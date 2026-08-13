@@ -82,4 +82,4 @@ No activity in this foundation submits evidence. When activities are added, they
 
 ## Content architecture
 
-Week routes are thin mounts. Teaching structure is canonical JSON under `content/unit-14/`, validated and rendered by the curriculum engine in `content/engine/`. See [curriculum-engine.md](curriculum-engine.md). The Part 1 review remains in [content-architecture/](content-architecture/README.md).
+Week routes are thin mounts. Teaching structure is canonical JSON under `content/unit-14/`, validated and rendered by vendored `@learning-platform/content` 0.1.0 plus hub-local draft/submit adapters in `content/engine/`. See [curriculum-engine.md](curriculum-engine.md). The Part 1 review remains in [content-architecture/](content-architecture/README.md).

@@ -97,7 +97,10 @@ test("python exercises stay python-only and do not execute code", function () {
   });
   assert.match(html, />python</);
   assert.doesNotMatch(html, /javascript|csharp|c#/i);
-  const engineSource = ["checks.js", "interactive.js", "render.js"].map(readEngine).join("\n");
+  const engineSource = [
+    fs.readFileSync(path.join(__dirname, "../vendor/learning-platform-content/0.1.0/learning-platform-content.iife.js"), "utf8"),
+    readEngine("interactive.js")
+  ].join("\n");
   assert.doesNotMatch(engineSource, /\beval\s*\(|new Function\s*\(|document\.write/);
 });
 

@@ -26,3 +26,18 @@ test("static GitHub Pages markers are present", function () {
   const home = fs.readFileSync(path.join(root, "index.html"), "utf8");
   assert.doesNotMatch(home, /href="\//);
 });
+
+test("the hub vendors reviewed Content 0.1.0 assets and records provenance", function () {
+  const vendor = path.join(root, "vendor/learning-platform-content/0.1.0");
+  [
+    "learning-platform-content.iife.js",
+    "learning-platform-content.cjs.js",
+    "LICENSE",
+    "PROVENANCE.md"
+  ].forEach(function (filename) {
+    assert.equal(fs.existsSync(path.join(vendor, filename)), true, filename);
+  });
+  const provenance = fs.readFileSync(path.join(vendor, "PROVENANCE.md"), "utf8");
+  assert.match(provenance, /fd4e307da96a417110674552bbadf8c705334af4/);
+  assert.match(provenance, /0\.1\.0/);
+});

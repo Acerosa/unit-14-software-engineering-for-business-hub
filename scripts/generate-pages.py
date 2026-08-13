@@ -26,17 +26,10 @@ def scripts(root: str, extras: list[str]) -> str:
 
 def engine_scripts(root: str) -> list[str]:
     return [
-        f"{root}/content/engine/constants.js",
-        f"{root}/content/engine/block-registry.js",
-        f"{root}/content/engine/validate.js",
-        f"{root}/content/engine/load.js",
-        f"{root}/content/engine/resolve.js",
-        f"{root}/content/engine/checks.js",
-        f"{root}/content/engine/render.js",
+        f"{root}/vendor/learning-platform-content/0.1.0/learning-platform-content.iife.js",
         f"{root}/content/engine/state.js",
         f"{root}/content/engine/submit.js",
         f"{root}/content/engine/interactive.js",
-        f"{root}/content/engine/browser.js",
         f"{root}/js/pages/curriculum-page.js",
     ]
 

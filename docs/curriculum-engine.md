@@ -2,7 +2,7 @@
 
 The learner hub is becoming a **renderer of structured curriculum**, not a collection of hand-written week pages.
 
-This is the first version of that engine. It lives in this hub so the contract can be proved against Unit 14. It is written so it can later move to `learning-platform-content` without carrying Unit 14 teaching copy with it.
+This is the first version of that engine. Canonical schemas, validation, block registry, importers and render helpers now live in `@learning-platform/content` **0.1.0**. This hub vendors the reviewed IIFE/CJS build and keeps learner draft/submit adapters plus Unit 14 teaching copy.
 
 ## Design philosophy
 
@@ -105,11 +105,11 @@ Low-stakes formative answers (for example classification `correctCategoryId`) ma
 
 See [Week 1 activities](week-1-activities.md) for the first vertical slice.
 
-GitHub Pages has no bundler. The engine is a set of browser scripts plus a Node entry for validation.
+GitHub Pages has no bundler. The hub vendors `learning-platform-content.iife.js` and loads hub-local `state.js`, `submit.js` and `interactive.js` after it. Node tests require `content/engine/index.js`, which re-exports the vendored CJS build plus those adapters.
 
 ## Validation
 
-`content/engine/validate.js` checks:
+`@learning-platform/content` `validatePackage` checks:
 
 - schema name and supported `schemaVersion`
 - required envelope and typed fields
@@ -145,16 +145,17 @@ Weeks 2–19 are structured week objects without sessions. That is intentional: 
 
 Week HTML routes are thin mounts (`data-lp-view="week"`). Session markup is generated at runtime from JSON.
 
-## What can later be extracted
+## Shared package
 
-Move to `learning-platform-content` when a second hub can share the contract:
+`@learning-platform/content` 0.1.0 owns:
 
-- `content/schemas/`
-- `content/engine/` (registry, validator, loader, renderer, importer)
+- `lp.content.*` schemas
+- block registry, validator, loader, renderer, importer
 
-Keep in the learner hub:
+This hub keeps:
 
 - `content/unit-14/`
+- `content/engine/state.js`, `submit.js`, `interactive.js`
 - branding, routes, GitHub Classroom copy, Python-only configuration
 
-Do not extract question banks or assignment briefs into the shared package.
+`content/schemas/` remains a local copy of the package schemas for reading in this repository. Do not put question banks or assignment briefs into the shared package.

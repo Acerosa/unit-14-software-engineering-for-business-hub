@@ -195,6 +195,9 @@ test("unimplemented registered blocks render as placeholders", function () {
 });
 
 test("the renderer does not know Unit 14 identifiers", function () {
-  const source = fs.readFileSync(path.join(__dirname, "../content/engine/render.js"), "utf8");
+  const source = fs.readFileSync(
+    path.join(__dirname, "../vendor/learning-platform-content/0.1.0/learning-platform-content.iife.js"),
+    "utf8"
+  );
   assert.doesNotMatch(source, /Unit 14|H\/507\/5017|ocr-level-3-it/i);
 });
