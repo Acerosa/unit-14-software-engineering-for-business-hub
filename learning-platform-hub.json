@@ -30,7 +30,8 @@
     "activities": [
       "classification",
       "coding-exercise",
-      "diagnostic"
+      "diagnostic",
+      "reflection"
     ]
   },
   "featureFlags": {
