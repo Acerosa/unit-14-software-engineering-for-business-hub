@@ -42,6 +42,12 @@ Open `http://localhost:8000/`. Teaching routes work without hosted credentials o
 node --test
 ```
 
+Validate the Unit 14 curriculum package:
+
+```bash
+node -e "const e=require('./content/engine'); const r=e.validateDirectory('./content/unit-14'); if(!r.valid){console.error(e.formatIssues(r.issues)); process.exit(1)}"
+```
+
 Manifest validation against the sibling backend:
 
 ```bash
@@ -57,7 +63,7 @@ This foundation does not authorise a production Pages deployment.
 
 ## Curriculum ownership
 
-The hub owns the Unit 14 Scheme of Learning sequence, assignment phases and learner-facing guidance. Authoritative OCR documents remain outside the repository. Calendar dates are stored as metadata and are `null` until taken from the curriculum planner.
+The hub owns the Unit 14 Scheme of Learning sequence, assignment phases and learner-facing guidance as canonical JSON (`content/unit-14/`). Authoritative OCR documents remain outside the repository. Calendar dates are stored as metadata and are `null` until taken from the curriculum planner. See [docs/curriculum-engine.md](docs/curriculum-engine.md).
 
 ## Backend trust boundary
 

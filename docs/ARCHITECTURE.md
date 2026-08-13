@@ -80,6 +80,6 @@ This is documented as a proposed Core enhancement, not implemented here.
 
 No activity in this foundation submits evidence. When activities are added, they must use Core evidence builders and `platform.submission`, or a documented compatibility adapter if contract 0.1.0 still requires client formative scores. The browser must not send identity or assignment IDs.
 
-## Content architecture (review only)
+## Content architecture
 
-The foundation still commits one HTML file per week. That is transitional. The investigation, reuse matrix, migration strategy and phased plan for a data-driven curriculum contract are in [content-architecture/](content-architecture/README.md). Implementation waits for the next specification.
+Week routes are thin mounts. Teaching structure is canonical JSON under `content/unit-14/`, validated and rendered by the curriculum engine in `content/engine/`. See [curriculum-engine.md](curriculum-engine.md). The Part 1 review remains in [content-architecture/](content-architecture/README.md).
