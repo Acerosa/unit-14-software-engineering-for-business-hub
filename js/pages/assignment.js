@@ -5,17 +5,28 @@
   var assignments = window.Unit14Assignments;
   var curriculum = window.Unit14Curriculum;
   var render = window.Unit14Render;
+  var engine = window.LearningPlatformContent;
 
-  function stageLabel(status) {
-    if (status === "in-progress") return "In progress";
-    if (status === "complete") return "Complete";
-    return "Not started";
+  function week1Label() {
+    var practised = false;
+    var week;
+    if (engine && engine.summariseDraft && engine.resolveWeek && window.__lpPackage) {
+      week = engine.resolveWeek(window.__lpPackage, "week-1");
+      (week && week.sessions || []).forEach(function (session) {
+        (session.activities || []).forEach(function (resolved) {
+          var summary = engine.summariseDraft(resolved.document);
+          if (summary.status === "practised" || summary.status === "started") practised = true;
+        });
+      });
+    }
+    return practised ? "Started / practised" : "Not started";
   }
 
-  utils.onContentReady(function () {
+  utils.onContentReady(function (event) {
     var assignmentId = document.body.dataset.assignment;
     var assignment = assignments.getAssignment(assignmentId);
     var mount = document.querySelector("[data-assignment-workspace]");
+    var pkg = window.__lpPackage;
     if (!assignment || !mount) return;
 
     var root = document.body.dataset.root || ".";
@@ -25,9 +36,11 @@
         "<br>" + utils.escapeHtml(item.summary) + "</li>";
     }).join("");
     var stages = assignment.stages.map(function (stage) {
+      var label = Number(stage.week) === 1 ? week1Label() : "Upcoming";
+      var tone = label === "Upcoming" || label === "Not started" ? "planned" : "in-progress";
       return "<li><span>" + utils.escapeHtml(stage.title) + " (Week " + stage.week + ")</span>" +
-        '<span class="status-label ' + render.statusClass(stage.status === "in-progress" ? "in-progress" : "planned") + '">' +
-        stageLabel(stage.status) + "</span></li>";
+        '<span class="status-label ' + render.statusClass(tone) + '">' +
+        utils.escapeHtml(label) + "</span></li>";
     }).join("");
     var weekLinks = weeks.map(function (week) {
       return '<li><a href="' + utils.createSitePath(root, week.route) + '">Week ' +
@@ -37,7 +50,7 @@
     mount.innerHTML =
       '<section class="panel" aria-labelledby="criteria-heading">' +
       '<h2 id="criteria-heading">Assessment criteria</h2>' +
-      "<p>This workspace helps you organise work. It does not award Pass, Merit or Distinction.</p>" +
+      "<p>This workspace helps you organise work. Completing hub practice is not P1 achieved. The hub does not award Pass, Merit or Distinction.</p>" +
       "<ul>" + criteria + "</ul>" +
       "<p>" + utils.escapeHtml(assignment.evidenceNote) + "</p>" +
       "</section>" +
