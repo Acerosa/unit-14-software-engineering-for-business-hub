@@ -48,7 +48,7 @@ test("Unit 14 curriculum package loads and validates", function () {
   assert.equal(result.valid, true, engine.formatIssues(result.issues));
   assert.equal(result.package.weeks.length, 19);
   assert.equal(result.package.sessions.length, 3);
-  assert.equal(result.package.activities.length, 12);
+  assert.equal(result.package.activities.length, 11);
   assert.equal(result.package.hub.relationships.curriculum, "u14-curriculum");
 });
 
@@ -59,10 +59,10 @@ test("curriculum, week, session, activity and block loading follow the contract"
   assert.equal(week.document.metadata.title, "Programming for Business, Variables and Data Types");
   assert.equal(week.sessions.length, 3);
   assert.equal(week.sessions[0].document.metadata.title, "Session 1");
-  assert.equal(week.sessions[0].activities.length, 6);
-  assert.equal(week.sessions[0].activities[0].document.id, "baseline-assessment-programming-constructs");
+  assert.equal(week.sessions[0].activities.length, 5);
+  assert.equal(week.sessions[0].activities[0].document.id, "week-1-baseline-diagnostic");
   assert.ok(week.sessions[0].activities[0].document.blocks.length >= 1);
-  assert.equal(week.sessions[0].activities[0].document.blocks[0].type, "paragraph");
+  assert.equal(week.sessions[0].activities[0].document.blocks[0].type, "heading");
 });
 
 test("the week renderer emits sessions from data rather than hard-coded HTML", function () {
@@ -71,7 +71,7 @@ test("the week renderer emits sessions from data rather than hard-coded HTML", f
   assert.match(html, /Session 1/);
   assert.match(html, /Session 2/);
   assert.match(html, /Directed independent study/);
-  assert.match(html, /Baseline assessment/);
+  assert.match(html, /Baseline programming diagnostic/);
   assert.match(html, /GitHub Classroom/);
   assert.match(html, /role="status"/);
   assert.match(html, /Python/);
@@ -184,7 +184,7 @@ test("Excel CSV sheets import into canonical objects then render", function () {
   assert.match(html, /Baseline check/);
 });
 
-test("registered question and code blocks render as placeholders", function () {
+test("unimplemented registered blocks render as placeholders", function () {
   const html = engine.renderBlock({
     id: "q1",
     type: "multiple-choice",
@@ -192,8 +192,6 @@ test("registered question and code blocks render as placeholders", function () {
   });
   assert.match(html, /multiple-choice/);
   assert.match(html, /not enabled yet/i);
-  const python = engine.renderBlock({ id: "c1", type: "python-exercise", content: {} });
-  assert.match(python, /python-exercise/);
 });
 
 test("the renderer does not know Unit 14 identifiers", function () {

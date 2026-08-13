@@ -31,5 +31,10 @@ test("accessibility fundamentals are present in the shell and CSS", function () 
   assert.match(weekHtml, /role="status"/);
   assert.match(weekHtml, /Session 1/);
   assert.match(weekHtml, /Session 2/);
+  assert.match(weekHtml, /<label class="lp-label" for=/);
+  assert.match(weekHtml, /<fieldset class="lp-fieldset"><legend>/);
+  assert.match(weekHtml, /Reset activity/);
+  assert.match(css, /Matched\. /);
+  assert.match(css, /Review\. /);
   assert.doesNotMatch(weekHtml, /status-label-planned[^]*Planned<\/span>\s*<h3>[^<]+<\/h3>\s*<p>[^<]+<\/p>\s*<a /);
 });

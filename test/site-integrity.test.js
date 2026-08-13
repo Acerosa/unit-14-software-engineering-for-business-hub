@@ -121,7 +121,7 @@ test("direct nested Week 1 and Assignment 1 routes remain self-contained", funct
   assert.match(week1, /GitHub Classroom/);
   assert.match(week1, /Python/);
   assert.match(week1Content, /GitHub Classroom/);
-  assert.match(week1Content, /Baseline assessment/);
+  assert.match(week1Content, /Baseline programming diagnostic/);
   assert.match(assignment1, /Programming Constructs Technical Guide/);
   assert.match(assignment1, /does not award grades/i);
 });
