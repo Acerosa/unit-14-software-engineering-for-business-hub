@@ -1,0 +1,552 @@
+[
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "baseline-assessment-programming-constructs",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Baseline assessment",
+      "status": "planned",
+      "summary": "A low-stakes check of starting knowledge before Week 1 teaching. Not a formal OCR assessment.",
+      "href": null
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "baseline-assessment-programming-constructs-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "A low-stakes check of starting knowledge before Week 1 teaching. Not a formal OCR assessment."
+        }
+      },
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "baseline-assessment-programming-constructs-callout",
+        "version": "0.1.0",
+        "type": "callout",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "tone": "info",
+          "title": "Planned",
+          "text": "Interactive teaching for this activity will be added as blocks in a later phase."
+        }
+      }
+    ]
+  },
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "business-software-and-data-discussion",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Business software and data discussion",
+      "status": "planned",
+      "summary": "Discuss why businesses use software and what data those programs store and process.",
+      "href": null
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "business-software-and-data-discussion-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "Discuss why businesses use software and what data those programs store and process."
+        }
+      },
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "business-software-and-data-discussion-callout",
+        "version": "0.1.0",
+        "type": "callout",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "tone": "info",
+          "title": "Planned",
+          "text": "Interactive teaching for this activity will be added as blocks in a later phase."
+        }
+      }
+    ]
+  },
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "variables-and-fundamental-data-types",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Variables and fundamental data types",
+      "status": "planned",
+      "summary": "Python variables and core data types used in business programs.",
+      "href": null
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "variables-and-fundamental-data-types-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "Python variables and core data types used in business programs."
+        }
+      },
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "variables-and-fundamental-data-types-callout",
+        "version": "0.1.0",
+        "type": "callout",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "tone": "info",
+          "title": "Planned",
+          "text": "Interactive teaching for this activity will be added as blocks in a later phase."
+        }
+      }
+    ]
+  },
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "python-print",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Print",
+      "status": "planned",
+      "summary": "Display information for a user with Python output.",
+      "href": null
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "python-print-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "Display information for a user with Python output."
+        }
+      },
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "python-print-callout",
+        "version": "0.1.0",
+        "type": "callout",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "tone": "info",
+          "title": "Planned",
+          "text": "Interactive teaching for this activity will be added as blocks in a later phase."
+        }
+      }
+    ]
+  },
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "python-input",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Input",
+      "status": "planned",
+      "summary": "Capture user-entered business data in a simple program.",
+      "href": null
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "python-input-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "Capture user-entered business data in a simple program."
+        }
+      },
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "python-input-callout",
+        "version": "0.1.0",
+        "type": "callout",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "tone": "info",
+          "title": "Planned",
+          "text": "Interactive teaching for this activity will be added as blocks in a later phase."
+        }
+      }
+    ]
+  },
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "python-development-environment-guidance",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Python development environment guidance",
+      "status": "planned",
+      "summary": "Set up and use the agreed Python environment for this unit.",
+      "href": null
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "python-development-environment-guidance-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "Set up and use the agreed Python environment for this unit."
+        }
+      },
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "python-development-environment-guidance-callout",
+        "version": "0.1.0",
+        "type": "callout",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "tone": "info",
+          "title": "Planned",
+          "text": "Interactive teaching for this activity will be added as blocks in a later phase."
+        }
+      }
+    ]
+  },
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "github-classroom-introduction",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "GitHub Classroom introduction",
+      "status": "planned",
+      "summary": "Accept the Classroom assignment, open the provisioned repository and clone it locally.",
+      "href": null
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "github-classroom-introduction-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "Accept the Classroom assignment, open the provisioned repository and clone it locally."
+        }
+      },
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "github-classroom-introduction-callout",
+        "version": "0.1.0",
+        "type": "callout",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "tone": "info",
+          "title": "Planned",
+          "text": "Interactive teaching for this activity will be added as blocks in a later phase."
+        }
+      }
+    ]
+  },
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "first-commits",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "First commits",
+      "status": "planned",
+      "summary": "Make first commits with meaningful commit messages.",
+      "href": null
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "first-commits-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "Make first commits with meaningful commit messages."
+        }
+      },
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "first-commits-callout",
+        "version": "0.1.0",
+        "type": "callout",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "tone": "info",
+          "title": "Planned",
+          "text": "Interactive teaching for this activity will be added as blocks in a later phase."
+        }
+      }
+    ]
+  },
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "guided-python-practice-variables",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Guided practice",
+      "status": "planned",
+      "summary": "Follow a guided Python activity using variables, print and input.",
+      "href": null
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "guided-python-practice-variables-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "Follow a guided Python activity using variables, print and input."
+        }
+      },
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "guided-python-practice-variables-callout",
+        "version": "0.1.0",
+        "type": "callout",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "tone": "info",
+          "title": "Planned",
+          "text": "Interactive teaching for this activity will be added as blocks in a later phase."
+        }
+      }
+    ]
+  },
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "independent-business-order-program",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Independent business-order programming activity",
+      "status": "planned",
+      "summary": "Write a small independent program for a simple business order scenario.",
+      "href": null
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "independent-business-order-program-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "Write a small independent program for a simple business order scenario."
+        }
+      },
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "independent-business-order-program-callout",
+        "version": "0.1.0",
+        "type": "callout",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "tone": "info",
+          "title": "Planned",
+          "text": "Interactive teaching for this activity will be added as blocks in a later phase."
+        }
+      }
+    ]
+  },
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "assignment-1-technical-guide-progress",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Assignment 1 technical-guide progress",
+      "status": "available",
+      "summary": "Start collecting examples of variables and data types for the technical guide. This is preparation, not an automatic Pass.",
+      "href": "assignments/assignment-1/"
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "assignment-1-technical-guide-progress-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "Start collecting examples of variables and data types for the technical guide. This is preparation, not an automatic Pass."
+        }
+      }
+    ]
+  },
+  {
+    "schema": "lp.content.activity",
+    "schemaVersion": "0.1.0",
+    "id": "week-1-directed-study",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Homework / directed study",
+      "status": "planned",
+      "summary": "Directed study tasks for Week 1 will be added from the Scheme of Learning.",
+      "href": null
+    },
+    "relationships": {
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "questions": [],
+      "assets": []
+    },
+    "blocks": [
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "week-1-directed-study-summary",
+        "version": "0.1.0",
+        "type": "paragraph",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "text": "Directed study tasks for Week 1 will be added from the Scheme of Learning."
+        }
+      },
+      {
+        "schema": "lp.content.block",
+        "schemaVersion": "0.1.0",
+        "id": "week-1-directed-study-callout",
+        "version": "0.1.0",
+        "type": "callout",
+        "metadata": {},
+        "relationships": {},
+        "content": {
+          "tone": "info",
+          "title": "Planned",
+          "text": "Interactive teaching for this activity will be added as blocks in a later phase."
+        }
+      }
+    ]
+  }
+]

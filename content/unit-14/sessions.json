@@ -1,0 +1,68 @@
+[
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-1-session-1",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 1",
+      "kind": "session",
+      "summary": "Programming for business, variables, data types, print and input in Python.",
+      "sortOrder": 1,
+      "defaultOpen": true
+    },
+    "relationships": {
+      "week": "week-1",
+      "activities": [
+        "baseline-assessment-programming-constructs",
+        "business-software-and-data-discussion",
+        "variables-and-fundamental-data-types",
+        "python-print",
+        "python-input",
+        "python-development-environment-guidance"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-1-session-2",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 2",
+      "kind": "session",
+      "summary": "Git and GitHub are part of the curriculum. GitHub remains the authentic development environment; this hub guides the process rather than recreating GitHub.",
+      "sortOrder": 2,
+      "defaultOpen": false
+    },
+    "relationships": {
+      "week": "week-1",
+      "activities": [
+        "github-classroom-introduction",
+        "first-commits",
+        "guided-python-practice-variables",
+        "independent-business-order-program"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-1-independent-study",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Directed independent study",
+      "kind": "independent-study",
+      "summary": "Start gathering notes for the Assignment 1 technical guide.",
+      "sortOrder": 3,
+      "defaultOpen": false
+    },
+    "relationships": {
+      "week": "week-1",
+      "activities": [
+        "assignment-1-technical-guide-progress",
+        "week-1-directed-study"
+      ]
+    }
+  }
+]

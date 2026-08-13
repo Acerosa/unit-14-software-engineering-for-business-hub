@@ -1,0 +1,481 @@
+[
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-1",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 1,
+      "title": "Programming for Business, Variables and Data Types",
+      "status": "available",
+      "phase": "teaching",
+      "professionalPractice": "GitHub Classroom, repository provisioning, clone, commits and meaningful commit messages.",
+      "route": "weeks/week-1/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "assignment": "A1",
+      "sessions": [
+        "week-1-session-1",
+        "week-1-session-2",
+        "week-1-independent-study"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-2",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 2,
+      "title": "Data Type Conversion and Predefined Subroutines",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": ".gitignore and a named feature branch.",
+      "route": "weeks/week-2/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "assignment": "A1",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-3",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 3,
+      "title": "Selection",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "GitHub Issues and linking work to commits.",
+      "route": "weeks/week-3/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "assignment": "A1",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-4",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 4,
+      "title": "Iteration",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "Feature branches and merging.",
+      "route": "weeks/week-4/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "assignment": "A1",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-5",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 5,
+      "title": "Encapsulation, Parameters and Return Values",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "Pull requests and peer code review.",
+      "route": "weeks/week-5/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "assignment": "A1",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-6",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 6,
+      "title": "GUI Objects and Assignment 1 Completion",
+      "status": "planned",
+      "phase": "assignment-completion",
+      "professionalPractice": "Tagged releases.",
+      "route": "weeks/week-6/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO1"
+      ],
+      "assignment": "A1",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-7",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 7,
+      "title": "The Modern Incremental System Life Cycle",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "Backlog, milestones, releases and incremental development.",
+      "route": "weeks/week-7/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO2"
+      ],
+      "assignment": "A2",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-8",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 8,
+      "title": "Investigating Business Requirements",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "Requirements represented as traceable GitHub Issues.",
+      "route": "weeks/week-8/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO2"
+      ],
+      "assignment": "A2",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-9",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 9,
+      "title": "Feasibility, Phased Development and Assignment 2",
+      "status": "planned",
+      "phase": "assignment-completion",
+      "professionalPractice": "Continue incremental development against the project backlog.",
+      "route": "weeks/week-9/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO2"
+      ],
+      "assignment": "A2",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-10",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 10,
+      "title": "Design Specification, User Interface and Flow Design",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "Requirement to Issue to branch workflow continues.",
+      "route": "weeks/week-10/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO3"
+      ],
+      "assignment": "A3",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-11",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 11,
+      "title": "Processing, Methodology and Professional House Style",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "House style applied through commits and pull requests.",
+      "route": "weeks/week-11/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO3"
+      ],
+      "assignment": "A3",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-12",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 12,
+      "title": "Adaptations to Design Following Stakeholder Negotiation",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "Stakeholder feedback recorded as accepted, deferred or declined changes, with issue discussion and milestone reassignment.",
+      "route": "weeks/week-12/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO3"
+      ],
+      "assignment": "A3",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-13",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 13,
+      "title": "Building the Prototype and Using Debug Tools",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "Requirement \u2192 Issue \u2192 branch \u2192 commits \u2192 pull request \u2192 merge.",
+      "route": "weeks/week-13/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO3"
+      ],
+      "assignment": "A3",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-14",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 14,
+      "title": "Testing the Prototype and Rectifying Issues",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "Test and evaluation evidence linked from issues and pull requests.",
+      "route": "weeks/week-14/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO3"
+      ],
+      "assignment": "A3",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-15",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 15,
+      "title": "Design Evaluation and Assignment 3 Completion",
+      "status": "planned",
+      "phase": "assignment-completion",
+      "professionalPractice": "Release evidence for the evaluated prototype.",
+      "route": "weeks/week-15/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO3"
+      ],
+      "assignment": "A3",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-16",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 16,
+      "title": "Presenting to an Audience",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "Presentation artefacts stored with the project repository.",
+      "route": "weeks/week-16/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO4"
+      ],
+      "assignment": "A4",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-17",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 17,
+      "title": "Demonstrating the Prototype to Stakeholders",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "Demonstration notes captured against project issues.",
+      "route": "weeks/week-17/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO4"
+      ],
+      "assignment": "A4",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-18",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 18,
+      "title": "Adapting the Prototype from Stakeholder Feedback",
+      "status": "planned",
+      "phase": "teaching",
+      "professionalPractice": "Feedback implemented through issue, branch, pull request and merge.",
+      "route": "weeks/week-18/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO4"
+      ],
+      "assignment": "A4",
+      "sessions": []
+    }
+  },
+  {
+    "schema": "lp.content.week",
+    "schemaVersion": "0.1.0",
+    "id": "week-19",
+    "version": "0.1.0",
+    "metadata": {
+      "teachingWeek": 19,
+      "title": "Assignment 4 Completion, Portfolio Consolidation and Unit Review",
+      "status": "planned",
+      "phase": "assignment-completion",
+      "professionalPractice": "Final tagged release and portfolio consolidation.",
+      "route": "weeks/week-19/",
+      "weekCommencing": null,
+      "releaseDate": null,
+      "dueDate": null
+    },
+    "relationships": {
+      "curriculum": "u14-curriculum",
+      "learningOutcomes": [
+        "LO4"
+      ],
+      "assignment": "A4",
+      "sessions": []
+    }
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "schema": "lp.content.learning-outcome",
+    "schemaVersion": "0.1.0",
+    "id": "LO1",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Understand universal programming constructs."
+    },
+    "relationships": {}
+  },
+  {
+    "schema": "lp.content.learning-outcome",
+    "schemaVersion": "0.1.0",
+    "id": "LO2",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Be able to investigate business requirements for programming solutions."
+    },
+    "relationships": {}
+  },
+  {
+    "schema": "lp.content.learning-outcome",
+    "schemaVersion": "0.1.0",
+    "id": "LO3",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Be able to develop software solutions to meet business requirements."
+    },
+    "relationships": {}
+  },
+  {
+    "schema": "lp.content.learning-outcome",
+    "schemaVersion": "0.1.0",
+    "id": "LO4",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Be able to propose software solutions to meet business requirements."
+    },
+    "relationships": {}
+  }
+]

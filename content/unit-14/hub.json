@@ -1,0 +1,31 @@
+{
+  "schema": "lp.content.hub",
+  "schemaVersion": "0.1.0",
+  "id": "unit-14-software-engineering-for-business",
+  "version": "0.1.0",
+  "metadata": {
+    "name": "Unit 14 Software Engineering for Business Hub",
+    "description": "Learner hub for OCR Level 3 IT Unit 14. Branding, routes and curriculum pointer only.",
+    "branding": {
+      "primary": "#1e3a5f",
+      "accent": "#2a7a62"
+    },
+    "routes": {
+      "home": "",
+      "weeks": "weeks/",
+      "assignments": "assignments/",
+      "project": "project/",
+      "resources": "resources/",
+      "help": "help/",
+      "account": "account/"
+    },
+    "features": [
+      "authentication",
+      "onboarding",
+      "progress"
+    ]
+  },
+  "relationships": {
+    "curriculum": "u14-curriculum"
+  }
+}
