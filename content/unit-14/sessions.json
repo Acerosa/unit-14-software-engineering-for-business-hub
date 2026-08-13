@@ -7,19 +7,18 @@
     "metadata": {
       "title": "Session 1",
       "kind": "session",
-      "summary": "Programming for business, variables, data types, print and input in Python.",
+      "summary": "Theory and demonstration: baseline, business data, variables and data types, print and input, and GitHub Classroom.",
       "sortOrder": 1,
       "defaultOpen": true
     },
     "relationships": {
       "week": "week-1",
       "activities": [
-        "baseline-assessment-programming-constructs",
-        "business-software-and-data-discussion",
-        "variables-and-fundamental-data-types",
-        "python-print",
-        "python-input",
-        "python-development-environment-guidance"
+        "week-1-baseline-diagnostic",
+        "week-1-business-data-explorer",
+        "week-1-variables-and-data-types",
+        "week-1-input-and-output",
+        "week-1-github-classroom-guidance"
       ]
     }
   },
@@ -31,17 +30,18 @@
     "metadata": {
       "title": "Session 2",
       "kind": "session",
-      "summary": "Git and GitHub are part of the curriculum. GitHub remains the authentic development environment; this hub guides the process rather than recreating GitHub.",
+      "summary": "Practical lab: retrieval, guided data-type practice, commits, the independent business-order program, and Assignment 1 notes.",
       "sortOrder": 2,
       "defaultOpen": false
     },
     "relationships": {
       "week": "week-1",
       "activities": [
-        "github-classroom-introduction",
-        "first-commits",
-        "guided-python-practice-variables",
-        "independent-business-order-program"
+        "week-1-review",
+        "week-1-guided-business-data",
+        "week-1-first-commits",
+        "week-1-first-python-business-program",
+        "week-1-assignment-1-guide"
       ]
     }
   },
@@ -53,15 +53,14 @@
     "metadata": {
       "title": "Directed independent study",
       "kind": "independent-study",
-      "summary": "Start gathering notes for the Assignment 1 technical guide.",
+      "summary": "Extend the business-order program with at least six pieces of data covering all four fundamental types, then commit, push and extend the Assignment 1 guide.",
       "sortOrder": 3,
       "defaultOpen": false
     },
     "relationships": {
       "week": "week-1",
       "activities": [
-        "assignment-1-technical-guide-progress",
-        "week-1-directed-study"
+        "week-1-homework-extension"
       ]
     }
   }
