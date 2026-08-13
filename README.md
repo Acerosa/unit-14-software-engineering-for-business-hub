@@ -68,6 +68,12 @@ This foundation does not authorise a production Pages deployment.
 
 The hub owns the Unit 14 Scheme of Learning sequence, assignment phases and learner-facing guidance as canonical JSON (`content/unit-14/`). Authoritative OCR documents remain outside the repository. Calendar dates are stored as metadata and are `null` until taken from the curriculum planner. See [docs/curriculum-engine.md](docs/curriculum-engine.md) and [docs/week-1-activities.md](docs/week-1-activities.md).
 
+The shared backend is the official publication authority. This static hub
+compares its local curriculum package version with
+`api.published_curriculum()` and only treats signed-in submissions as
+authoritative when the versions match. See
+[docs/publication-consumption.md](docs/publication-consumption.md).
+
 ## Backend trust boundary
 
 - Only the public Supabase URL and publishable key are browser configuration.
