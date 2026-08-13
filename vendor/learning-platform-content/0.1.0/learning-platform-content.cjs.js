@@ -1683,6 +1683,46 @@
 
   var ns = root.LearningPlatformContent = root.LearningPlatformContent || {};
 
+  var SCRIPT = /<\s*script/i;
+  var EVENT_ATTR = /\son[a-z]+\s*=/i;
+  var JS_URL = /^\s*javascript:/i;
+
+  ns.containsUnsafeMarkup = function (value) {
+    return SCRIPT.test(String(value || "")) || EVENT_ATTR.test(String(value || "")) || JS_URL.test(String(value || ""));
+  };
+
+  ns.sanitizeImportedText = function (value) {
+    var text = String(value == null ? "" : value);
+    if (ns.containsUnsafeMarkup(text)) {
+      var error = new Error("Imported content contains disallowed HTML or script.");
+      error.code = "UNSAFE_CONTENT";
+      throw error;
+    }
+    return text;
+  };
+
+  ns.sanitizeObject = function (value) {
+    if (typeof value === "string") return ns.sanitizeImportedText(value);
+    if (Array.isArray(value)) return value.map(ns.sanitizeObject);
+    if (value && typeof value === "object") {
+      var result = {};
+      Object.keys(value).forEach(function (key) {
+        result[key] = ns.sanitizeObject(value[key]);
+      });
+      return result;
+    }
+    return value;
+  };
+
+  ns.sanitiseContent = ns.sanitizeObject;
+  ns.sanitizeContent = ns.sanitizeObject;
+})(typeof globalThis !== "undefined" ? globalThis : this);
+
+(function (root) {
+  "use strict";
+
+  var ns = root.LearningPlatformContent = root.LearningPlatformContent || {};
+
   ns.browserIo = function () {
     return {
       readText: function (filePath) {
@@ -1705,6 +1745,42 @@
     var relative = (config && config.curriculumPackage) || "content";
     return String(root).replace(/\/?$/, "/") + String(relative).replace(/^\//, "");
   };
+})(typeof globalThis !== "undefined" ? globalThis : this);
+
+(function (root) {
+  "use strict";
+
+  var ns = root.LearningPlatformContent = root.LearningPlatformContent || {};
+
+  ns.importJson = ns.importJSON;
+
+  ns.importExcel = function (input, hub, curriculum) {
+    if (!input || typeof input !== "object") {
+      throw new Error("Unsupported Excel import shape");
+    }
+    var keys = Object.keys(input);
+    if (keys.length && keys.every(function (key) { return typeof input[key] === "string"; })) {
+      return ns.importFromCsvSheets(input, hub, curriculum);
+    }
+    return ns.importFromSheets(input);
+  };
+
+  ns.supportedSchemas = Object.freeze(Object.keys(ns.SCHEMAS).map(function (key) {
+    return ns.SCHEMAS[key];
+  }));
+
+  ns.supportedVersions = ns.SUPPORTED_SCHEMA_VERSIONS;
+
+  ns.BlockRegistry = Object.freeze({
+    get types() {
+      return ns.BLOCK_TYPES;
+    },
+    get: ns.getBlockType,
+    isRegistered: ns.isRegisteredBlockType,
+    isInteractive: ns.isInteractiveBlockType,
+    register: ns.registerBlockType,
+    normalise: ns.normaliseBlockType
+  });
 })(typeof globalThis !== "undefined" ? globalThis : this);
 
 (function (root) {
