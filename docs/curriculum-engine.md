@@ -150,7 +150,9 @@ Week HTML routes are thin mounts (`data-lp-view="week"`). Session markup is gene
 `@learning-platform/content` 0.1.0 owns:
 
 - `lp.content.*` schemas
-- block registry, validator, loader, renderer, importer
+- block registry, validator, loader, renderer, importer, sanitisation
+
+Canonical repository: [Acerosa/learning-platform-content](https://github.com/Acerosa/learning-platform-content) (tag `v0.1.0`).
 
 This hub keeps:
 
@@ -158,4 +160,4 @@ This hub keeps:
 - `content/engine/state.js`, `submit.js`, `interactive.js`
 - branding, routes, GitHub Classroom copy, Python-only configuration
 
-`content/schemas/` remains a local copy of the package schemas for reading in this repository. Do not put question banks or assignment briefs into the shared package.
+A reviewed copy of the package schemas lives under `vendor/learning-platform-content/0.1.0/schemas/` for local reading. Do not put question banks or assignment briefs into the shared package.

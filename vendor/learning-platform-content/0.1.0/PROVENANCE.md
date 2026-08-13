@@ -1,8 +1,11 @@
 # learning-platform-content 0.1.0
 
-These browser and Node assets are vendored from `@learning-platform/content`
-commit `fd4e307da96a417110674552bbadf8c705334af4`
-(`feat: extract canonical lp.content engine as @learning-platform/content 0.1.0`).
+These browser and Node assets are vendored from the canonical repository
+[Acerosa/learning-platform-content](https://github.com/Acerosa/learning-platform-content)
+tag `v0.1.0`. The JavaScript files match commit
+`339bbf6878dba2322f3ef208889505b1e495f27d`
+(`chore: rebuild dist for the public API and sanitisation surface`).
+
 They are kept in a versioned directory so this static GitHub Pages hub has no
 runtime dependency on GitHub or npm and can be rolled back with its own
 reviewed commit.

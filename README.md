@@ -20,7 +20,7 @@ This repository must not own learner identity, RLS, database migrations, adminis
 ## Shared dependencies
 
 - Vendored `@learning-platform/core` **0.1.0** from commit `f484b2d` under `vendor/learning-platform-core/0.1.0/`
-- Vendored `@learning-platform/content` **0.1.0** from commit `fd4e307` under `vendor/learning-platform-content/0.1.0/`
+- Vendored `@learning-platform/content` **0.1.0** (`v0.1.0`) from [Acerosa/learning-platform-content](https://github.com/Acerosa/learning-platform-content) under `vendor/learning-platform-content/0.1.0/`
 - Supabase JS **2.112.3** loaded at the reviewed browser version
 - Learner API / submission contracts **0.1.0** through Core
 - Hub course key in the manifest: `ocr-level-3-it` (the currently registered OCR Level 3 IT course)
