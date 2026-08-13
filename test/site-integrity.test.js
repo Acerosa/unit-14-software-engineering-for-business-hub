@@ -71,7 +71,8 @@ test("routes load Core in dependency order and keep GitHub Pages-relative assets
     "js/core/utils.js",
     "js/core/platform.js",
     "js/core/theme.js",
-    "js/core/shell.js"
+    "js/core/shell.js",
+    "content/engine/publication.js"
   ];
 
   allWeekRoutes.concat([

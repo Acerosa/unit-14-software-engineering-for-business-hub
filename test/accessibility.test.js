@@ -34,7 +34,34 @@ test("accessibility fundamentals are present in the shell and CSS", function () 
   assert.match(weekHtml, /<label class="lp-label" for=/);
   assert.match(weekHtml, /<fieldset class="lp-fieldset"><legend>/);
   assert.match(weekHtml, /Reset activity/);
-  assert.match(css, /Matched\. /);
+  assert.match(css, /publication-banner/);
   assert.match(css, /Review\. /);
+  const matchedStatus = engine.renderPublicationStatus(engine.resolvePublicationState({
+    hubCode: "unit-14-software-engineering-for-business",
+    courseKey: "ocr-level-3-it",
+    packageVersion: "0.1.0",
+    schemaVersion: "0.1.0",
+    contentPackageVersion: "0.1.0"
+  }, [{
+    hub_code: "unit-14-software-engineering-for-business",
+    course_key: "ocr-level-3-it",
+    package_version: "0.1.0",
+    schema_version: "0.1.0",
+    source_package_version: "0.1.0",
+    published_at: "2026-08-13T12:00:00Z"
+  }]));
+  const errorStatus = engine.renderPublicationStatus(engine.resolvePublicationState({
+    hubCode: "unit-14-software-engineering-for-business",
+    courseKey: "ocr-level-3-it",
+    packageVersion: "0.1.0",
+    schemaVersion: "0.1.0",
+    contentPackageVersion: "0.1.0"
+  }, [], true));
+  assert.match(matchedStatus, /role="status"/);
+  assert.match(matchedStatus, /visually-hidden/);
+  assert.doesNotMatch(matchedStatus, /Update pending|Preview|Temporarily unable/);
+  assert.match(errorStatus, /role="status"/);
+  assert.match(errorStatus, /Temporarily unable to save progress/);
+  assert.doesNotMatch(matchedStatus + errorStatus, /content hash|RLS|RPC|schema validation/i);
   assert.doesNotMatch(weekHtml, /status-label-planned[^]*Planned<\/span>\s*<h3>[^<]+<\/h3>\s*<p>[^<]+<\/p>\s*<a /);
 });

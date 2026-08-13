@@ -30,6 +30,10 @@ test("hub configuration matches the canonical manifest contracts", function () {
 
   assert.equal(window.APP_CONFIG.hubId, manifest.hubId);
   assert.equal(window.APP_CONFIG.hubVersion, manifest.version);
+  assert.equal(window.APP_CONFIG.courseKey, manifest.courses[0]);
+  assert.equal(window.APP_CONFIG.curriculumVersion, "0.1.0");
+  assert.equal(window.APP_CONFIG.schemaVersion, "0.1.0");
+  assert.equal(window.APP_CONFIG.contentPackageVersion, "0.1.0");
   assert.equal(window.APP_CONFIG.coreVersion, manifest.compatibility.required.coreVersion);
   assert.equal(window.APP_CONFIG.learnerApiContractVersion, manifest.compatibility.required.learnerApiContractVersion);
   assert.equal(window.APP_CONFIG.submissionContractVersion, manifest.compatibility.required.submissionContractVersion);

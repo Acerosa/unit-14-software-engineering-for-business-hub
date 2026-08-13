@@ -149,6 +149,33 @@
     mount.innerHTML = '<ol class="breadcrumb-list">' + html + "</ol>";
   }
 
+  function renderPublicationStatus(state) {
+    var mount = document.querySelector("[data-publication-status]");
+    var engine = window.LearningPlatformContent;
+    if (!mount) {
+      mount = document.createElement("div");
+      mount.setAttribute("data-publication-status", "");
+      if (document.body.firstElementChild) {
+        document.body.insertBefore(mount, document.querySelector(".breadcrumbs") || document.querySelector(".page-header") || document.body.firstElementChild.nextSibling);
+      } else {
+        document.body.appendChild(mount);
+      }
+    }
+    if (!engine || typeof engine.renderPublicationStatus !== "function") return;
+    mount.innerHTML = engine.renderPublicationStatus(state);
+    document.body.dataset.publicationState = state && state.state ? state.state : "ERROR";
+  }
+
+  function bindPublicationStatus() {
+    var engine = window.LearningPlatformContent;
+    if (engine && typeof engine.getPublicationState === "function" && engine.getPublicationState()) {
+      renderPublicationStatus(engine.getPublicationState());
+    }
+    document.addEventListener("lp:publication-resolved", function (event) {
+      renderPublicationStatus(event.detail || (engine && engine.getPublicationState && engine.getPublicationState()));
+    });
+  }
+
   function renderFooter() {
     var phase = document.querySelector("[data-current-phase]");
     if (phase) phase.textContent = config.currentPhase;
@@ -158,6 +185,7 @@
     renderHeader();
     renderBreadcrumbs();
     renderFooter();
+    bindPublicationStatus();
     document.body.dataset.platformState = "loading";
 
     if (!core || !platform) return;

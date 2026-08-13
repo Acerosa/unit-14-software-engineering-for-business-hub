@@ -247,7 +247,8 @@ test("submission uses Core evidence fields and never sends learner identity", as
           return Promise.resolve({ ok: true });
         }
       }
-    }
+    },
+    publication: { allowsSubmission: true }
   });
   assert.equal(result.status, "submitted");
   assert.equal(captured.length, 1);
@@ -284,7 +285,8 @@ test("incomplete activities stay local until every question has evidence", async
           return Promise.resolve({ ok: true });
         }
       }
-    }
+    },
+    publication: { allowsSubmission: true }
   });
   assert.equal(result.status, "local");
   assert.equal(captured.length, 0);
@@ -314,7 +316,8 @@ test("python activities declare the programming language only when required", as
           return Promise.resolve({ ok: true });
         }
       }
-    }
+    },
+    publication: { allowsSubmission: true }
   });
   assert.equal(result.status, "submitted");
   assert.equal(captured[0].programmingLanguage, "python");
