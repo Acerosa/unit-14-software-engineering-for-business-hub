@@ -37,6 +37,8 @@ Python only. No exam-practice.
 
 ## Phase 3 — extract `learning-platform-content`
 
+**Status (2026-08-13):** `@learning-platform/content` 0.1.0 exists. This hub vendors the reviewed IIFE/CJS build and keeps learner adapters plus `content/unit-14/` teaching copy.
+
 Create the repository when:
 
 - Unit 14 week renderer is driven only by validated data

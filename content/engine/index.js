@@ -1,39 +1,6 @@
-const fs = require("node:fs");
-const path = require("node:path");
-
-require("./constants.js");
-require("./block-registry.js");
-require("./validate.js");
-require("./load.js");
-require("./resolve.js");
-require("./checks.js");
-require("./render.js");
+require("../../vendor/learning-platform-content/0.1.0/learning-platform-content.cjs.js");
 require("./state.js");
 require("./submit.js");
 require("./interactive.js");
-require("./importer.js");
-require("./excel.js");
 
-const ns = globalThis.LearningPlatformContent;
-
-ns.nodeIo = function (baseDir) {
-  return {
-    readText: function (filePath) {
-      return fs.readFileSync(filePath, "utf8");
-    },
-    joinPath: function (base, rel) {
-      return path.join(base || baseDir, rel);
-    }
-  };
-};
-
-ns.loadPackageFromDirectory = function (directory) {
-  return ns.loadPackageSync(directory, ns.nodeIo(directory));
-};
-
-ns.validateDirectory = function (directory) {
-  const pkg = ns.loadPackageFromDirectory(directory);
-  return Object.assign({ package: pkg }, ns.validatePackage(pkg));
-};
-
-module.exports = ns;
+module.exports = globalThis.LearningPlatformContent;

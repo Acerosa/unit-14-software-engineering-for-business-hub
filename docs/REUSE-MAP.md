@@ -21,7 +21,7 @@ Classification used here:
 | Coming-soon cards | Unit 3 | Adapted | Honest unfinished states | Non-linked planned activity cards; colour is not the only status cue |
 | Breadcrumbs and skip link | Unit 3 / T Level | Adapted | Accessibility and orientation | Generated from `data-items` in the hub shell |
 | Mobile menu | Unit 3 / T Level / Core nav | Adapted | Keyboard-accessible small-viewport nav | Hub-owned header because Core 0.1.0 cannot order extra sections as required |
-| Programming activities | T Level Foundations `programming-checker.js` | Adapted | Deterministic regex/structure checks, no in-browser execution | Generic `python-exercise` checks in `content/engine/checks.js`; Python-only UI; no T Level questions copied |
+| Programming activities | T Level Foundations `programming-checker.js` | Adapted | Deterministic regex/structure checks, no in-browser execution | Generic `python-exercise` checks in `@learning-platform/content`; Python-only UI; no T Level questions copied |
 | Classification items | T Level labelled categories | Adapted | Reusable categories belong in content | Generic `classification` block; Unit 14 supplies integer/float/string/Boolean labels in JSON |
 | Browser draft recovery | T Level `activity-state.js` | Adapted | Draft continuity without a second identity store | Prefix `learning-platform.content.draft.v1`; guest vs `auth:{user.id}`; reset is per activity |
 | Requirements classification | T Level | Deferred extract | Useful for LO2 | Not copied |

@@ -113,7 +113,7 @@ test("direct nested Week 1 and Assignment 1 routes remain self-contained", funct
   assert.match(week1, /\.\.\/\.\.\/vendor\/learning-platform-core\/0\.1\.0\/theme\.css/);
   assert.match(week1, /data-lp-view="week"/);
   assert.match(week1, /data-lp-week="week-1"/);
-  assert.match(week1, /content\/engine\/render\.js/);
+  assert.match(week1, /vendor\/learning-platform-content\/0\.1\.0\/learning-platform-content\.iife\.js/);
   assert.match(week1, /Programming for Business, Variables and Data Types/);
   assert.match(week1, /LO1/);
   assert.match(week1, /Assignment 1/);
