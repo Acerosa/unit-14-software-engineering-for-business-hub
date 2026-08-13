@@ -39,5 +39,7 @@ test("the hub vendors reviewed Content 0.1.0 assets and records provenance", fun
   });
   const provenance = fs.readFileSync(path.join(vendor, "PROVENANCE.md"), "utf8");
   assert.match(provenance, /339bbf6878dba2322f3ef208889505b1e495f27d/);
+  assert.match(provenance, /Acerosa\/learning-platform-content/);
+  assert.match(provenance, /v0\.1\.0/);
   assert.match(provenance, /0\.1\.0/);
 });
