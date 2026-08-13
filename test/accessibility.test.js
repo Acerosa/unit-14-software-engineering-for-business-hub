@@ -14,6 +14,10 @@ test("accessibility fundamentals are present in the shell and CSS", function () 
   const shell = read("js/core/shell.js");
   const home = read("index.html");
   const week1 = read("weeks/week-1/index.html");
+  const engine = require("../content/engine/index.js");
+  const path = require("node:path");
+  const pkg = engine.loadPackageFromDirectory(path.join(root, "content/unit-14"));
+  const weekHtml = engine.renderWeek(engine.resolveWeek(pkg, "week-1"), { root: "../.." });
 
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /:focus-visible/);
@@ -23,8 +27,9 @@ test("accessibility fundamentals are present in the shell and CSS", function () 
   assert.match(shell, /aria-expanded/);
   assert.match(shell, /Escape/);
   assert.match(home, /Skip to main content/);
-  assert.match(week1, /role="status"/);
-  assert.match(week1, /Session 1/);
-  assert.match(week1, /Session 2/);
-  assert.doesNotMatch(week1, /status-label-planned[^]*Planned<\/span>\s*<h3>[^<]+<\/h3>\s*<p>[^<]+<\/p>\s*<a /);
+  assert.match(week1, /data-lp-view="week"/);
+  assert.match(weekHtml, /role="status"/);
+  assert.match(weekHtml, /Session 1/);
+  assert.match(weekHtml, /Session 2/);
+  assert.doesNotMatch(weekHtml, /status-label-planned[^]*Planned<\/span>\s*<h3>[^<]+<\/h3>\s*<p>[^<]+<\/p>\s*<a /);
 });

@@ -108,14 +108,20 @@ test("routes load Core in dependency order and keep GitHub Pages-relative assets
 test("direct nested Week 1 and Assignment 1 routes remain self-contained", function () {
   const week1 = read("weeks/week-1/index.html");
   const assignment1 = read("assignments/assignment-1/index.html");
+  const week1Content = read("content/unit-14/weeks.json") + read("content/unit-14/activities.json") + read("content/unit-14/sessions.json");
   assert.match(week1, /data-root="\.\.\/\.\."/);
   assert.match(week1, /\.\.\/\.\.\/vendor\/learning-platform-core\/0\.1\.0\/theme\.css/);
+  assert.match(week1, /data-lp-view="week"/);
+  assert.match(week1, /data-lp-week="week-1"/);
+  assert.match(week1, /content\/engine\/render\.js/);
   assert.match(week1, /Programming for Business, Variables and Data Types/);
   assert.match(week1, /LO1/);
   assert.match(week1, /Assignment 1/);
   assert.match(week1, /P1/);
   assert.match(week1, /GitHub Classroom/);
   assert.match(week1, /Python/);
+  assert.match(week1Content, /GitHub Classroom/);
+  assert.match(week1Content, /Baseline assessment/);
   assert.match(assignment1, /Programming Constructs Technical Guide/);
   assert.match(assignment1, /does not award grades/i);
 });
