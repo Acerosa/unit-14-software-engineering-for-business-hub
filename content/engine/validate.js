@@ -222,6 +222,7 @@
   }
 
   function validateRelationships(documents, index, issues) {
+    var questionIds = {};
     documents.forEach(function (doc) {
       var rel = doc.relationships || {};
       var path = doc.schema + ":" + doc.id;
@@ -259,6 +260,7 @@
         asIdList(rel.learningOutcomes).forEach(function (id) {
           ref(issues, path + ".relationships.learningOutcomes", index, ns.SCHEMAS.LEARNING_OUTCOME, id);
         });
+        ref(issues, path + ".relationships.assignment", index, ns.SCHEMAS.ASSIGNMENT, rel.assignment);
         asIdList(rel.questions).forEach(function (id) {
           ref(issues, path + ".relationships.questions", index, ns.SCHEMAS.QUESTION, id);
         });
@@ -269,9 +271,16 @@
           ref(issues, path + ".relationships.prerequisites", index, ns.SCHEMAS.ACTIVITY, id);
         });
         (doc.blocks || []).forEach(function (block, indexNo) {
+          var qid = block.content && block.content.questionId;
           var blockRel = block.relationships || {};
           ref(issues, path + ".blocks[" + indexNo + "].relationships.question", index, ns.SCHEMAS.QUESTION, blockRel.question);
           ref(issues, path + ".blocks[" + indexNo + "].relationships.asset", index, ns.SCHEMAS.ASSET, blockRel.asset);
+          if (qid) {
+            if (questionIds[qid]) {
+              issues.push(issue("DUPLICATE_ID", path + ".blocks[" + indexNo + "].content.questionId", "duplicate question id '" + qid + "'"));
+            }
+            questionIds[qid] = path;
+          }
         });
       }
       if (doc.schema === ns.SCHEMAS.ASSIGNMENT) {

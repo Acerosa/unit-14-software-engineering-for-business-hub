@@ -114,8 +114,126 @@
       if (!(options && options.showTeacherNotes)) return "";
       return '<aside class="lp-block lp-block--teacher-note"><p>' +
         escapeHtml((block.content || {}).text || "") + "</p></aside>";
+    },
+    "single-choice": function (block) {
+      var content = block.content || {};
+      var questionId = content.questionId || block.id;
+      var name = "lp-choice-" + (block.id || questionId);
+      var optionsHtml = (content.options || []).map(function (option) {
+        var inputId = name + "-" + option.id;
+        return '<label class="lp-choice" for="' + escapeHtml(inputId) + '">' +
+          '<input type="radio" id="' + escapeHtml(inputId) + '" name="' + escapeHtml(name) +
+          '" value="' + escapeHtml(option.id) + '" data-lp-response>' +
+          '<span>' + escapeHtml(option.label) + "</span></label>";
+      }).join("");
+      return interactiveShell(block, questionId,
+        '<fieldset class="lp-fieldset"><legend>' + escapeHtml(content.prompt || "Choose one option") +
+        "</legend>" + optionsHtml + "</fieldset>" +
+        checkButton(block, "Check answer"));
+    },
+    classification: function (block) {
+      var content = block.content || {};
+      var questionId = content.questionId || block.id;
+      var categories = content.categories || [];
+      var itemsHtml = (content.items || []).map(function (item) {
+        var selectId = "lp-class-" + (block.id || questionId) + "-" + item.id;
+        var options = ['<option value="">Select a type</option>'].concat(categories.map(function (category) {
+          return '<option value="' + escapeHtml(category.id) + '">' + escapeHtml(category.label) + "</option>";
+        }));
+        return '<div class="lp-classify-item"><label for="' + escapeHtml(selectId) + '">' +
+          escapeHtml(item.label) + '</label><select id="' + escapeHtml(selectId) +
+          '" data-lp-response data-lp-item="' + escapeHtml(item.id) + '">' + options.join("") +
+          '</select><span class="lp-item-status" data-lp-item-status="' + escapeHtml(item.id) +
+          '" role="status"></span></div>';
+      }).join("");
+      return interactiveShell(block, questionId,
+        '<fieldset class="lp-fieldset"><legend>' + escapeHtml(content.prompt || "Classify each item") +
+        "</legend>" + itemsHtml + "</fieldset>" +
+        checkButton(block, "Check types"));
+    },
+    "short-response": function (block) {
+      return textResponseBlock(block, "short-response", 4, "Write a short justification");
+    },
+    reflection: function (block) {
+      return textResponseBlock(block, "reflection", 6, "Write your reflection");
+    },
+    "code-editor": function (block) {
+      return codeBlock(block, false);
+    },
+    "python-exercise": function (block) {
+      return codeBlock(block, true);
     }
   };
+
+  function interactiveShell(block, questionId, inner) {
+    var formative = (block.content || {}).formative === true;
+    return '<div class="lp-block lp-block--interactive" data-lp-block="' + escapeHtml(block.type) +
+      '" data-lp-block-id="' + escapeHtml(block.id) + '" data-lp-question="' + escapeHtml(questionId) +
+      '"' + (formative ? ' data-lp-formative="true"' : "") + ">" + inner +
+      '<p class="lp-feedback" data-lp-feedback role="status" aria-live="polite"></p></div>';
+  }
+
+  function checkButton(block, label) {
+    return '<div class="lp-block-actions"><button type="button" class="lp-button" data-lp-check="' +
+      escapeHtml(block.id) + '">' + escapeHtml(label) + "</button></div>";
+  }
+
+  function textResponseBlock(block, type, rows, label) {
+    var content = block.content || {};
+    var questionId = content.questionId || block.id;
+    var areaId = "lp-text-" + (block.id || questionId);
+    return interactiveShell(block, questionId,
+      '<label class="lp-label" for="' + escapeHtml(areaId) + '">' +
+      escapeHtml(content.prompt || label) + "</label>" +
+      '<textarea class="lp-textarea" id="' + escapeHtml(areaId) + '" rows="' + rows +
+      '" data-lp-response spellcheck="true"></textarea>' +
+      '<div class="lp-block-actions"><button type="button" class="lp-button" data-lp-check="' +
+      escapeHtml(block.id) + '">Save response</button></div>');
+  }
+
+  function expectedConceptList(content) {
+    var concepts = content.expectedConcepts;
+    if (!concepts || !concepts.length) {
+      concepts = ((content.checks && content.checks.required) || []).map(function (rule) {
+        return typeof rule === "string" ? rule : (rule.label || "");
+      }).filter(Boolean);
+    }
+    if (!concepts.length) return "";
+    return "Expected constructs: " + concepts.join(", ") + ".";
+  }
+
+  function codeBlock(block, isExercise) {
+    var content = block.content || {};
+    var questionId = content.questionId || block.id;
+    var editorId = "lp-code-" + (block.id || questionId);
+    var language = isExercise ? "python" : (content.language || "python");
+    var hints = (content.hints || []).map(function (hint, index) {
+      return '<details class="lp-hint"><summary>Hint ' + (index + 1) + "</summary><p>" +
+        escapeHtml(hint) + "</p></details>";
+    }).join("");
+    var instructions = content.instructions
+      ? '<p class="lp-instructions">' + escapeHtml(content.instructions) + "</p>"
+      : "";
+    var concepts = expectedConceptList(content);
+    return interactiveShell(block, questionId,
+      instructions +
+      '<p class="lp-code-help">Tab moves to the next control. This editor does not run the program in the browser.</p>' +
+      '<div class="lp-code-toolbar"><span class="lp-language-badge">' + escapeHtml(language) + "</span>" +
+      '<div><button type="button" class="lp-button lp-button--secondary" data-lp-copy="' +
+      escapeHtml(block.id) + '">Copy</button>' +
+      '<button type="button" class="lp-button lp-button--secondary" data-lp-reset-block="' +
+      escapeHtml(block.id) + '">Reset code</button></div></div>' +
+      '<label class="lp-label" for="' + escapeHtml(editorId) + '">' +
+      escapeHtml(content.label || "Python editor") + "</label>" +
+      '<textarea class="lp-code" id="' + escapeHtml(editorId) + '" data-lp-response spellcheck="false" ' +
+      'autocapitalize="off" autocomplete="off">' + escapeHtml(content.starter || "") + "</textarea>" +
+      (concepts ? '<p class="lp-concepts">' + escapeHtml(concepts) + "</p>" : "") +
+      hints +
+      (isExercise
+        ? '<div class="lp-block-actions"><button type="button" class="lp-button" data-lp-check="' +
+          escapeHtml(block.id) + '">Check Python</button></div>'
+        : ""));
+  }
 
   ns.renderBlock = function (block, options) {
     var type = ns.getBlockType(block && block.type);
@@ -150,15 +268,19 @@
         escapeHtml(meta.title) + "</a>";
     }
     return (
-      '<article class="lp-activity hub-card' + (status === "available" ? "" : " is-coming-soon") +
-      '" data-lp-activity="' + escapeHtml(activity.id) + '">' +
+      '<article class="lp-activity panel" data-lp-activity="' + escapeHtml(activity.id) +
+      '" data-lp-activity-version="' + escapeHtml(activity.version || "0.1.0") + '">' +
       '<span class="' + statusClass(status) + '" role="status"><span aria-hidden="true">●</span> ' +
       statusLabel(status) + "</span>" +
       "<h3>" + escapeHtml(meta.title || "") + "</h3>" +
       (meta.summary ? "<p>" + escapeHtml(meta.summary) + "</p>" : "") +
       blocks +
       link +
-      "</article>"
+      '<div class="lp-activity-actions">' +
+      '<button type="button" class="lp-button lp-button--secondary" data-lp-reset-activity="' +
+      escapeHtml(activity.id) + '">Reset activity</button>' +
+      '<p class="lp-activity-status" data-lp-activity-status role="status" aria-live="polite"></p>' +
+      "</div></article>"
     );
   };
 
@@ -175,7 +297,7 @@
       (activities.length === 1 ? " activity" : " activities") + "</span></span></summary>" +
       '<div class="session-disclosure__content">' +
       (meta.summary ? '<p class="panel-note">' + escapeHtml(meta.summary) + "</p>" : "") +
-      '<div class="card-grid">' +
+      '<div class="lp-activity-list">' +
       activities.map(function (activity) {
         return ns.renderActivity(activity, options);
       }).join("") +

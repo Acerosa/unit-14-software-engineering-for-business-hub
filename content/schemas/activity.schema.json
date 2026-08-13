@@ -25,6 +25,8 @@
       "type": "object",
       "properties": {
         "learningOutcomes": { "type": "array", "items": { "type": "string" } },
+        "assignment": { "type": "string" },
+        "criteria": { "type": "array", "items": { "type": "string" } },
         "questions": { "type": "array", "items": { "type": "string" } },
         "assets": { "type": "array", "items": { "type": "string" } },
         "prerequisites": { "type": "array", "items": { "type": "string" } }
