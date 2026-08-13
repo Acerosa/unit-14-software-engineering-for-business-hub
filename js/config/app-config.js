@@ -31,6 +31,7 @@
     theme: Object.freeze({
       primary: "#1e3a5f",
       accent: "#2a7a62"
-    })
+    }),
+    curriculumPackage: "content/unit-14"
   });
 })();

@@ -3,7 +3,7 @@
 
   var utils = window.AppUtils;
 
-  utils.onReady(function () {
+  utils.onContentReady(function () {
     window.Unit14Render.renderAssignmentCards(
       document.querySelector("[data-assignment-grid]"),
       window.Unit14Assignments.assignments,

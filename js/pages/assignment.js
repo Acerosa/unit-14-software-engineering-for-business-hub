@@ -12,7 +12,7 @@
     return "Not started";
   }
 
-  utils.onReady(function () {
+  utils.onContentReady(function () {
     var assignmentId = document.body.dataset.assignment;
     var assignment = assignments.getAssignment(assignmentId);
     var mount = document.querySelector("[data-assignment-workspace]");

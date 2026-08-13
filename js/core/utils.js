@@ -27,6 +27,14 @@
       if (status === "available") return "Available";
       if (status === "in-progress") return "In progress";
       return "Planned";
+    },
+
+    onContentReady: function (callback) {
+      if (window.Unit14Curriculum && window.Unit14Curriculum.weeks && window.Unit14Curriculum.weeks.length) {
+        callback();
+        return;
+      }
+      document.addEventListener("lp:content-ready", callback, { once: true });
     }
   });
 })();

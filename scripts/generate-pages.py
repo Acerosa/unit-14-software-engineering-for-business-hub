@@ -24,6 +24,19 @@ def scripts(root: str, extras: list[str]) -> str:
     )
 
 
+def engine_scripts(root: str) -> list[str]:
+    return [
+        f"{root}/content/engine/constants.js",
+        f"{root}/content/engine/block-registry.js",
+        f"{root}/content/engine/validate.js",
+        f"{root}/content/engine/load.js",
+        f"{root}/content/engine/resolve.js",
+        f"{root}/content/engine/render.js",
+        f"{root}/content/engine/browser.js",
+        f"{root}/js/pages/curriculum-page.js",
+    ]
+
+
 def page(
     *,
     title: str,
@@ -171,9 +184,7 @@ def weeks_index() -> str:
         breadcrumbs='[{"label":"Home","path":""},{"label":"Weeks"}]',
         heading="Weeks",
         subtitle="Follow the weekly journey. Activities belong inside each week rather than on a separate dump page.",
-        extras=[
-            "../js/data/curriculum.js",
-            "../js/data/assignments.js",
+        extras=engine_scripts("..") + [
             "../js/pages/render.js",
             "../js/pages/weeks.js",
         ],
@@ -184,158 +195,28 @@ def weeks_index() -> str:
     )
 
 
-def planned_week(number: int, title: str) -> str:
+def week_page(number: int, title: str, status: str) -> str:
+    subtitle = (
+        "LO1 · Assignment 1 / P1 · Python · GitHub Classroom introduction."
+        if number == 1
+        else "Planned Scheme of Learning week. Session activities are added from the curriculum when they exist."
+    )
     return page(
         title=f"Week {number}: {title} | Unit 14 Hub",
-        description=f"Week {number} outline for OCR Unit 14: {title}.",
+        description=f"Week {number} learning for OCR Unit 14: {title}.",
         page_id=f"week-{number}",
         section="learning",
         root="../..",
         breadcrumbs=f'[{{"label":"Home","path":""}},{{"label":"Weeks","path":"weeks/"}},{{"label":"Week {number}"}}]',
         heading=f"Week {number}: {title}",
-        subtitle="Planned Scheme of Learning week. Full teaching activities are not available in this foundation release.",
-        extra_attrs=f' data-week="{number}"',
-        extras=[
-            "../../js/data/curriculum.js",
-            "../../js/data/assignments.js",
+        subtitle=subtitle,
+        extra_attrs=f' data-week="{number}" data-lp-view="week" data-lp-week="week-{number}" data-lp-status="{status}"',
+        extras=engine_scripts("../..") + [
             "../../js/pages/render.js",
-            "../../js/pages/week.js",
         ],
-        main="""    <section class="panel">
-      <p>This page exists so the week route and curriculum metadata are in place. Session activities will be added from the Scheme of Learning in a later implementation phase.</p>
-    </section>""",
-    )
-
-
-def week_one() -> str:
-    return page(
-        title="Week 1: Programming for Business, Variables and Data Types | Unit 14 Hub",
-        description="Week 1 learning for OCR Unit 14: programming for business, variables and data types.",
-        page_id="week-1",
-        section="learning",
-        root="../..",
-        breadcrumbs='[{"label":"Home","path":""},{"label":"Weeks","path":"weeks/"},{"label":"Week 1"}]',
-        heading="Week 1: Programming for Business, Variables and Data Types",
-        subtitle="LO1 · Assignment 1 / P1 · Python · GitHub Classroom introduction.",
-        extra_attrs=' data-week="1"',
-        extras=[
-            "../../js/data/curriculum.js",
-            "../../js/data/assignments.js",
-        ],
-        main="""    <section class="panel" aria-labelledby="why-heading">
-      <h2 id="why-heading">What you are learning and why</h2>
-      <dl class="meta-list">
-        <div><dt>Learning outcome</dt><dd>LO1 Understand universal programming constructs.</dd></div>
-        <div><dt>Assignment</dt><dd>Assignment 1: Programming Constructs Technical Guide (P1)</dd></div>
-        <div><dt>Language</dt><dd>Python</dd></div>
-        <div><dt>Practical work</dt><dd>Use variables, print and input, then make first Git commits.</dd></div>
-        <div><dt>Evidence later</dt><dd>Notes and examples for the Assignment 1 technical guide. This week's practice is formative.</dd></div>
-        <div><dt>What to do next</dt><dd>Work through Session 1, then Session 2, then the directed study.</dd></div>
-      </dl>
-      <p><a class="text-link" href="../../assignments/assignment-1/">Open the Assignment 1 workspace</a></p>
-    </section>
-
-    <details class="session-disclosure panel" id="session-1" open>
-      <summary class="session-disclosure__summary">
-        <span class="session-disclosure__text">
-          <h2 id="session-1-heading" class="session-disclosure__heading">Session 1</h2>
-          <span class="session-disclosure__meta">6 planned activities</span>
-        </span>
-      </summary>
-      <div class="session-disclosure__content">
-        <p class="panel-note">Session 1 introduces programming for business, variables, data types, print and input. Interactive activities will be added here; this foundation page establishes the week structure.</p>
-        <div class="card-grid">
-          <article class="hub-card is-coming-soon">
-            <span class="status-label status-label-planned" role="status"><span aria-hidden="true">●</span> Planned</span>
-            <h3>1. Baseline assessment</h3>
-            <p>A low-stakes check of starting knowledge before Week 1 teaching. Not a formal OCR assessment.</p>
-          </article>
-          <article class="hub-card is-coming-soon">
-            <span class="status-label status-label-planned" role="status"><span aria-hidden="true">●</span> Planned</span>
-            <h3>2. Business software and data discussion</h3>
-            <p>Discuss why businesses use software and what data those programs store and process.</p>
-          </article>
-          <article class="hub-card is-coming-soon">
-            <span class="status-label status-label-planned" role="status"><span aria-hidden="true">●</span> Planned</span>
-            <h3>3. Variables and fundamental data types</h3>
-            <p>Python variables and core data types used in business programs.</p>
-          </article>
-          <article class="hub-card is-coming-soon">
-            <span class="status-label status-label-planned" role="status"><span aria-hidden="true">●</span> Planned</span>
-            <h3>4. Print</h3>
-            <p>Display information for a user with Python output.</p>
-          </article>
-          <article class="hub-card is-coming-soon">
-            <span class="status-label status-label-planned" role="status"><span aria-hidden="true">●</span> Planned</span>
-            <h3>5. Input</h3>
-            <p>Capture user-entered business data in a simple program.</p>
-          </article>
-          <article class="hub-card is-coming-soon">
-            <span class="status-label status-label-planned" role="status"><span aria-hidden="true">●</span> Planned</span>
-            <h3>6. Python development environment guidance</h3>
-            <p>Set up and use the agreed Python environment for this unit.</p>
-          </article>
-        </div>
-      </div>
-    </details>
-
-    <details class="session-disclosure panel" id="session-2">
-      <summary class="session-disclosure__summary">
-        <span class="session-disclosure__text">
-          <h2 id="session-2-heading" class="session-disclosure__heading">Session 2</h2>
-          <span class="session-disclosure__meta">4 planned activities</span>
-        </span>
-      </summary>
-      <div class="session-disclosure__content">
-        <p class="panel-note">Git and GitHub are part of the curriculum. GitHub remains the authentic development environment; this hub will guide the process rather than recreate GitHub.</p>
-        <div class="card-grid">
-          <article class="hub-card is-coming-soon">
-            <span class="status-label status-label-planned" role="status"><span aria-hidden="true">●</span> Planned</span>
-            <h3>7. GitHub Classroom introduction</h3>
-            <p>Accept the Classroom assignment, open the provisioned repository and clone it locally.</p>
-          </article>
-          <article class="hub-card is-coming-soon">
-            <span class="status-label status-label-planned" role="status"><span aria-hidden="true">●</span> Planned</span>
-            <h3>8. First commits</h3>
-            <p>Make first commits with meaningful commit messages.</p>
-          </article>
-          <article class="hub-card is-coming-soon">
-            <span class="status-label status-label-planned" role="status"><span aria-hidden="true">●</span> Planned</span>
-            <h3>9. Guided practice</h3>
-            <p>Follow a guided Python activity using variables, print and input.</p>
-          </article>
-          <article class="hub-card is-coming-soon">
-            <span class="status-label status-label-planned" role="status"><span aria-hidden="true">●</span> Planned</span>
-            <h3>10. Independent business-order programming activity</h3>
-            <p>Write a small independent program for a simple business order scenario.</p>
-          </article>
-        </div>
-      </div>
-    </details>
-
-    <details class="session-disclosure panel" id="directed-study">
-      <summary class="session-disclosure__summary">
-        <span class="session-disclosure__text">
-          <h2 id="directed-study-heading" class="session-disclosure__heading">Directed independent study</h2>
-          <span class="session-disclosure__meta">2 items</span>
-        </span>
-      </summary>
-      <div class="session-disclosure__content">
-        <div class="card-grid">
-          <article class="hub-card">
-            <span class="status-label status-label-available" role="status"><span aria-hidden="true">●</span> Available</span>
-            <h3>Assignment 1 technical-guide progress</h3>
-            <p>Start collecting examples of variables and data types for the technical guide. This is preparation, not an automatic Pass.</p>
-            <a class="card-link" href="../../assignments/assignment-1/">Open Assignment 1 workspace</a>
-          </article>
-          <article class="hub-card is-coming-soon">
-            <span class="status-label status-label-planned" role="status"><span aria-hidden="true">●</span> Planned</span>
-            <h3>Homework / directed study</h3>
-            <p>Directed study tasks for Week 1 will be added from the Scheme of Learning.</p>
-          </article>
-        </div>
-      </div>
-    </details>""",
+        main="""    <div data-lp-mount>
+      <noscript><p>Enable JavaScript to load this week's sessions from the curriculum.</p></noscript>
+    </div>""",
     )
 
 
@@ -349,8 +230,7 @@ def assignments_index() -> str:
         breadcrumbs='[{"label":"Home","path":""},{"label":"Assignments"}]',
         heading="Assignments",
         subtitle="Four assignment phases. The hub helps you organise evidence. It does not award grades.",
-        extras=[
-            "../js/data/assignments.js",
+        extras=engine_scripts("..") + [
             "../js/pages/render.js",
             "../js/pages/assignments.js",
         ],
@@ -372,9 +252,7 @@ def assignment_page(code: str, key: str, title: str, status: str, lo: str, crite
         heading=f"{code}: {title}",
         subtitle=f"{lo} · {criteria} · Internally assessed. This workspace does not award grades.",
         extra_attrs=f' data-assignment="{code}"',
-        extras=[
-            "../../js/data/curriculum.js",
-            "../../js/data/assignments.js",
+        extras=engine_scripts("../..") + [
             "../../js/pages/render.js",
             "../../js/pages/assignment.js",
         ],
@@ -488,9 +366,9 @@ def account_page() -> str:
 def main() -> None:
     write(ROOT / "index.html", home())
     write(ROOT / "weeks/index.html", weeks_index())
-    write(ROOT / "weeks/week-1/index.html", week_one())
-    for number, title, _status in WEEKS[1:]:
-        write(ROOT / f"weeks/week-{number}/index.html", planned_week(number, title))
+    write(ROOT / "weeks/week-1/index.html", week_page(1, WEEKS[0][1], "available"))
+    for number, title, status in WEEKS[1:]:
+        write(ROOT / f"weeks/week-{number}/index.html", week_page(number, title, status))
     write(ROOT / "assignments/index.html", assignments_index())
     for code, key, title, status, lo, criteria in ASSIGNMENTS:
         write(ROOT / f"assignments/{key}/index.html", assignment_page(code, key, title, status, lo, criteria))
