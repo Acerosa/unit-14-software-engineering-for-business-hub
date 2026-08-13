@@ -2,8 +2,6 @@
   "use strict";
 
   var utils = window.AppUtils;
-  var assignments = window.Unit14Assignments;
-  var curriculum = window.Unit14Curriculum;
   var render = window.Unit14Render;
   var engine = window.LearningPlatformContent;
 
@@ -22,11 +20,12 @@
     return practised ? "Started / practised" : "Not started";
   }
 
-  utils.onContentReady(function (event) {
+  utils.onContentReady(function () {
+    var assignments = window.Unit14Assignments;
+    var curriculum = window.Unit14Curriculum;
     var assignmentId = document.body.dataset.assignment;
-    var assignment = assignments.getAssignment(assignmentId);
+    var assignment = assignments && assignments.getAssignment(assignmentId);
     var mount = document.querySelector("[data-assignment-workspace]");
-    var pkg = window.__lpPackage;
     if (!assignment || !mount) return;
 
     var root = document.body.dataset.root || ".";

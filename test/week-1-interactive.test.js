@@ -273,6 +273,12 @@ test("guests keep drafts locally when submission is unavailable", async function
   assert.equal(result.status, "local");
 });
 
+test("the Assignment 1 workspace reads adapters after content is ready", function () {
+  const source = fs.readFileSync(path.join(__dirname, "../js/pages/assignment.js"), "utf8");
+  assert.match(source, /onContentReady\(function \(\) \{[\s\S]*window\.Unit14Assignments/);
+  assert.match(source, /not P1 achieved/);
+});
+
 test("content and engine do not award P1 or ship privileged credentials", function () {
   const hubJs = fs.readdirSync(path.join(__dirname, "../js"), { recursive: true })
     .filter(function (filename) { return String(filename).endsWith(".js"); })
