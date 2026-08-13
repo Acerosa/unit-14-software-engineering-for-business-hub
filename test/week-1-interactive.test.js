@@ -249,7 +249,7 @@ test("submission uses Core evidence fields and never sends learner identity", as
   assert.equal(result.status, "submitted");
   assert.equal(captured.length, 1);
   assert.equal(captured[0].activityKey, "week-1-business-data-explorer");
-  assert.equal(captured[0].programmingLanguage, "python");
+  assert.equal(captured[0].programmingLanguage, undefined);
   assert.equal(captured[0].learnerId, undefined);
   assert.equal(captured[0].enrolmentId, undefined);
   assert.equal(captured[0].assignmentId, undefined);
@@ -257,6 +257,65 @@ test("submission uses Core evidence fields and never sends learner identity", as
   const serialised = engine.serialiseActivityResult(activity, draft);
   assert.equal(serialised.activityId, activity.id);
   assert.equal(serialised.responses[0].type, "classification");
+});
+
+test("incomplete activities stay local until every question has evidence", async function () {
+  loadCore();
+  const captured = [];
+  const activity = {
+    id: "week-1-baseline-diagnostic",
+    version: "0.1.0",
+    blocks: [
+      { id: "q1", type: "single-choice", content: { questionId: "u14-w1-base-q1" } },
+      { id: "q2", type: "short-response", content: { questionId: "u14-w1-base-q4" } }
+    ]
+  };
+  const result = await engine.submitActivityDraft(activity, {
+    responses: { "u14-w1-base-q1": "a" }
+  }, {
+    platform: {
+      auth: { isSignedIn: function () { return true; } },
+      submission: {
+        submit: function (payload) {
+          captured.push(payload);
+          return Promise.resolve({ ok: true });
+        }
+      }
+    }
+  });
+  assert.equal(result.status, "local");
+  assert.equal(captured.length, 0);
+  assert.match(result.reason, /Complete every question/);
+});
+
+test("python activities declare the programming language only when required", async function () {
+  loadCore();
+  const captured = [];
+  const activity = {
+    id: "week-1-input-and-output",
+    version: "0.1.0",
+    blocks: [{
+      id: "code",
+      type: "python-exercise",
+      content: { questionId: "u14-w1-io-code" }
+    }]
+  };
+  const result = await engine.submitActivityDraft(activity, {
+    responses: { "u14-w1-io-code": "name = input(\"Name: \")\nprint(name)\n" }
+  }, {
+    platform: {
+      auth: { isSignedIn: function () { return true; } },
+      submission: {
+        submit: function (payload) {
+          captured.push(payload);
+          return Promise.resolve({ ok: true });
+        }
+      }
+    }
+  });
+  assert.equal(result.status, "submitted");
+  assert.equal(captured[0].programmingLanguage, "python");
+  assert.equal(captured[0].learnerId, undefined);
 });
 
 test("guests keep drafts locally when submission is unavailable", async function () {

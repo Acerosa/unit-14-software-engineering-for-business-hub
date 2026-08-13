@@ -84,8 +84,17 @@ test("the composition root creates and initialises exactly one Core platform", a
 
 test("the reviewed hub manifest validates against the backend schema", function () {
   const validator = path.resolve(root, "../learning-platform-backend/scripts/import/validate-hub-manifest.py");
+  const reviewed = path.resolve(
+    root,
+    "../learning-platform-backend/supabase/data/manifests/hubs/unit-14-software-engineering-for-business/learning-platform-hub.json"
+  );
   assert.equal(fs.existsSync(validator), true, "backend validator must be available as a sibling repository");
-  const result = spawnSync("python3", [validator, path.join(root, "learning-platform-hub.json")], {
+  assert.equal(fs.existsSync(reviewed), true, "reviewed backend hub manifest must exist");
+  assert.deepEqual(
+    JSON.parse(fs.readFileSync(path.join(root, "learning-platform-hub.json"), "utf8")),
+    JSON.parse(fs.readFileSync(reviewed, "utf8"))
+  );
+  const result = spawnSync("python3", [validator, reviewed], {
     encoding: "utf8"
   });
   assert.equal(result.status, 0, result.stdout + result.stderr);

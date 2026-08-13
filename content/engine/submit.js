@@ -11,8 +11,14 @@
     if (!core || !core.evidence) return null;
     try {
       if (type === "single-choice" && response) return core.evidence.singleChoice(questionId, String(response));
-      if (type === "short-response") return core.evidence.written(questionId, String(response || ""));
-      if (type === "reflection") return core.evidence.reflection(questionId, String(response || ""));
+      if (type === "short-response") {
+        if (response == null || !String(response).trim()) return null;
+        return core.evidence.written(questionId, String(response));
+      }
+      if (type === "reflection") {
+        if (response == null || !String(response).trim()) return null;
+        return core.evidence.reflection(questionId, String(response));
+      }
       if ((type === "code-editor" || type === "python-exercise") && response != null) {
         return core.evidence.coding(questionId, String(response), { language: "python" });
       }
@@ -41,6 +47,39 @@
 
   ns.buildActivityEvidence = function (activity, draft) {
     return flattenEvidence(activity.blocks || [], (draft && draft.responses) || {});
+  };
+
+  ns.activityRequiresPython = function (activity) {
+    return (activity.blocks || []).some(function (block) {
+      var type = ns.normaliseBlockType(block.type);
+      return type === "code-editor" || type === "python-exercise";
+    });
+  };
+
+  ns.expectedEvidenceCount = function (activity) {
+    var count = 0;
+    (activity.blocks || []).forEach(function (block) {
+      var type = ns.normaliseBlockType(block.type);
+      if (typeof ns.isInteractiveBlockType === "function" && !ns.isInteractiveBlockType(type)) return;
+      if (type === "classification") {
+        var items = (block.content && block.content.items) || [];
+        count += items.length || 1;
+      } else if (
+        type === "single-choice" ||
+        type === "short-response" ||
+        type === "reflection" ||
+        type === "code-editor" ||
+        type === "python-exercise"
+      ) {
+        count += 1;
+      }
+    });
+    return count;
+  };
+
+  ns.activityEvidenceComplete = function (activity, draft) {
+    var expected = ns.expectedEvidenceCount(activity);
+    return expected > 0 && ns.buildActivityEvidence(activity, draft).length === expected;
   };
 
   ns.serialiseActivityResult = function (activity, draft) {
@@ -73,6 +112,10 @@
       result.reason = "Add a response before saving to your learning record.";
       return Promise.resolve(result);
     }
+    if (!ns.activityEvidenceComplete(activity, draft)) {
+      result.reason = "Complete every question in this activity before saving to your learning record.";
+      return Promise.resolve(result);
+    }
     if (!platform || !platform.auth || !platform.auth.isSignedIn()) {
       return Promise.resolve(result);
     }
@@ -82,15 +125,16 @@
     }
 
     try {
-      return platform.submission.submit({
+      var payload = {
         activityKey: activity.id,
         activityVersion: activity.version || "0.1.0",
         responses: responses,
         sourcePage: options && options.sourcePage,
         startedAt: draft.startedAt,
-        completedAt: draft.completedAt || new Date().toISOString(),
-        programmingLanguage: "python"
-      }).then(function () {
+        completedAt: draft.completedAt || new Date().toISOString()
+      };
+      if (ns.activityRequiresPython(activity)) payload.programmingLanguage = "python";
+      return platform.submission.submit(payload).then(function () {
         return { status: "submitted", reason: "Saved to your learning record." };
       }).catch(function () {
         return {
