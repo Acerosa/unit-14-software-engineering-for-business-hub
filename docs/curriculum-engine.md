@@ -91,7 +91,13 @@ Interactive blocks stay generic. Categories, prompts, starter code and checks co
 
 It never sends learner id, enrolment id, assignment id or attempt number.
 
-Week 1 activities are not in the backend activity catalogue yet. Signed-in submit may therefore fail; the hub keeps the local draft and does not invent a second API. Guests always stay on the local draft.
+Week 1 activities are published in the shared backend catalogue. Signed-in
+submit uses Core evidence objects and `api.submit_attempt`. Incomplete
+activities stay on the device until every interactive block has a response.
+`programmingLanguage` is sent only for Python/code editors.
+
+See [Publication](publication.md) for the catalogue pipeline, id mapping and
+version rules.
 
 A local serialised result (`serialiseActivityResult`) is `{ activityId, version, responses: [{ questionId, type, value }] }`. The live submit path uses Core evidence objects, not that shape.
 

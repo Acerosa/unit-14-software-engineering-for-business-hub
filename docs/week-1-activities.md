@@ -80,11 +80,13 @@ This is preparation progress. Completing a hub activity is **not** P1 achieved. 
 
 ## Submission
 
-On Check, the hub tries Core `platform.submission.submit` with evidence objects.
+On Check, the hub tries Core `platform.submission.submit` with evidence objects
+when every interactive block is complete. Guests and incomplete attempts stay
+on the local draft. The hub does not send learner, enrolment or assignment
+identifiers, scores or `is_correct`.
 
-Known gap: these activity keys are not published in the backend catalogue. A signed-in submit is expected to fail until that catalogue exists. The draft remains on the device. Guests never call the backend as an authoritative save.
-
-The hub does not send learner, enrolment or assignment identifiers.
+Published Week 1 activity keys are registered in the shared backend. See
+[Publication](publication.md).
 
 ## Known limitations
 
@@ -94,4 +96,4 @@ The hub does not send learner, enrolment or assignment identifiers.
 - No Admin authoring UI
 - No automatic P1 grading
 - Formative answers are visible in JSON
-- Backend 0.1.0 `submit_attempt` still expects catalogue activity keys; Week 1 uses local drafts when that fails
+- OCR Assignments 1–4 remain hub-owned; the backend has no OCR assignment catalogue
