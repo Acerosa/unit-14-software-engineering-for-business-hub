@@ -17,7 +17,7 @@ The unit is internally assessed.
 
 | Week | Title | LO | Assignment | Status in this foundation |
 | --- | --- | --- | --- | --- |
-| 1 | Programming for Business, Variables and Data Types | LO1 | A1 | Available — sessions rendered from curriculum JSON |
+| 1 | Programming for Business, Variables and Data Types | LO1 | A1 | Available — interactive Week 1 activities from curriculum JSON |
 | 2 | Data Type Conversion and Predefined Subroutines | LO1 | A1 | Planned outline |
 | 3 | Selection | LO1 | A1 | Planned outline |
 | 4 | Iteration | LO1 | A1 | Planned outline |

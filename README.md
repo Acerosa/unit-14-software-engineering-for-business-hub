@@ -63,7 +63,7 @@ This foundation does not authorise a production Pages deployment.
 
 ## Curriculum ownership
 
-The hub owns the Unit 14 Scheme of Learning sequence, assignment phases and learner-facing guidance as canonical JSON (`content/unit-14/`). Authoritative OCR documents remain outside the repository. Calendar dates are stored as metadata and are `null` until taken from the curriculum planner. See [docs/curriculum-engine.md](docs/curriculum-engine.md).
+The hub owns the Unit 14 Scheme of Learning sequence, assignment phases and learner-facing guidance as canonical JSON (`content/unit-14/`). Authoritative OCR documents remain outside the repository. Calendar dates are stored as metadata and are `null` until taken from the curriculum planner. See [docs/curriculum-engine.md](docs/curriculum-engine.md) and [docs/week-1-activities.md](docs/week-1-activities.md).
 
 ## Backend trust boundary
 

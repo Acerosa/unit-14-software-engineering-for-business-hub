@@ -14,16 +14,17 @@ Classification used here:
 | Semantic tokens and cards | Core `theme.css` / `tokens.css` | Core | Current visual authority | Hub CSS maps layout onto `--lp-*` tokens instead of copying Unit 3 `main.css` |
 | Learner header | Core `createLearnerHeader` | Core | Shared identity display | Mounted under the hub header |
 | Static Core vendor layout | T Level `vendor/learning-platform-core/0.1.0` | Adapted | GitHub Pages cannot install npm at runtime | Same commit `f484b2d`, new provenance file |
-| Script loading order | T Level routes | Adapted | Proven Core initialisation order | Omits T Level submission compatibility adapters because no activities submit yet |
+| Script loading order | T Level routes | Adapted | Proven Core initialisation order | Uses Core `submission.submit` evidence objects; does not copy T Level `awarded_score` / `is_correct` adapters |
 | Public/publishable Supabase config | T Level and Unit 3 | Adapted | Same hosted platform | `api` schema declared; no service-role key |
 | Week-centred IA | Unit 3 | Adapted | Activities belong in the week journey | Weeks index plus week pages; no dump Activities route; no exam-practice layer |
 | Session 1 / Session 2 disclosure | Unit 3 `details`/`summary` | Adapted | Familiar learning-page hierarchy | Used on Week 1; planned weeks stay as outlines |
 | Coming-soon cards | Unit 3 | Adapted | Honest unfinished states | Non-linked planned activity cards; colour is not the only status cue |
 | Breadcrumbs and skip link | Unit 3 / T Level | Adapted | Accessibility and orientation | Generated from `data-items` in the hub shell |
 | Mobile menu | Unit 3 / T Level / Core nav | Adapted | Keyboard-accessible small-viewport nav | Hub-owned header because Core 0.1.0 cannot order extra sections as required |
-| Programming activities | T Level Foundations | Deferred extract | Reuse later, Python-only configuration | Not implemented in this foundation |
+| Programming activities | T Level Foundations `programming-checker.js` | Adapted | Deterministic regex/structure checks, no in-browser execution | Generic `python-exercise` checks in `content/engine/checks.js`; Python-only UI; no T Level questions copied |
+| Classification items | T Level labelled categories | Adapted | Reusable categories belong in content | Generic `classification` block; Unit 14 supplies integer/float/string/Boolean labels in JSON |
+| Browser draft recovery | T Level `activity-state.js` | Adapted | Draft continuity without a second identity store | Prefix `learning-platform.content.draft.v1`; guest vs `auth:{user.id}`; reset is per activity |
 | Requirements classification | T Level | Deferred extract | Useful for LO2 | Not copied |
-| Browser draft recovery | T Level | Deferred extract | Needed when coding activities land | Not copied |
 | Assignment workspace | Unit 14 | Hub-owned | Assignment-based unit | Guidance/progress only; no automatic P/M/D |
 | Evidence map | Unit 14 | Hub-owned | LO → assignment → criterion → artefact → weeks | Metadata in `assignments.js` |
 | Project journey | Unit 14, informed by T Level projects | Hub-owned | Assignments 2–4 are one lifecycle | Navigation/guidance; GitHub stays authentic |

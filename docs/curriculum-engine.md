@@ -62,7 +62,42 @@ Each renderer knows only its immediate children:
 | Activity | blocks |
 | Block | one registered type |
 
-Registered block types include prose, media, question forms, Python/code exercises and teacher notes. This version **implements** heading, paragraph, markdown, image, video, callout, accordion, reference, hint, quote, divider and teacher-note. Other registered types render as accessible placeholders so the registry can grow without inventing a new engine.
+Registered block types include prose, media, question forms, Python/code exercises and teacher notes.
+
+This version **implements**:
+
+- prose: heading, paragraph, markdown, image, video, callout, accordion, reference, hint, quote, divider, teacher-note
+- interactive: single-choice, classification, short-response, reflection, code-editor, python-exercise
+
+Other registered types (for example multiple-choice, matching, debugging-exercise) render as accessible placeholders so later weeks can add types without a new engine.
+
+Interactive blocks stay generic. Categories, prompts, starter code and checks come from content JSON. The renderer never branches on Unit 14, week number, or assignment id.
+
+`python-exercise` extends the generic code editor with instructions, hints, expected constructs and optional regex checks. It does **not** execute Python in the browser. That matches the T Level hub’s deterministic checker: required/prohibited patterns, no `eval`, no remote runner.
+
+## Learner state
+
+`content/engine/state.js` stores drafts in `localStorage` under `learning-platform.content.draft.v1:{learnerKey}:{activityId}`.
+
+- Guest key: `guest`
+- Signed-in key: `auth:{user.id}` from Core `platform.auth.getSession()`
+- Browser storage is draft continuity only
+- Reset activity clears that activity’s key only
+- Authoritative progress still belongs to Auth/backend when an activity can be submitted
+
+## Submission boundary
+
+`content/engine/submit.js` maps responses to Core `evidence.*` helpers and calls `platform.submission.submit` with the allowed fields only (`activityKey`, `activityVersion`, `responses`, `sourcePage`, `startedAt`, `completedAt`, `programmingLanguage`).
+
+It never sends learner id, enrolment id, assignment id or attempt number.
+
+Week 1 activities are not in the backend activity catalogue yet. Signed-in submit may therefore fail; the hub keeps the local draft and does not invent a second API. Guests always stay on the local draft.
+
+A local serialised result (`serialiseActivityResult`) is `{ activityId, version, responses: [{ questionId, type, value }] }`. The live submit path uses Core evidence objects, not that shape.
+
+Low-stakes formative answers (for example classification `correctCategoryId`) may live in browser JSON. That is instant teaching feedback, not secure Assignment 1 marking. The hub does not award P1.
+
+See [Week 1 activities](week-1-activities.md) for the first vertical slice.
 
 GitHub Pages has no bundler. The engine is a set of browser scripts plus a Node entry for validation.
 
@@ -98,9 +133,9 @@ JSON or Excel (xlsx / CSV sheets)
 
 - curriculum and 19-week registry
 - four assignments
-- Week 1 sessions and activities expressed as blocks
+- Week 1 sessions and interactive activities expressed as blocks
 
-Weeks 2–19 are structured week objects without sessions. That is intentional: Week 1 proves the architecture; later specifications add teaching activities from the Scheme of Learning.
+Weeks 2–19 are structured week objects without sessions. That is intentional: Week 1 is the interactive vertical slice; later specifications add teaching activities from the Scheme of Learning.
 
 Week HTML routes are thin mounts (`data-lp-view="week"`). Session markup is generated at runtime from JSON.
 
