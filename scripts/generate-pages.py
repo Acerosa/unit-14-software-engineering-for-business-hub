@@ -31,7 +31,11 @@ def engine_scripts(root: str) -> list[str]:
         f"{root}/content/engine/validate.js",
         f"{root}/content/engine/load.js",
         f"{root}/content/engine/resolve.js",
+        f"{root}/content/engine/checks.js",
         f"{root}/content/engine/render.js",
+        f"{root}/content/engine/state.js",
+        f"{root}/content/engine/submit.js",
+        f"{root}/content/engine/interactive.js",
         f"{root}/content/engine/browser.js",
         f"{root}/js/pages/curriculum-page.js",
     ]

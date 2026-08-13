@@ -6,7 +6,11 @@ require("./block-registry.js");
 require("./validate.js");
 require("./load.js");
 require("./resolve.js");
+require("./checks.js");
 require("./render.js");
+require("./state.js");
+require("./submit.js");
+require("./interactive.js");
 require("./importer.js");
 require("./excel.js");
 
