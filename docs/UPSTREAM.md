@@ -9,9 +9,11 @@ This hub did not modify sibling repositories. The following gaps were recorded f
 
 ## learning-platform-backend
 
-1. **Unit 14 module registration** — the hub manifest currently links to course `ocr-level-3-it`. A dedicated module/catalogue for Unit 14 is still required before hosted assignments and `api.curriculum_weeks` can describe this unit.
+1. **Unit 14 module registration** — done locally on `feature/unit14-content-registration`. The hub is testing/active, with module, 19 week metadata rows, LO topics, Week 1 activity versions and a closed `UNIT14-TEST-A` group. Hosted deployment is still not authorised.
 2. **Calendar metadata** — `api.curriculum_weeks` currently exposes key, title, week number and sort order. Teaching-week commencing dates, phase and assignment linkage would avoid duplicating planner data in each hub. Do not add this until a reviewed schema exists.
-3. **Hub registration migration** — after this repository's `learning-platform-hub.json` is reviewed, generate the registration SQL with the backend scripts. Default status should remain planned/inactive.
+3. **Hub registration migration** — done locally. The reviewed manifest lives in the backend registry; Hub Manifest 1.0.0 still cannot hold a curriculum pointer.
+4. **OCR assignment catalogue** — Assignments 1–4 remain hub-owned. `learning.activity_assignments` is group delivery of activity versions, not OCR briefs.
+5. **Client-marked `submit_attempt` compatibility** — Unit 14 Core submissions omit scores. Direct RPC still accepts client marks for Unit 3 / T Level compatibility. Tightening that for questions with `learning.question_marking` is later backend work.
 
 ## learning-platform-admin
 

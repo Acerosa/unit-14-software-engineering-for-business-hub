@@ -24,7 +24,7 @@ This repository must not own learner identity, RLS, database migrations, adminis
 - Learner API / submission contracts **0.1.0** through Core
 - Hub course key in the manifest: `ocr-level-3-it` (the currently registered OCR Level 3 IT course)
 
-A Unit 14 module still needs a reviewed backend registration before hosted assignments and progress can appear.
+The hub is registered in the local shared backend as testing/active, with Week 1 catalogue publication for delivery, submission and progress. Hosted Supabase deployment is not authorised by this foundation. See [docs/publication.md](docs/publication.md).
 
 ## Local development
 
@@ -48,11 +48,11 @@ Validate the Unit 14 curriculum package:
 node -e "const e=require('./content/engine'); const r=e.validateDirectory('./content/unit-14'); if(!r.valid){console.error(e.formatIssues(r.issues)); process.exit(1)}"
 ```
 
-Manifest validation against the sibling backend:
+Manifest validation against the sibling backend. After Unit 14 is in the reviewed registry, validate that copy (validating this repository's file reports `DUPLICATE_HUB_ID` by design):
 
 ```bash
 python3 ../learning-platform-backend/scripts/import/validate-hub-manifest.py \
-  learning-platform-hub.json
+  ../learning-platform-backend/supabase/data/manifests/hubs/unit-14-software-engineering-for-business/learning-platform-hub.json
 ```
 
 ## Deployment
