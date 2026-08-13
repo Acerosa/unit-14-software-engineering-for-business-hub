@@ -24,7 +24,9 @@ This repository must not own learner identity, RLS, database migrations, adminis
 - Learner API / submission contracts **0.1.0** through Core
 - Hub course key in the manifest: `ocr-level-3-it` (the currently registered OCR Level 3 IT course)
 
-The hub is registered in the local shared backend as testing/active, with Week 1 catalogue publication for delivery, submission and progress. Hosted Supabase deployment is not authorised by this foundation. See [docs/publication.md](docs/publication.md).
+The hub is registered in the local shared backend as testing/active, with Week 1 catalogue publication for delivery, submission and progress. Hosted Supabase deployment is not authorised by this foundation.
+
+Git tag `curriculum-engine-mvp` is the Parts 1–4 baseline. See [docs/curriculum-engine-mvp.md](docs/curriculum-engine-mvp.md) and [docs/publication.md](docs/publication.md).
 
 ## Local development
 

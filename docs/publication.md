@@ -137,6 +137,13 @@ not yet expose curriculum weeks, OCR assignment briefs or learning-outcome
 authoring. Those are the smallest later read additions if the portal needs
 them before authoring.
 
+## MVP baseline
+
+Git tag `curriculum-engine-mvp` is the verified Curriculum Engine MVP. It includes
+canonical JSON, Week 1 rendering, evidence-only submission and local backend
+registration. It does not include Weeks 2–19 activities or hosted deployment.
+See [curriculum-engine-mvp.md](curriculum-engine-mvp.md).
+
 ## Hub-only content
 
 - OCR A1–A4 criteria and Pass/Merit/Distinction judgement
