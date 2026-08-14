@@ -7,11 +7,11 @@ import { createSitePath } from "../paths";
 import type { CurriculumAdapter } from "../content/engine";
 
 function stageStatus(stage: { week: number; title: string }, pkg: unknown): string {
-  if (Number(stage.week) !== 1) return "Upcoming";
   const engine = getContentEngine();
-  const week = engine.resolveWeek(pkg, "week-1");
+  const week = engine.resolveWeek(pkg, `week-${Number(stage.week)}`);
+  if (!week || !(week.sessions || []).length) return "Upcoming";
   let practised = false;
-  (week?.sessions || []).forEach((session) => {
+  (week.sessions || []).forEach((session) => {
     (session.activities || []).forEach((resolved) => {
       const summary = engine.summariseDraft(resolved.document);
       if (summary.status === "practised" || summary.status === "started") practised = true;
@@ -56,7 +56,7 @@ export function WeekPage({
     return <p>This week is not in the curriculum package.</p>;
   }
 
-  const showAssignmentProgress = resolved.assignment && resolved.document.metadata.teachingWeek === 1;
+  const showAssignmentProgress = Boolean(resolved.assignment && (resolved.sessions || []).length);
 
   return (
     <div data-lp-mount="" ref={mountRef}>

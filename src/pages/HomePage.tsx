@@ -20,6 +20,12 @@ export function HomePage({ root }: { root: string }) {
           </article>
           <article className="hub-card">
             <StatusBadge status="available" />
+            <h3>Week 2</h3>
+            <p>Data Type Conversion and Predefined Subroutines. Supports LO1 and Assignment 1 / P1.</p>
+            <a className="card-link" href={createSitePath(root, "weeks/week-2/")}>Open Week 2</a>
+          </article>
+          <article className="hub-card">
+            <StatusBadge status="available" />
             <h3>Assignment 1</h3>
             <p>Programming Constructs Technical Guide. Learning in Weeks 1 to 6 builds toward this assignment.</p>
             <a className="card-link" href={createSitePath(root, "assignments/assignment-1/")}>Open Assignment 1 workspace</a>

@@ -65,16 +65,18 @@ OCR Assignments 1–4 remain hub-owned. `learning.activity_assignments` is group
 delivery of activity versions, not Programming Constructs Technical Guide or
 the other OCR briefs. Criteria are not awarded by publication.
 
-Planner dates stay null. Weeks 2–19 have week metadata only.
+Planner dates stay null. Weeks 3–19 have week metadata only.
 
 ## Backend registration
 
-Published for Week 1:
+Published for Weeks 1–2:
 
 - hub `unit-14-software-engineering-for-business` (testing, active)
 - course `ocr-level-3-it`
 - module, four LO topics, 19 weeks
 - 11 Week 1 activities at version `0.1.0`
+- 13 Week 2 activities at version `0.1.0`
+- curriculum package version `0.2.0`
 - questions, protected `learning.question_marking` specs, delivery and the
   closed synthetic group `UNIT14-TEST-A`
 
@@ -153,4 +155,4 @@ See [curriculum-engine-mvp.md](curriculum-engine-mvp.md).
 - OCR A1–A4 criteria and Pass/Merit/Distinction judgement
 - session teaching copy and block prose
 - planner dates
-- Weeks 2–19 activities and sessions
+- Weeks 3–19 activities and sessions

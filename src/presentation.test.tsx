@@ -4,11 +4,13 @@ import { HomePage } from "./pages/HomePage";
 import { breadcrumbs } from "./page-copy";
 
 describe("Unit 14 presentation", () => {
-  it("keeps Week 1 and Assignment 1 as the home starting points", () => {
+  it("keeps Week 1, Week 2 and Assignment 1 as the home starting points", () => {
     render(<HomePage root="." />);
     const week1 = screen.getByRole("link", { name: "Open Week 1" });
+    const week2 = screen.getByRole("link", { name: "Open Week 2" });
     const assignment = screen.getByRole("link", { name: "Open Assignment 1 workspace" });
     expect(week1.getAttribute("href")).toBe("./weeks/week-1/");
+    expect(week2.getAttribute("href")).toBe("./weeks/week-2/");
     expect(assignment.getAttribute("href")).toBe("./assignments/assignment-1/");
   });
 

@@ -5,6 +5,10 @@ const WEEKS: Record<string, { title: string; subtitle: string }> = {
   "week-1": {
     title: "Week 1: Programming for Business, Variables and Data Types",
     subtitle: "LO1 · Assignment 1 / P1 · Python · GitHub Classroom introduction."
+  },
+  "week-2": {
+    title: "Week 2: Data Type Conversion and Predefined Subroutines",
+    subtitle: "LO1 · Assignment 1 / P1 · Conversion, predefined subroutines, .gitignore and a feature branch."
   }
 };
 
@@ -28,7 +32,6 @@ const ASSIGNMENTS: Record<string, { title: string; subtitle: string }> = {
 };
 
 const PLANNED_WEEKS: Array<[number, string]> = [
-  [2, "Data Type Conversion and Predefined Subroutines"],
   [3, "Selection"],
   [4, "Iteration"],
   [5, "Encapsulation, Parameters and Return Values"],

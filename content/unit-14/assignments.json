@@ -21,7 +21,7 @@
       ],
       "stages": [
         { "id": "variables", "title": "Variables and data types", "week": 1, "status": "in-progress" },
-        { "id": "conversion", "title": "Conversion and predefined subroutines", "week": 2, "status": "not-started" },
+        { "id": "conversion", "title": "Conversion and predefined subroutines", "week": 2, "status": "in-progress" },
         { "id": "selection", "title": "Selection", "week": 3, "status": "not-started" },
         { "id": "iteration", "title": "Iteration", "week": 4, "status": "not-started" },
         { "id": "encapsulation", "title": "Encapsulation, parameters and return values", "week": 5, "status": "not-started" },

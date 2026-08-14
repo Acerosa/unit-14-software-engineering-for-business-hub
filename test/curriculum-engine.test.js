@@ -47,8 +47,8 @@ test("Unit 14 curriculum package loads and validates", function () {
   const result = engine.validateDirectory(packageDir);
   assert.equal(result.valid, true, engine.formatIssues(result.issues));
   assert.equal(result.package.weeks.length, 19);
-  assert.equal(result.package.sessions.length, 3);
-  assert.equal(result.package.activities.length, 11);
+  assert.equal(result.package.sessions.length, 6);
+  assert.equal(result.package.activities.length, 24);
   assert.equal(result.package.hub.relationships.curriculum, "u14-curriculum");
 });
 
@@ -80,9 +80,32 @@ test("the week renderer emits sessions from data rather than hard-coded HTML", f
 
 test("planned weeks render from the registry without invented sessions", function () {
   const pkg = engine.loadPackageFromDirectory(packageDir);
-  const html = engine.renderWeek(engine.resolveWeek(pkg, "week-2"), { root: "../.." });
+  const html = engine.renderWeek(engine.resolveWeek(pkg, "week-3"), { root: "../.." });
   assert.match(html, /Planned teaching week/);
   assert.doesNotMatch(html, /lp-session/);
+  assert.doesNotMatch(html, /week-1-session-1/);
+  assert.doesNotMatch(html, /week-2-session-1/);
+});
+
+test("Week 2 renders two taught sessions and directed independent study from the package", function () {
+  const pkg = engine.loadPackageFromDirectory(packageDir);
+  const week = engine.resolveWeek(pkg, "week-2");
+  assert.equal(week.document.metadata.status, "available");
+  assert.equal(week.document.relationships.assignment, "A1");
+  assert.deepEqual(week.document.relationships.learningOutcomes, ["LO1"]);
+  assert.equal(week.sessions.length, 3);
+  assert.equal(week.sessions[0].document.metadata.kind, "session");
+  assert.equal(week.sessions[1].document.metadata.kind, "session");
+  assert.equal(week.sessions[2].document.metadata.kind, "independent-study");
+  assert.equal(week.sessions[0].activities.length, 6);
+  assert.equal(week.sessions[1].activities.length, 6);
+  assert.equal(week.sessions[2].activities.length, 1);
+  const html = engine.renderWeek(week, { root: "../.." });
+  assert.match(html, /Session 1/);
+  assert.match(html, /Session 2/);
+  assert.match(html, /Directed independent study/);
+  assert.match(html, /Five conversion debugging programs/);
+  assert.doesNotMatch(html, /Planned teaching week/);
   assert.doesNotMatch(html, /week-1-session-1/);
 });
 

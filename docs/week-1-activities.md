@@ -90,7 +90,7 @@ Published Week 1 activity keys are registered in the shared backend. See
 
 ## Known limitations
 
-- Weeks 2–19 still have no authored session activities
+- Weeks 3–19 still have no authored session activities
 - No in-browser Python execution
 - No GitHub API / Classroom client
 - No Admin authoring UI

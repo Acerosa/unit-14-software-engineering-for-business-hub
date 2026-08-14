@@ -19,7 +19,7 @@ function loadCore() {
 const local = {
   hubCode: "unit-14-software-engineering-for-business",
   courseKey: "ocr-level-3-it",
-  packageVersion: "0.1.0",
+  packageVersion: "0.2.0",
   schemaVersion: "0.1.0",
   contentPackageVersion: "0.1.0"
 };
@@ -32,7 +32,7 @@ function row(overrides) {
   return Object.assign({
     hub_code: "unit-14-software-engineering-for-business",
     course_key: "ocr-level-3-it",
-    package_version: "0.1.0",
+    package_version: "0.2.0",
     schema_version: "0.1.0",
     source_package_version: "0.1.0",
     published_at: "2026-08-13T12:00:00Z"
@@ -43,7 +43,7 @@ test("MATCHED when local package version equals the published backend version", 
   const state = engine.resolvePublicationState(local, [row()]);
   assert.equal(state.state, "MATCHED");
   assert.equal(state.allowsSubmission, true);
-  assert.equal(state.publication.packageVersion, "0.1.0");
+  assert.equal(state.publication.packageVersion, "0.2.0");
   assert.doesNotMatch(engine.renderPublicationStatus(state), /content hash|RLS|RPC|schema validation/i);
   assert.match(engine.renderPublicationStatus(state), /visually-hidden/);
   assert.match(engine.renderPublicationStatus(state), /data-publication-state="MATCHED"/);
@@ -57,7 +57,7 @@ test("NO_PUBLICATION when the backend has no current row for this hub and course
 });
 
 test("LOCAL_BEHIND when the backend published version is newer", function () {
-  const state = engine.resolvePublicationState(local, [row({ package_version: "0.1.1" })]);
+  const state = engine.resolvePublicationState(local, [row({ package_version: "0.2.1" })]);
   assert.equal(state.state, "LOCAL_BEHIND");
   assert.equal(state.allowsSubmission, false);
   assert.match(engine.renderPublicationStatus(state), /Update pending/);
@@ -65,7 +65,7 @@ test("LOCAL_BEHIND when the backend published version is newer", function () {
 
 test("LOCAL_AHEAD when the hub package is newer than the published version", function () {
   const state = engine.resolvePublicationState(
-    Object.assign({}, local, { packageVersion: "0.2.0" }),
+    Object.assign({}, local, { packageVersion: "0.3.0" }),
     [row()]
   );
   assert.equal(state.state, "LOCAL_AHEAD");
@@ -205,12 +205,12 @@ test("local package version and Week 1 activity versions are separate", function
   const context = engine.localPublicationContext(pkg, {
     hubId: "unit-14-software-engineering-for-business",
     courseKey: "ocr-level-3-it",
-    curriculumVersion: pkg.version,
+    curriculumVersion: pkg.indexFile.version,
     schemaVersion: pkg.schemaVersion,
     contentPackageVersion: "0.1.0"
   });
   const diagnostic = pkg.activities.filter(function (item) { return item.id === "week-1-baseline-diagnostic"; })[0];
-  assert.equal(context.packageVersion, "0.1.0");
+  assert.equal(context.packageVersion, "0.2.0");
   assert.equal(context.schemaVersion, "0.1.0");
   assert.equal(diagnostic.version, "0.1.0");
   assert.equal(diagnostic.id, "week-1-baseline-diagnostic");
