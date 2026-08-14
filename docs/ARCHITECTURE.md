@@ -15,9 +15,9 @@ It does not own identity, marks, enrolments, RLS, administration or GitHub itsel
 
 ## Core responsibility
 
-`learning-platform-core` 0.1.0 owns authentication, session restoration, onboarding, learner context, assignments/progress services, theme behaviour, account UI, platform state and learner-safe API access.
+`learning-platform-core` 0.2.0 owns authentication, session restoration, onboarding, learner context, assignments/progress services, theme behaviour, account UI, platform state and learner-safe API access.
 
-`js/core/platform.js` is the single composition root. It creates one Core platform per page. Hub code does not call `createClient()` and does not keep a parallel session store.
+`src/platform.ts` is the React composition root. It creates one Core platform per page through `createPlatform(..., { createClient })`. Hub code does not keep a parallel session store.
 
 ## Backend responsibility
 
@@ -43,26 +43,29 @@ This hub is prepared to use those services through Core. It does not submit atte
 
 ## Static runtime composition
 
-Every route loads:
+Vite builds a multi-page static site (`base: './'`). Each public route is a directory with `index.html` that mounts the same React application. GitHub Actions runs `npm ci`, tests and `vite build`, then publishes `dist/`.
 
 ```text
 theme bootstrap
   -> hub and public Supabase configuration
-  -> pinned Supabase JS 2.112.3
-  -> vendored learning-platform-core 0.1.0 IIFE
-  -> platform composition
-  -> theme adapter
-  -> hub shell (navigation, account dialog, learner header)
-  -> optional curriculum page modules
+  -> @learning-platform/core createPlatform
+  -> @learning-platform/ui HubShell
+  -> Content loadPackage / resolveWeek / renderActivity / bindInteractive
 ```
 
-Core assets are copied from one reviewed commit into `vendor/learning-platform-core/0.1.0/`. GitHub Pages serves repository files only.
+Shared packages are `file:` siblings pinned in CI to reviewed tags. See [PROVENANCE.md](PROVENANCE.md). GitHub Pages serves only the static `dist/` output.
 
-## Navigation exception
+## Shared learner UI
 
-Core 0.1.0 always places the six standard navigation IDs first. Unit 14 needs Home, Weeks, Assignments, Project, Resources, Help and Account in that learner order. The hub therefore renders its own header from `APP_CONFIG.navigation` while still passing the same metadata into `createPlatform()` for account/theme/conformance.
+`src/App.tsx` mounts `@learning-platform/ui` `HubShell`, `LearnerHeader`, `WeekView` and `ActivityCard`. Core `createAccountDialog` remains the account modal. Week pages map canonical Content `resolveWeek()` through `src/content/week-presentation.ts`. Activity interiors still come from Content `renderActivity` + `bindInteractive`.
 
-This is documented as a proposed Core enhancement, not implemented here.
+Assignment workspace copy, P/M/D disclaimers and the project journey remain hub-owned.
+
+Hub branding stays in `APP_CONFIG.theme` (`#1e3a5f` / `#2a7a62`) and `shortName` / `qualification`.
+
+## Navigation
+
+Core 0.2.0 honours `navigationMode: "as-supplied"`. Unit 14 keeps Home, Weeks, Assignments, Project, Resources, Help and Account in that order without a custom header implementation.
 
 ## Curriculum registry
 

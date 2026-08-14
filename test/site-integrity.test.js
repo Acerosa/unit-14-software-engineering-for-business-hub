@@ -61,19 +61,7 @@ test("all GitHub Pages foundation routes exist", function () {
   });
 });
 
-test("routes load Core in dependency order and keep GitHub Pages-relative assets", function () {
-  const scripts = [
-    "theme-bootstrap.js",
-    "app-config.js",
-    "supabase-config.js",
-    "@supabase/supabase-js@2.112.3",
-    "learning-platform-core.iife.js",
-    "js/core/utils.js",
-    "js/core/platform.js",
-    "js/core/theme.js",
-    "js/core/shell.js"
-  ];
-
+test("routes are Vite HTML shells with GitHub Pages-relative module entries", function () {
   allWeekRoutes.concat([
     "index.html",
     "weeks/index.html",
@@ -85,17 +73,13 @@ test("routes load Core in dependency order and keep GitHub Pages-relative assets
     "account/index.html"
   ]).forEach(function (route) {
     const html = read(route);
-    let previousIndex = -1;
-    scripts.forEach(function (script) {
-      const scriptIndex = html.indexOf(script);
-      assert.ok(scriptIndex > previousIndex, route + " must load " + script + " in order");
-      previousIndex = scriptIndex;
-    });
-    assert.match(html, /<main\b[^>]*id="main-content"/i, route + " needs a main landmark");
-    assert.match(html, /<h1\b/i, route + " needs a page heading");
     assert.match(html, /lang="en-GB"/);
-    assert.match(html, /class="skip-link"/);
+    assert.match(html, /id="root"/);
+    assert.match(html, /type="module"/);
+    assert.match(html, /src=".*src\/main\.tsx"/);
     assert.match(html, /data-root=/);
+    assert.match(html, /<noscript>/);
+    assert.doesNotMatch(html, /express|next\/server|fs\.readFile/i);
     references(html, "href").forEach(function (reference) {
       assertLocalReferenceExists(route, reference);
     });
@@ -109,39 +93,40 @@ test("direct nested Week 1 and Assignment 1 routes remain self-contained", funct
   const week1 = read("weeks/week-1/index.html");
   const assignment1 = read("assignments/assignment-1/index.html");
   const week1Content = read("content/unit-14/weeks.json") + read("content/unit-14/activities.json") + read("content/unit-14/sessions.json");
+  const weekCopy = read("src/page-copy.ts") + read("src/pages/HomePage.tsx") + read("src/pages/AssignmentPage.tsx");
   assert.match(week1, /data-root="\.\.\/\.\."/);
-  assert.match(week1, /\.\.\/\.\.\/vendor\/learning-platform-core\/0\.1\.0\/theme\.css/);
   assert.match(week1, /data-lp-view="week"/);
   assert.match(week1, /data-lp-week="week-1"/);
-  assert.match(week1, /vendor\/learning-platform-content\/0\.1\.0\/learning-platform-content\.iife\.js/);
+  assert.match(week1, /src="\.\.\/\.\.\/src\/main\.tsx"/);
   assert.match(week1, /Programming for Business, Variables and Data Types/);
-  assert.match(week1, /LO1/);
-  assert.match(week1, /Assignment 1/);
-  assert.match(week1, /P1/);
-  assert.match(week1, /GitHub Classroom/);
-  assert.match(week1, /Python/);
+  assert.match(weekCopy, /LO1/);
+  assert.match(weekCopy, /Assignment 1/);
+  assert.match(weekCopy, /P1/);
+  assert.match(weekCopy, /GitHub Classroom/);
+  assert.match(weekCopy, /Python/);
   assert.match(week1Content, /GitHub Classroom/);
   assert.match(week1Content, /Baseline programming diagnostic/);
   assert.match(assignment1, /Programming Constructs Technical Guide/);
-  assert.match(assignment1, /does not award grades/i);
+  assert.match(read("src/pages/AssignmentPage.tsx"), /does not award Pass, Merit or Distinction/i);
 });
 
 test("public configuration contains no privileged secrets", function () {
-  const config = read("js/config/supabase-config.js");
-  const javascript = fs.readdirSync(path.join(projectRoot, "js/core"))
-    .filter(function (filename) { return filename.endsWith(".js"); })
-    .map(function (filename) { return read("js/core/" + filename); })
+  const config = read("js/config/supabase-config.js") + read("src/supabase-config.ts") + read("src/platform.ts");
+  const javascript = fs.readdirSync(path.join(projectRoot, "src"))
+    .filter(function (filename) { return filename.endsWith(".ts") || filename.endsWith(".tsx"); })
+    .map(function (filename) { return read("src/" + filename); })
     .join("\n");
 
   assert.match(config, /projectUrl:\s*"https:\/\/[a-z0-9-]+\.supabase\.co"/i);
   assert.match(config, /publishableKey:\s*"sb_publishable_/);
-  assert.match(config, /apiSchema:\s*"api"/);
+  assert.match(read("js/config/supabase-config.js"), /apiSchema:\s*"api"/);
   assert.doesNotMatch(config + javascript, /service_role|sb_secret_|postgresql:\/\/|eyJhbGciOi/i);
-  assert.doesNotMatch(javascript, /createClient\(/);
+  assert.match(read("src/platform.ts"), /createClient/);
+  assert.doesNotMatch(read("src/platform.ts"), /serviceRoleKey|createClient\([^)]*secret/);
 });
 
 test("hub navigation covers the Unit 14 information architecture", function () {
-  const config = read("js/config/app-config.js");
+  const config = read("js/config/app-config.js") + read("src/config.ts");
   ["home", "learning", "assignments", "project", "resources", "help", "account"].forEach(function (id) {
     assert.match(config, new RegExp('id: "' + id + '"'));
   });

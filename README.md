@@ -10,7 +10,9 @@ The hub is curriculum-specific and platform-first:
 
 | Repository | Responsibility |
 | --- | --- |
-| `learning-platform-core` | Shared browser auth, session, onboarding, learner context, theme, UI primitives and learner-safe API services |
+| `learning-platform-core` | Shared browser auth, session, onboarding, learner context, theme, tokens, DOM factories and learner-safe API services |
+| `@learning-platform/ui` | React learner chrome and week/session/activity presentation ([Acerosa/-learning-platform-ui](https://github.com/Acerosa/-learning-platform-ui)) |
+| `learning-platform-content` | Curriculum schemas, validation and activity-block rendering |
 | `learning-platform-backend` | Authoritative identity, enrolments, curriculum delivery, assignments, attempts, progress, RLS and APIs |
 | this hub | Unit 14 weeks, assignments, project guidance and subject presentation |
 | `learning-platform-admin` | Central staff administration across hubs |
@@ -19,30 +21,36 @@ This repository must not own learner identity, RLS, database migrations, adminis
 
 ## Shared dependencies
 
-- Vendored `@learning-platform/core` **0.1.0** from commit `f484b2d` under `vendor/learning-platform-core/0.1.0/`
-- Vendored `@learning-platform/content` **0.1.0** (`v0.1.0`) from [Acerosa/learning-platform-content](https://github.com/Acerosa/learning-platform-content) under `vendor/learning-platform-content/0.1.0/`
-- Supabase JS **2.112.3** loaded at the reviewed browser version
-- Learner API / submission contracts **0.1.0** through Core
-- Hub course key in the manifest: `ocr-level-3-it` (the currently registered OCR Level 3 IT course)
+Reviewed build-time packages (see [docs/PROVENANCE.md](docs/PROVENANCE.md)):
+
+- `@learning-platform/core` **0.2.0** (`v0.2.0`)
+- `@learning-platform/content` **0.1.0** (`v0.1.0`)
+- `@learning-platform/ui` **0.1.0** (`v0.1.0`) from [Acerosa/-learning-platform-ui](https://github.com/Acerosa/-learning-platform-ui)
+- Supabase JS **2.112.3**
+
+Vendored IIFE copies under `vendor/` remain for Node curriculum tests. The GitHub Pages bundle is produced by Vite from the `file:` packages.
 
 The hub is registered in the local shared backend as testing/active, with Week 1 catalogue publication for delivery, submission and progress. Hosted Supabase deployment is not authorised by this foundation.
+
+Learner chrome uses `@learning-platform/ui` React components on Core 0.2.0 contracts (`HubShell`, `WeekView`, activity cards). Curriculum JSON and activity-block rendering stay in `@learning-platform/content`. See [docs/shared-hub-ui.md](docs/shared-hub-ui.md) and [docs/react-vite.md](docs/react-vite.md).
 
 Git tag `curriculum-engine-mvp` is the Parts 1–4 baseline. See [docs/curriculum-engine-mvp.md](docs/curriculum-engine-mvp.md) and [docs/publication.md](docs/publication.md).
 
 ## Local development
 
-No install or build is required.
+Sibling checkouts and commands: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 ```bash
-python3 -m http.server 8000
+npm install
+npm run dev
 ```
 
-Open `http://localhost:8000/`. Teaching routes work without hosted credentials or sign-in.
+Teaching routes work without hosted credentials. Open the Vite URL shown in the terminal.
 
 ## Testing
 
 ```bash
-node --test
+npm test
 ```
 
 Validate the Unit 14 curriculum package:
@@ -60,13 +68,25 @@ python3 ../learning-platform-backend/scripts/import/validate-hub-manifest.py \
 
 ## Deployment
 
-The site is static and GitHub Pages compatible. Publish from the repository root with `.nojekyll` present. Nested routes use repository-relative paths and can be refreshed directly.
+Vite emits a static `dist/` for GitHub Pages. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-This foundation does not authorise a production Pages deployment.
+```bash
+npm run build
+```
+
+Nested routes remain real directories. GitHub Actions runs `npm ci`, tests, `vite build`, then publishes `dist/`. Pages must use the GitHub Actions source, not the repository root.
+
+This hub is not LHDS-certified. The Pages site is the static learner hub, not a hosted backend.
 
 ## Curriculum ownership
 
 The hub owns the Unit 14 Scheme of Learning sequence, assignment phases and learner-facing guidance as canonical JSON (`content/unit-14/`). Authoritative OCR documents remain outside the repository. Calendar dates are stored as metadata and are `null` until taken from the curriculum planner. See [docs/curriculum-engine.md](docs/curriculum-engine.md) and [docs/week-1-activities.md](docs/week-1-activities.md).
+
+The shared backend is the official publication authority. This static hub
+compares its local curriculum package version with
+`api.published_curriculum()` and only treats signed-in submissions as
+authoritative when the versions match. See
+[docs/publication-consumption.md](docs/publication-consumption.md).
 
 ## Backend trust boundary
 

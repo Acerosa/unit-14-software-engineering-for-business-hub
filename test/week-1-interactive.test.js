@@ -12,7 +12,7 @@ const engineDir = path.join(__dirname, "../content/engine");
 function loadCore() {
   if (globalThis.LearningPlatformCore) return;
   const source = fs.readFileSync(
-    path.join(__dirname, "../vendor/learning-platform-core/0.1.0/learning-platform-core.iife.js"),
+    path.join(__dirname, "../vendor/learning-platform-core/0.2.0/learning-platform-core.iife.js"),
     "utf8"
   );
   vm.runInThisContext(source + "\n;globalThis.LearningPlatformCore = LearningPlatformCore;");
@@ -247,7 +247,8 @@ test("submission uses Core evidence fields and never sends learner identity", as
           return Promise.resolve({ ok: true });
         }
       }
-    }
+    },
+    publication: { allowsSubmission: true }
   });
   assert.equal(result.status, "submitted");
   assert.equal(captured.length, 1);
@@ -284,7 +285,8 @@ test("incomplete activities stay local until every question has evidence", async
           return Promise.resolve({ ok: true });
         }
       }
-    }
+    },
+    publication: { allowsSubmission: true }
   });
   assert.equal(result.status, "local");
   assert.equal(captured.length, 0);
@@ -314,7 +316,8 @@ test("python activities declare the programming language only when required", as
           return Promise.resolve({ ok: true });
         }
       }
-    }
+    },
+    publication: { allowsSubmission: true }
   });
   assert.equal(result.status, "submitted");
   assert.equal(captured[0].programmingLanguage, "python");
@@ -336,15 +339,28 @@ test("guests keep drafts locally when submission is unavailable", async function
 });
 
 test("the Assignment 1 workspace reads adapters after content is ready", function () {
-  const source = fs.readFileSync(path.join(__dirname, "../js/pages/assignment.js"), "utf8");
-  assert.match(source, /onContentReady\(function \(\) \{[\s\S]*window\.Unit14Assignments/);
+  const source = fs.readFileSync(path.join(__dirname, "../src/pages/AssignmentPage.tsx"), "utf8");
+  assert.match(source, /assignments\.getAssignment\(assignmentId\)/);
   assert.match(source, /not P1 achieved/);
 });
 
 test("content and engine do not award P1 or ship privileged credentials", function () {
-  const hubJs = fs.readdirSync(path.join(__dirname, "../js"), { recursive: true })
-    .filter(function (filename) { return String(filename).endsWith(".js"); })
-    .map(function (filename) { return fs.readFileSync(path.join(__dirname, "../js", filename), "utf8"); })
+  const hubJs = [
+    ...fs.readdirSync(path.join(__dirname, "../js"), { recursive: true }),
+    ...fs.readdirSync(path.join(__dirname, "../src"), { recursive: true })
+  ]
+    .filter(function (filename) { return /\.(js|ts|tsx)$/.test(String(filename)); })
+    .map(function (filename) {
+      const jsPath = path.join(__dirname, "../js", filename);
+      const srcPath = path.join(__dirname, "../src", filename);
+      if (fs.existsSync(jsPath) && fs.statSync(jsPath).isFile()) {
+        return fs.readFileSync(jsPath, "utf8");
+      }
+      if (fs.existsSync(srcPath) && fs.statSync(srcPath).isFile()) {
+        return fs.readFileSync(srcPath, "utf8");
+      }
+      return "";
+    })
     .join("\n");
   const engineJs = fs.readdirSync(engineDir)
     .filter(function (filename) { return filename.endsWith(".js"); })

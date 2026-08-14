@@ -119,6 +119,10 @@
     if (!platform || !platform.auth || !platform.auth.isSignedIn()) {
       return Promise.resolve(result);
     }
+    if (!ns.publicationAllowsSubmission(options && options.publication)) {
+      result.reason = ns.publicationSubmissionMessage(options && options.publication);
+      return Promise.resolve(result);
+    }
     if (!platform.submission || typeof platform.submission.submit !== "function") {
       result.reason = "The platform submission service is not available. Your draft remains on this device.";
       return Promise.resolve(result);

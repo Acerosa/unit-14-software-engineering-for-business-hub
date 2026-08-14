@@ -167,7 +167,9 @@
         draft.checked[qid] = true;
         setFeedback(blockRoot, block, draft.responses[qid], true);
         persist();
-        ns.submitActivityDraft(activity, draft, options);
+        ns.submitActivityDraft(activity, draft, Object.assign({}, options, {
+          publication: ns.getPublicationState()
+        }));
       }
 
       if (resetBlockId) {

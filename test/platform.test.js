@@ -30,9 +30,15 @@ test("hub configuration matches the canonical manifest contracts", function () {
 
   assert.equal(window.APP_CONFIG.hubId, manifest.hubId);
   assert.equal(window.APP_CONFIG.hubVersion, manifest.version);
+  assert.equal(window.APP_CONFIG.courseKey, manifest.courses[0]);
+  assert.equal(window.APP_CONFIG.curriculumVersion, "0.1.0");
+  assert.equal(window.APP_CONFIG.schemaVersion, "0.1.0");
+  assert.equal(window.APP_CONFIG.contentPackageVersion, "0.1.0");
   assert.equal(window.APP_CONFIG.coreVersion, manifest.compatibility.required.coreVersion);
   assert.equal(window.APP_CONFIG.learnerApiContractVersion, manifest.compatibility.required.learnerApiContractVersion);
   assert.equal(window.APP_CONFIG.submissionContractVersion, manifest.compatibility.required.submissionContractVersion);
+  assert.match(read("src/config.ts"), /hubId: "unit-14-software-engineering-for-business"/);
+  assert.match(read("src/platform.ts"), /navigationMode: "as-supplied"/);
   assert.deepEqual(
     JSON.parse(JSON.stringify(window.APP_CONFIG.features)),
     manifest.featureFlags
@@ -50,9 +56,13 @@ test("the composition root creates and initialises exactly one Core platform", a
       return Promise.resolve({ status: "signed-out" });
     }
   };
-  const window = {
-    document: { body: { dataset: { root: "." } } },
-    APP_CONFIG: {
+  const { createHubPlatform } = require("../js/core/create-hub-platform.js");
+  const created = createHubPlatform(function (value) {
+    options = value;
+    return platform;
+  }, {
+    root: ".",
+    config: {
       hubId: "unit-14-software-engineering-for-business",
       siteName: "Unit 14 Software Engineering for Business Hub",
       coreVersion: "0.1.0",
@@ -60,25 +70,18 @@ test("the composition root creates and initialises exactly one Core platform", a
       features: { authentication: true },
       theme: { primary: "#1e3a5f", accent: "#2a7a62" }
     },
-    SUPABASE_CONFIG: {
+    supabase: {
       projectUrl: "https://example.supabase.co",
       publishableKey: "sb_publishable_example"
-    },
-    LearningPlatformCore: {
-      createPlatform(value) {
-        options = value;
-        return platform;
-      }
     }
-  };
-
-  run(window, "js/core/platform.js");
-  await window.LearningPlatform.ready;
+  });
+  await created.initialise();
 
   assert.equal(initialisations, 1);
   assert.equal(options.hubCode, "unit-14-software-engineering-for-business");
   assert.equal(options.supabase.publishableKey, "sb_publishable_example");
   assert.equal(options.accountPath, "./account/");
+  assert.equal(options.navigationMode, "as-supplied");
   assert.ok(!Object.prototype.hasOwnProperty.call(options.supabase, "serviceRoleKey"));
 });
 

@@ -4,6 +4,10 @@
   window.APP_CONFIG = Object.freeze({
     hubId: "unit-14-software-engineering-for-business",
     hubVersion: "0.1.0",
+    courseKey: "ocr-level-3-it",
+    curriculumVersion: "0.1.0",
+    schemaVersion: "0.1.0",
+    contentPackageVersion: "0.1.0",
     siteName: "Unit 14 Software Engineering for Business Hub",
     shortName: "Unit 14 Hub",
     qualification: "OCR Level 3 IT",
@@ -27,6 +31,15 @@
       authentication: true,
       onboarding: true,
       progress: true
+    }),
+    ui: Object.freeze({
+      contextType: "assignment",
+      showLearningOutcomes: true,
+      showAssignmentContext: true,
+      showExamContext: false,
+      showProjectContext: false,
+      showIndependentStudy: true,
+      showProgress: false
     }),
     theme: Object.freeze({
       primary: "#1e3a5f",

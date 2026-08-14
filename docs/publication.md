@@ -137,6 +137,10 @@ not yet expose curriculum weeks, OCR assignment briefs or learning-outcome
 authoring. Those are the smallest later read additions if the portal needs
 them before authoring.
 
+Learner hubs consume **publication metadata** from
+`api.published_curriculum()`, not the stored package body. See
+[Publication consumption](publication-consumption.md).
+
 ## MVP baseline
 
 Git tag `curriculum-engine-mvp` is the verified Curriculum Engine MVP. It includes

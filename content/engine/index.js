@@ -1,5 +1,6 @@
 require("../../vendor/learning-platform-content/0.1.0/learning-platform-content.cjs.js");
 require("./state.js");
+require("./publication.js");
 require("./submit.js");
 require("./interactive.js");
 

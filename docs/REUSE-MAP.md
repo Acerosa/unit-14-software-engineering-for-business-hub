@@ -10,7 +10,7 @@ Classification used here:
 | Feature | Source/reference | Reuse type | Reason | Unit 14 adaptation |
 | --- | --- | --- | --- | --- |
 | Auth, session, onboarding | Core `createPlatform()`, account dialog | Core | Do not duplicate Auth | Direct Core use; no Unit 3 Apps Script account forms |
-| Theme light/dark/system | Core theme service + `theme-bootstrap.js` from T Level/Unit 3 | Adapted | Prevent theme flash on static pages | Shared storage key `learning-platform.theme.v1`; Unit 14 colours `#1e3a5f` / `#2a7a62` |
+| Theme light/dark/system | Core theme service + `src/theme-bootstrap.ts` | Adapted | Prevent theme flash on static pages | Shared storage key `learning-platform.theme.v1`; Unit 14 colours `#1e3a5f` / `#2a7a62` |
 | Semantic tokens and cards | Core `theme.css` / `tokens.css` | Core | Current visual authority | Hub CSS maps layout onto `--lp-*` tokens instead of copying Unit 3 `main.css` |
 | Learner header | Core `createLearnerHeader` | Core | Shared identity display | Mounted under the hub header |
 | Static Core vendor layout | T Level `vendor/learning-platform-core/0.1.0` | Adapted | GitHub Pages cannot install npm at runtime | Same commit `f484b2d`, new provenance file |
@@ -19,8 +19,10 @@ Classification used here:
 | Week-centred IA | Unit 3 | Adapted | Activities belong in the week journey | Weeks index plus week pages; no dump Activities route; no exam-practice layer |
 | Session 1 / Session 2 disclosure | Unit 3 `details`/`summary` | Adapted | Familiar learning-page hierarchy | Used on Week 1; planned weeks stay as outlines |
 | Coming-soon cards | Unit 3 | Adapted | Honest unfinished states | Non-linked planned activity cards; colour is not the only status cue |
-| Breadcrumbs and skip link | Unit 3 / T Level | Adapted | Accessibility and orientation | Generated from `data-items` in the hub shell |
-| Mobile menu | Unit 3 / T Level / Core nav | Adapted | Keyboard-accessible small-viewport nav | Hub-owned header because Core 0.1.0 cannot order extra sections as required |
+| Breadcrumbs and skip link | Core `createBreadcrumbs` + shared skip-link CSS | Core | Proven across hubs | Mounted from `data-items` |
+| Mobile menu | Core `createNavigationShell` | Core | 0.2.0 ordered navigation | `navigationMode: "as-supplied"` |
+| Week / session chrome | Core `createWeekView` / `createSessionSection` | Core | Presentation only | Hub maps Content `resolveWeek()` |
+| Activity listing cards | Core `createActivityCard` | Core | Outer presentation | Content still renders activity interiors |
 | Programming activities | T Level Foundations `programming-checker.js` | Adapted | Deterministic regex/structure checks, no in-browser execution | Generic `python-exercise` checks in `@learning-platform/content`; Python-only UI; no T Level questions copied |
 | Classification items | T Level labelled categories | Adapted | Reusable categories belong in content | Generic `classification` block; Unit 14 supplies integer/float/string/Boolean labels in JSON |
 | Browser draft recovery | T Level `activity-state.js` | Adapted | Draft continuity without a second identity store | Prefix `learning-platform.content.draft.v1`; guest vs `auth:{user.id}`; reset is per activity |

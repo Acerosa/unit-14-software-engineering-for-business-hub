@@ -105,7 +105,27 @@ Low-stakes formative answers (for example classification `correctCategoryId`) ma
 
 See [Week 1 activities](week-1-activities.md) for the first vertical slice.
 
-GitHub Pages has no bundler. The hub vendors `learning-platform-content.iife.js` and loads hub-local `state.js`, `submit.js` and `interactive.js` after it. Node tests require `content/engine/index.js`, which re-exports the vendored CJS build plus those adapters.
+GitHub Pages has no bundler. The hub vendors `learning-platform-content.iife.js` and loads hub-local `publication.js`, `state.js`, `submit.js` and `interactive.js` after Core. Node tests require `content/engine/index.js`, which re-exports the vendored CJS build plus those adapters.
+
+## Published curriculum consumption
+
+The backend decides which curriculum **package version** is officially
+published. This hub still renders `content/unit-14/` and compares
+`APP_CONFIG.curriculumVersion` with `api.published_curriculum()`.
+
+Authoritative submission is allowed only in the `MATCHED` state. Drafts stay
+on the device in every other state. Historical attempts are not rewritten.
+
+See [Publication consumption](publication-consumption.md) for states, metadata
+and the submission gate. Catalogue registration and activity-id mapping remain
+in [Publication](publication.md).
+
+These version numbers are not interchangeable:
+
+- curriculum package version
+- activity version
+- `lp.content` schema version
+- `@learning-platform/content` package version
 
 ## Validation
 
@@ -157,7 +177,7 @@ Canonical repository: [Acerosa/learning-platform-content](https://github.com/Ace
 This hub keeps:
 
 - `content/unit-14/`
-- `content/engine/state.js`, `submit.js`, `interactive.js`
+- `content/engine/state.js`, `publication.js`, `submit.js`, `interactive.js`
 - branding, routes, GitHub Classroom copy, Python-only configuration
 
 A reviewed copy of the package schemas lives under `vendor/learning-platform-content/0.1.0/schemas/` for local reading. Do not put question banks or assignment briefs into the shared package.
