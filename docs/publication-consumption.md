@@ -47,10 +47,10 @@ key, and the current access token when signed in. Guests use the publishable
 key. The hub does not create a second Supabase client.
 
 This adapter stays in the hub because Core 0.1.0 does not expose a generic
-learner-safe RPC helper. `publication.js` starts the lookup itself so it does
-not depend on `shell.js` script order. A later Core extraction can own
-`fetchPublishedCurriculum` / `lookupPublicationState` once `createPlatform`
-has a generic `api` schema read.
+learner-safe RPC helper. The React app starts the lookup from the content
+provider so it does not depend on page-module script order. A later Core
+extraction can own `fetchPublishedCurriculum` / `lookupPublicationState`
+once `createPlatform` has a generic `api` schema read.
 
 ## Metadata consumed
 

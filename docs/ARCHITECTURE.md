@@ -15,9 +15,9 @@ It does not own identity, marks, enrolments, RLS, administration or GitHub itsel
 
 ## Core responsibility
 
-`learning-platform-core` 0.1.0 owns authentication, session restoration, onboarding, learner context, assignments/progress services, theme behaviour, account UI, platform state and learner-safe API access.
+`learning-platform-core` 0.2.0 owns authentication, session restoration, onboarding, learner context, assignments/progress services, theme behaviour, account UI, platform state and learner-safe API access.
 
-`js/core/platform.js` is the single composition root. It creates one Core platform per page. Hub code does not call `createClient()` and does not keep a parallel session store.
+`src/platform.ts` is the React composition root. It creates one Core platform per page through `createPlatform(..., { createClient })`. Hub code does not keep a parallel session store.
 
 ## Backend responsibility
 
@@ -43,24 +43,21 @@ This hub is prepared to use those services through Core. It does not submit atte
 
 ## Static runtime composition
 
-Every route loads:
+Vite builds a multi-page static site (`base: './'`). Each public route is a directory with `index.html` that mounts the same React application. GitHub Actions runs `npm ci`, tests and `vite build`, then publishes `dist/`.
 
 ```text
 theme bootstrap
   -> hub and public Supabase configuration
-  -> pinned Supabase JS 2.112.3
-  -> vendored learning-platform-core 0.1.0 IIFE
-  -> platform composition
-  -> theme adapter
-  -> hub shell (navigation, account dialog, learner header)
-  -> optional curriculum page modules
+  -> @learning-platform/core createPlatform
+  -> @learning-platform/ui HubShell
+  -> Content loadPackage / resolveWeek / renderActivity / bindInteractive
 ```
 
-Core assets are copied from one reviewed Core 0.2.0 build into `vendor/learning-platform-core/0.2.0/`. GitHub Pages serves repository files only.
+Shared packages are `file:` siblings pinned in CI to reviewed tags. See [PROVENANCE.md](PROVENANCE.md). GitHub Pages serves only the static `dist/` output.
 
 ## Shared learner UI
 
-`js/core/shell.js` mounts Core `createNavigationShell` (with `navigationMode: "as-supplied"`), `createBreadcrumbs`, `createLearnerHeader` and `createAccountDialog`. Week pages map canonical Content `resolveWeek()` through `js/pages/week-presentation.js` into Core `createWeekView`. Activity interiors still come from Content `renderActivity` + `bindInteractive`.
+`src/App.tsx` mounts `@learning-platform/ui` `HubShell`, `LearnerHeader`, `WeekView` and `ActivityCard`. Core `createAccountDialog` remains the account modal. Week pages map canonical Content `resolveWeek()` through `src/content/week-presentation.ts`. Activity interiors still come from Content `renderActivity` + `bindInteractive`.
 
 Assignment workspace copy, P/M/D disclaimers and the project journey remain hub-owned.
 

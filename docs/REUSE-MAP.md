@@ -10,7 +10,7 @@ Classification used here:
 | Feature | Source/reference | Reuse type | Reason | Unit 14 adaptation |
 | --- | --- | --- | --- | --- |
 | Auth, session, onboarding | Core `createPlatform()`, account dialog | Core | Do not duplicate Auth | Direct Core use; no Unit 3 Apps Script account forms |
-| Theme light/dark/system | Core theme service + `theme-bootstrap.js` from T Level/Unit 3 | Adapted | Prevent theme flash on static pages | Shared storage key `learning-platform.theme.v1`; Unit 14 colours `#1e3a5f` / `#2a7a62` |
+| Theme light/dark/system | Core theme service + `src/theme-bootstrap.ts` | Adapted | Prevent theme flash on static pages | Shared storage key `learning-platform.theme.v1`; Unit 14 colours `#1e3a5f` / `#2a7a62` |
 | Semantic tokens and cards | Core `theme.css` / `tokens.css` | Core | Current visual authority | Hub CSS maps layout onto `--lp-*` tokens instead of copying Unit 3 `main.css` |
 | Learner header | Core `createLearnerHeader` | Core | Shared identity display | Mounted under the hub header |
 | Static Core vendor layout | T Level `vendor/learning-platform-core/0.1.0` | Adapted | GitHub Pages cannot install npm at runtime | Same commit `f484b2d`, new provenance file |

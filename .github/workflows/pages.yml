@@ -20,32 +20,49 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out Unit 14 hub
+        uses: actions/checkout@v4
         with:
           path: unit-14-software-engineering-for-business-hub
-      - uses: actions/checkout@v4
+
+      - name: Check out reviewed Core
+        uses: actions/checkout@v4
         with:
           repository: Acerosa/learning-platform-core
+          ref: v0.2.0
           path: learning-platform-core
-      - uses: actions/checkout@v4
+
+      - name: Check out reviewed Content
+        uses: actions/checkout@v4
         with:
           repository: Acerosa/learning-platform-content
           ref: v0.1.0
           path: learning-platform-content
-      - uses: actions/checkout@v4
+
+      - name: Check out reviewed UI
+        uses: actions/checkout@v4
         with:
-          repository: Acerosa/learning-platform-ui
+          repository: Acerosa/-learning-platform-ui
+          ref: v0.1.0
           path: learning-platform-ui
-      - uses: actions/setup-node@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
           cache-dependency-path: unit-14-software-engineering-for-business-hub/package-lock.json
-      - name: Install and test
+
+      - name: Install, test and build
         working-directory: unit-14-software-engineering-for-business-hub
         run: |
           npm ci
           npm test
+
+      - name: Configure GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3

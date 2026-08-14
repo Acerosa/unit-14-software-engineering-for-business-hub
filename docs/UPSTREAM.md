@@ -4,7 +4,7 @@ This hub did not modify sibling repositories. The following gaps were recorded f
 
 ## learning-platform-core
 
-1. **Ordered extra navigation** — done in Core 0.2.0 via `navigationMode: "as-supplied"`. Unit 14 now mounts `createNavigationShell`.
+1. **Ordered extra navigation** — done in Core 0.2.0 via `navigationMode: "as-supplied"`. Unit 14 mounts `@learning-platform/ui` `HubShell` with that navigation list.
 2. **Assignment-workspace primitives** — a non-grading milestone list would be reusable by other internally assessed units. Keep it clearly labelled as guidance, not marks. Still hub-owned.
 
 ## learning-platform-backend
