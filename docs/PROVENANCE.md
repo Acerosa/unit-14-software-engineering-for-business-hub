@@ -8,6 +8,8 @@ Unit 14 installs shared packages at **build time** through `file:` siblings. Git
 | `@learning-platform/content` | [Acerosa/learning-platform-content](https://github.com/Acerosa/learning-platform-content) | `v0.1.0` | `d794fdef17dcf661570fd4292563835606d4b658` | 0.1.0 |
 | `@learning-platform/ui` | [Acerosa/-learning-platform-ui](https://github.com/Acerosa/-learning-platform-ui) | `v0.1.0` | `e4ba520dabe5c341b62ec88574606fad61810061` | 0.1.0 |
 
+CI also checks out [Acerosa/learning-platform-backend](https://github.com/Acerosa/learning-platform-backend) at `f21dc41a803d7ab7c9ccd11349bf2f98745cc56c` so the hub-manifest validator test can run. Backend is not a `file:` package and is not part of the learner bundle.
+
 The UI GitHub repository name has a leading hyphen. CI checks it out to the local folder `learning-platform-ui` so `file:../learning-platform-ui` resolves.
 
 Vendored IIFE copies under `vendor/` remain for Node curriculum tests and provenance of earlier static-hub consumption. The React/Vite production bundle uses the `file:` packages above, not those IIFE globals.

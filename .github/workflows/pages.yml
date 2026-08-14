@@ -46,6 +46,13 @@ jobs:
           ref: v0.1.0
           path: learning-platform-ui
 
+      - name: Check out reviewed Backend (manifest validator)
+        uses: actions/checkout@v4
+        with:
+          repository: Acerosa/learning-platform-backend
+          ref: f21dc41a803d7ab7c9ccd11349bf2f98745cc56c
+          path: learning-platform-backend
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:

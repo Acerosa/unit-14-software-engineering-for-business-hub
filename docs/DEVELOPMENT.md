@@ -7,7 +7,8 @@ Projects/
 ├── unit-14-software-engineering-for-business-hub
 ├── learning-platform-core          # tag v0.2.0
 ├── learning-platform-content       # tag v0.1.0
-└── learning-platform-ui            # tag v0.1.0 (repo Acerosa/-learning-platform-ui)
+├── learning-platform-ui            # tag v0.1.0 (repo Acerosa/-learning-platform-ui)
+└── learning-platform-backend       # CI/local hub-manifest validation only
 ```
 
 ```bash
