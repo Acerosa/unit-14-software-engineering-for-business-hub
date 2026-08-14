@@ -42,7 +42,7 @@ jobs:
       - name: Check out reviewed UI
         uses: actions/checkout@v4
         with:
-          repository: Acerosa/-learning-platform-ui
+          repository: Acerosa/Acerosa-learning-platform-ui
           ref: v0.1.0
           path: learning-platform-ui
 

@@ -6,7 +6,7 @@ Unit 14 installs shared packages at **build time** through `file:` siblings. Git
 | --- | --- | --- | --- | --- |
 | `@learning-platform/core` | [Acerosa/learning-platform-core](https://github.com/Acerosa/learning-platform-core) | `v0.2.0` | `f59614ee0d77f43852f02b1eab6dfb176ddfbc40` | 0.2.0 |
 | `@learning-platform/content` | [Acerosa/learning-platform-content](https://github.com/Acerosa/learning-platform-content) | `v0.1.0` | `d794fdef17dcf661570fd4292563835606d4b658` | 0.1.0 |
-| `@learning-platform/ui` | [Acerosa/-learning-platform-ui](https://github.com/Acerosa/-learning-platform-ui) | `v0.1.0` | `e4ba520dabe5c341b62ec88574606fad61810061` | 0.1.0 |
+| `@learning-platform/ui` | [Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui) | `v0.1.0` | `e4ba520dabe5c341b62ec88574606fad61810061` | 0.1.0 |
 
 CI also checks out [Acerosa/learning-platform-backend](https://github.com/Acerosa/learning-platform-backend) at `f21dc41a803d7ab7c9ccd11349bf2f98745cc56c` so the hub-manifest validator test can run. Backend is not a `file:` package and is not part of the learner bundle.
 

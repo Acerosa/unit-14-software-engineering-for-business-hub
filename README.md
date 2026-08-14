@@ -11,7 +11,7 @@ The hub is curriculum-specific and platform-first:
 | Repository | Responsibility |
 | --- | --- |
 | `learning-platform-core` | Shared browser auth, session, onboarding, learner context, theme, tokens, DOM factories and learner-safe API services |
-| `@learning-platform/ui` | React learner chrome and week/session/activity presentation ([Acerosa/-learning-platform-ui](https://github.com/Acerosa/-learning-platform-ui)) |
+| `@learning-platform/ui` | React learner chrome and week/session/activity presentation ([Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui)) |
 | `learning-platform-content` | Curriculum schemas, validation and activity-block rendering |
 | `learning-platform-backend` | Authoritative identity, enrolments, curriculum delivery, assignments, attempts, progress, RLS and APIs |
 | this hub | Unit 14 weeks, assignments, project guidance and subject presentation |
@@ -25,7 +25,7 @@ Reviewed build-time packages (see [docs/PROVENANCE.md](docs/PROVENANCE.md)):
 
 - `@learning-platform/core` **0.2.0** (`v0.2.0`)
 - `@learning-platform/content` **0.1.0** (`v0.1.0`)
-- `@learning-platform/ui` **0.1.0** (`v0.1.0`) from [Acerosa/-learning-platform-ui](https://github.com/Acerosa/-learning-platform-ui)
+- `@learning-platform/ui` **0.1.0** (`v0.1.0`) from [Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui)
 - Supabase JS **2.112.3**
 
 Vendored IIFE copies under `vendor/` remain for Node curriculum tests. The GitHub Pages bundle is produced by Vite from the `file:` packages.

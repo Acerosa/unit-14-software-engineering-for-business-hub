@@ -9,7 +9,7 @@ Unit 14 is the reference learner hub for React + TypeScript + Vite.
 - Vite multi-page static build (`base: './'`)
 - `@learning-platform/core` 0.2.0 tag `v0.2.0` (auth, learner context, theme, tokens)
 - `@learning-platform/content` 0.1.0 tag `v0.1.0` (curriculum, `renderActivity`, `bindInteractive`)
-- `@learning-platform/ui` 0.1.0 tag `v0.1.0` from `Acerosa/-learning-platform-ui` (React chrome and week presentation)
+- `@learning-platform/ui` 0.1.0 tag `v0.1.0` from `Acerosa/Acerosa-learning-platform-ui` (React chrome and week presentation)
 
 CI checks those repositories out as siblings and installs them through `file:` dependencies. See [PROVENANCE.md](PROVENANCE.md).
 
