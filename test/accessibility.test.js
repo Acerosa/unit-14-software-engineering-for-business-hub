@@ -11,11 +11,9 @@ function read(file) {
 
 test("accessibility fundamentals are present in the shell and CSS", function () {
   const css = read("css/hub.css");
-  const shell = read("js/core/shell.js");
-  const home = read("index.html");
+  const app = read("src/App.tsx");
   const week1 = read("weeks/week-1/index.html");
   const engine = require("../content/engine/index.js");
-  const path = require("node:path");
   const pkg = engine.loadPackageFromDirectory(path.join(root, "content/unit-14"));
   const weekHtml = engine.renderWeek(engine.resolveWeek(pkg, "week-1"), { root: "../.." });
 
@@ -23,11 +21,9 @@ test("accessibility fundamentals are present in the shell and CSS", function () 
   assert.match(css, /:focus-visible/);
   assert.match(css, /skip-link/);
   assert.match(css, /@media \(max-width: 48rem\)/);
-  const coreUi = read("vendor/learning-platform-core/0.2.0/learning-platform-core.iife.js");
-  assert.match(shell, /createNavigationShell/);
-  assert.match(coreUi, /aria-expanded/);
-  assert.match(shell, /Escape/);
-  assert.match(home, /Skip to main content/);
+  assert.match(app, /HubShell/);
+  assert.match(css, /skip-link/);
+  assert.match(read("../learning-platform-ui/src/components/HubShell.tsx"), /Skip to main content/);
   assert.match(week1, /data-lp-view="week"/);
   assert.match(weekHtml, /role="status"/);
   assert.match(weekHtml, /Session 1/);

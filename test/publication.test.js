@@ -219,7 +219,8 @@ test("local package version and Week 1 activity versions are separate", function
 test("historical progress reads are unchanged by publication state", function () {
   const source = fs.readFileSync(path.join(__dirname, "../content/engine/publication.js"), "utf8")
     + fs.readFileSync(path.join(__dirname, "../content/engine/submit.js"), "utf8")
-    + fs.readFileSync(path.join(__dirname, "../js/core/shell.js"), "utf8");
+    + fs.readFileSync(path.join(__dirname, "../src/App.tsx"), "utf8")
+    + fs.readFileSync(path.join(__dirname, "../src/hooks/useContentPackage.ts"), "utf8");
   assert.doesNotMatch(source, /my_attempts|invalidate|delete.*attempt/i);
   assert.match(source, /published_curriculum/);
   assert.match(source, /lp:publication-resolved/);

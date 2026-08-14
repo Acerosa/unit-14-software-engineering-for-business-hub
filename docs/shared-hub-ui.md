@@ -1,8 +1,19 @@
 # Shared hub UI adoption
 
-Unit 14 is the first consumer of Core 0.2.0 learner UI primitives.
+Unit 14 is the first consumer of Core 0.2.0 learner UI primitives and of `@learning-platform/ui` React components.
 
-## What moved to Core
+## What moved to Core / UI
+
+- Skip-link, banner, primary navigation, theme control, account slot
+- Breadcrumbs
+- Week presentation contract (`WeekView` / `createWeekView`)
+- Session container with kind variants
+- Activity listing cards and status badges
+- Assignment/exam/project context panel (data-driven)
+
+React components in `@learning-platform/ui` reimplement that grammar. Core DOM factories remain available and unused by this Vite build.
+
+## What stayed in the hub
 
 - Skip-link, banner, primary navigation, theme control, account slot
 - Breadcrumbs

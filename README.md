@@ -27,24 +27,23 @@ This repository must not own learner identity, RLS, database migrations, adminis
 
 The hub is registered in the local shared backend as testing/active, with Week 1 catalogue publication for delivery, submission and progress. Hosted Supabase deployment is not authorised by this foundation.
 
-Learner chrome uses Core 0.2.0 shared hub UI (`createNavigationShell`, `createBreadcrumbs`, `createWeekView`, activity cards). Curriculum JSON and activity-block rendering stay in `@learning-platform/content`. See [docs/shared-hub-ui.md](docs/shared-hub-ui.md).
+Learner chrome uses `@learning-platform/ui` React components on Core 0.2.0 contracts (`HubShell`, `WeekView`, activity cards). Curriculum JSON and activity-block rendering stay in `@learning-platform/content`. See [docs/shared-hub-ui.md](docs/shared-hub-ui.md) and [docs/react-vite.md](docs/react-vite.md).
 
 Git tag `curriculum-engine-mvp` is the Parts 1–4 baseline. See [docs/curriculum-engine-mvp.md](docs/curriculum-engine-mvp.md) and [docs/publication.md](docs/publication.md).
 
 ## Local development
 
-No install or build is required.
-
 ```bash
-python3 -m http.server 8000
+npm install
+npm run dev
 ```
 
-Open `http://localhost:8000/`. Teaching routes work without hosted credentials or sign-in.
+Teaching routes work without hosted credentials. Open the Vite URL shown in the terminal.
 
 ## Testing
 
 ```bash
-node --test
+npm test
 ```
 
 Validate the Unit 14 curriculum package:
@@ -62,7 +61,13 @@ python3 ../learning-platform-backend/scripts/import/validate-hub-manifest.py \
 
 ## Deployment
 
-The site is static and GitHub Pages compatible. Publish from the repository root with `.nojekyll` present. Nested routes use repository-relative paths and can be refreshed directly.
+Vite emits a static `dist/` for GitHub Pages:
+
+```bash
+npm run build
+```
+
+Nested routes remain real directories. GitHub Actions runs `npm ci`, tests, `vite build`, then publishes `dist/`.
 
 This foundation does not authorise a production Pages deployment.
 

@@ -1,0 +1,64 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: unit-14-software-engineering-for-business-hub
+      - uses: actions/checkout@v4
+        with:
+          repository: Acerosa/learning-platform-core
+          path: learning-platform-core
+      - uses: actions/checkout@v4
+        with:
+          repository: Acerosa/learning-platform-content
+          ref: v0.1.0
+          path: learning-platform-content
+      - uses: actions/checkout@v4
+        with:
+          repository: Acerosa/learning-platform-ui
+          path: learning-platform-ui
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: unit-14-software-engineering-for-business-hub/package-lock.json
+      - name: Install and test
+        working-directory: unit-14-software-engineering-for-business-hub
+        run: |
+          npm ci
+          npm test
+      - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: unit-14-software-engineering-for-business-hub/dist
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

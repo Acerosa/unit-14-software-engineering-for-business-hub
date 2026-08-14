@@ -1,0 +1,48 @@
+export const APP_CONFIG = Object.freeze({
+  hubId: "unit-14-software-engineering-for-business",
+  hubVersion: "0.1.0",
+  courseKey: "ocr-level-3-it",
+  curriculumVersion: "0.1.0",
+  schemaVersion: "0.1.0",
+  contentPackageVersion: "0.1.0",
+  siteName: "Unit 14 Software Engineering for Business Hub",
+  shortName: "Unit 14 Hub",
+  qualification: "OCR Level 3 IT",
+  unitCode: "H/507/5017",
+  unitName: "Software Engineering for Business",
+  coreVersion: "0.1.0",
+  learnerApiContractVersion: "0.1.0",
+  submissionContractVersion: "0.1.0",
+  academicYear: "2026/27",
+  currentPhase: "Foundation: Week 1 and assignment workspace",
+  navigation: Object.freeze([
+    Object.freeze({ id: "home", label: "Home", path: "" }),
+    Object.freeze({ id: "learning", label: "Weeks", path: "weeks/" }),
+    Object.freeze({ id: "assignments", label: "Assignments", path: "assignments/" }),
+    Object.freeze({ id: "project", label: "Project", path: "project/" }),
+    Object.freeze({ id: "resources", label: "Resources", path: "resources/" }),
+    Object.freeze({ id: "help", label: "Help", path: "help/" }),
+    Object.freeze({ id: "account", label: "Account", path: "account/" })
+  ]),
+  features: Object.freeze({
+    authentication: true,
+    onboarding: true,
+    progress: true
+  }),
+  ui: Object.freeze({
+    contextType: "assignment",
+    showLearningOutcomes: true,
+    showAssignmentContext: true,
+    showExamContext: false,
+    showProjectContext: false,
+    showIndependentStudy: true,
+    showProgress: false
+  }),
+  theme: Object.freeze({
+    primary: "#1e3a5f",
+    accent: "#2a7a62"
+  }),
+  curriculumPackage: "content/unit-14"
+});
+
+export type AppConfig = typeof APP_CONFIG;
