@@ -56,13 +56,19 @@ theme bootstrap
   -> optional curriculum page modules
 ```
 
-Core assets are copied from one reviewed commit into `vendor/learning-platform-core/0.1.0/`. GitHub Pages serves repository files only.
+Core assets are copied from one reviewed Core 0.2.0 build into `vendor/learning-platform-core/0.2.0/`. GitHub Pages serves repository files only.
 
-## Navigation exception
+## Shared learner UI
 
-Core 0.1.0 always places the six standard navigation IDs first. Unit 14 needs Home, Weeks, Assignments, Project, Resources, Help and Account in that learner order. The hub therefore renders its own header from `APP_CONFIG.navigation` while still passing the same metadata into `createPlatform()` for account/theme/conformance.
+`js/core/shell.js` mounts Core `createNavigationShell` (with `navigationMode: "as-supplied"`), `createBreadcrumbs`, `createLearnerHeader` and `createAccountDialog`. Week pages map canonical Content `resolveWeek()` through `js/pages/week-presentation.js` into Core `createWeekView`. Activity interiors still come from Content `renderActivity` + `bindInteractive`.
 
-This is documented as a proposed Core enhancement, not implemented here.
+Assignment workspace copy, P/M/D disclaimers and the project journey remain hub-owned.
+
+Hub branding stays in `APP_CONFIG.theme` (`#1e3a5f` / `#2a7a62`) and `shortName` / `qualification`.
+
+## Navigation
+
+Core 0.2.0 honours `navigationMode: "as-supplied"`. Unit 14 keeps Home, Weeks, Assignments, Project, Resources, Help and Account in that order without a custom header implementation.
 
 ## Curriculum registry
 

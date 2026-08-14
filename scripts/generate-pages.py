@@ -11,11 +11,12 @@ def scripts(root: str, extras: list[str]) -> str:
         f"{root}/js/config/app-config.js",
         f"{root}/js/config/supabase-config.js",
         "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3",
-        f"{root}/vendor/learning-platform-core/0.1.0/learning-platform-core.iife.js",
+        f"{root}/vendor/learning-platform-core/0.2.0/learning-platform-core.iife.js",
         f"{root}/js/core/utils.js",
         f"{root}/js/core/platform.js",
         f"{root}/js/core/theme.js",
         f"{root}/js/core/shell.js",
+        f"{root}/content/engine/publication.js",
         *extras,
     ]
     return "".join(
@@ -30,6 +31,7 @@ def engine_scripts(root: str) -> list[str]:
         f"{root}/content/engine/state.js",
         f"{root}/content/engine/submit.js",
         f"{root}/content/engine/interactive.js",
+        f"{root}/js/pages/week-presentation.js",
         f"{root}/js/pages/curriculum-page.js",
     ]
 
@@ -56,7 +58,7 @@ def page(
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="{description}">
   <title>{title}</title>
-  <link rel="stylesheet" href="{root}/vendor/learning-platform-core/0.1.0/theme.css">
+  <link rel="stylesheet" href="{root}/vendor/learning-platform-core/0.2.0/theme.css">
   <link rel="stylesheet" href="{root}/css/hub.css">
   <script src="{root}/js/core/theme-bootstrap.js"></script>
   {scripts(root, extras)}

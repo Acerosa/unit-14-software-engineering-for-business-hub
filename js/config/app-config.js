@@ -32,6 +32,15 @@
       onboarding: true,
       progress: true
     }),
+    ui: Object.freeze({
+      contextType: "assignment",
+      showLearningOutcomes: true,
+      showAssignmentContext: true,
+      showExamContext: false,
+      showProjectContext: false,
+      showIndependentStudy: true,
+      showProgress: false
+    }),
     theme: Object.freeze({
       primary: "#1e3a5f",
       accent: "#2a7a62"

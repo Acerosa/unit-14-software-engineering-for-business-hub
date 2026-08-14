@@ -6,87 +6,40 @@
   var config = window.APP_CONFIG;
   var utils = window.AppUtils;
   var accountDialog;
+  var navigationController;
 
-  function isCurrent(item, currentPage, currentSection) {
-    return item.id === currentPage || item.id === currentSection;
-  }
-
-  function navLink(item, currentPage, currentSection, root) {
-    var current = isCurrent(item, currentPage, currentSection);
-    var href = utils.createSitePath(root, item.path);
-    return (
-      '<li>' +
-      '<a href="' + href + '"' + (current ? ' aria-current="page"' : "") + ">" +
-      utils.escapeHtml(item.label) +
-      "</a></li>"
-    );
+  function currentIds() {
+    var page = document.body.dataset.page || "home";
+    var section = document.body.dataset.section || page;
+    return page === section ? [page] : [page, section];
   }
 
   function renderHeader() {
     var headerMount = document.querySelector("[data-site-header]");
-    if (!headerMount || !config) return;
+    if (!headerMount || !config || !core || !platform) return;
 
-    var currentPage = document.body.dataset.page || "home";
-    var currentSection = document.body.dataset.section || currentPage;
-    var root = document.body.dataset.root || ".";
-    var links = config.navigation.map(function (item) {
-      return navLink(item, currentPage, currentSection, root);
-    }).join("");
+    var actions = document.createElement("div");
+    var account = document.createElement("div");
+    account.className = "student-account";
+    account.setAttribute("data-student-account", "");
+    actions.appendChild(account);
 
-    headerMount.innerHTML =
-      '<header class="site-header" role="banner">' +
-      '<div class="header-bar">' +
-      '<a class="site-brand" href="' + utils.createSitePath(root, "") + '">' +
-      '<p class="brand-title">' + utils.escapeHtml(config.shortName) + "</p>" +
-      '<p class="brand-tagline">' + utils.escapeHtml(config.qualification) + "</p>" +
-      "</a>" +
-      '<button type="button" class="nav-toggle" aria-controls="site-navigation" aria-expanded="false" aria-label="Open main menu">Menu</button>' +
-      '<nav class="site-nav" id="site-navigation" aria-label="Main">' +
-      '<ul class="nav-list">' + links + "</ul>" +
-      "</nav>" +
-      '<div class="header-actions">' +
-      '<div class="theme-control">' +
-      '<label for="theme-select">Theme</label>' +
-      '<select id="theme-select" data-theme-select>' +
-      '<option value="system">System</option>' +
-      '<option value="light">Light</option>' +
-      '<option value="dark">Dark</option>' +
-      "</select></div>" +
-      '<div class="student-account" data-student-account></div>' +
-      "</div></div></header>";
+    var banner = document.createElement("header");
+    banner.className = "lp-shell__banner";
+    banner.setAttribute("role", "banner");
 
-    initialiseMenu(headerMount);
-    if (window.ThemeService) {
-      window.ThemeService.attachControls(headerMount);
-    }
-  }
-
-  function initialiseMenu(headerMount) {
-    var button = headerMount.querySelector(".nav-toggle");
-    var navigation = headerMount.querySelector(".site-nav");
-    if (!button || !navigation) return;
-
-    function closeMenu(returnFocus) {
-      button.setAttribute("aria-expanded", "false");
-      navigation.classList.remove("site-nav--open");
-      if (returnFocus) button.focus();
-    }
-
-    button.addEventListener("click", function () {
-      var open = button.getAttribute("aria-expanded") === "true";
-      button.setAttribute("aria-expanded", String(!open));
-      navigation.classList.toggle("site-nav--open", !open);
+    navigationController = core.createNavigationShell({
+      config: platform.config,
+      currentId: document.body.dataset.section || document.body.dataset.page || "home",
+      currentIds: currentIds(),
+      themeService: platform.theme,
+      brandTitle: config.shortName,
+      brandTagline: config.qualification,
+      actions: actions
     });
-
-    navigation.addEventListener("click", function (event) {
-      if (event.target.closest("a")) closeMenu(false);
-    });
-
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape" && button.getAttribute("aria-expanded") === "true") {
-        closeMenu(true);
-      }
-    });
+    banner.appendChild(navigationController.element);
+    headerMount.replaceChildren(banner);
+    document.body.classList.add("lp-shell");
   }
 
   function renderAccount(state) {
@@ -95,21 +48,32 @@
 
     mounts.forEach(function (mount) {
       if (!signedIn) {
-        mount.innerHTML = '<button class="lp-button lp-button--secondary" type="button" data-open-account>Sign in</button>';
-        mount.querySelector("[data-open-account]").addEventListener("click", function (event) {
+        mount.replaceChildren();
+        var signIn = document.createElement("button");
+        signIn.className = "lp-button lp-button--secondary";
+        signIn.type = "button";
+        signIn.setAttribute("data-open-account", "");
+        signIn.textContent = "Sign in";
+        signIn.addEventListener("click", function (event) {
           accountDialog.open(event.currentTarget);
         });
+        mount.appendChild(signIn);
         return;
       }
 
-      mount.innerHTML =
-        '<span class="student-account__name"></span>' +
-        '<button class="lp-button lp-button--secondary" type="button" data-open-account>Account</button>';
-      mount.querySelector(".student-account__name").textContent =
-        state.context.firstName || state.context.displayName || "Learner";
-      mount.querySelector("[data-open-account]").addEventListener("click", function (event) {
+      mount.replaceChildren();
+      var name = document.createElement("span");
+      name.className = "student-account__name";
+      name.textContent = state.context.firstName || state.context.displayName || "Learner";
+      var account = document.createElement("button");
+      account.className = "lp-button lp-button--secondary";
+      account.type = "button";
+      account.setAttribute("data-open-account", "");
+      account.textContent = "Account";
+      account.addEventListener("click", function (event) {
         accountDialog.open(event.currentTarget);
       });
+      mount.append(name, account);
     });
   }
 
@@ -126,7 +90,7 @@
 
   function renderBreadcrumbs() {
     var mount = document.querySelector("[data-breadcrumbs]");
-    if (!mount) return;
+    if (!mount || !core) return;
     var root = document.body.dataset.root || ".";
     var items = [];
     try {
@@ -134,19 +98,13 @@
     } catch (error) {
       items = [];
     }
-    if (!items.length) {
-      mount.hidden = true;
-      return;
-    }
-    var html = items.map(function (item, index) {
-      var last = index === items.length - 1;
-      if (last || !item.path) {
-        return "<li><span aria-current=\"page\">" + utils.escapeHtml(item.label) + "</span></li>";
+    var crumbs = core.createBreadcrumbs({
+      items: items,
+      resolveHref: function (path) {
+        return utils.createSitePath(root, path);
       }
-      return "<li><a href=\"" + utils.createSitePath(root, item.path) + "\">" +
-        utils.escapeHtml(item.label) + "</a></li>";
-    }).join("");
-    mount.innerHTML = '<ol class="breadcrumb-list">' + html + "</ol>";
+    });
+    mount.replaceWith(crumbs);
   }
 
   function renderPublicationStatus(state) {
@@ -156,7 +114,7 @@
       mount = document.createElement("div");
       mount.setAttribute("data-publication-status", "");
       if (document.body.firstElementChild) {
-        document.body.insertBefore(mount, document.querySelector(".breadcrumbs") || document.querySelector(".page-header") || document.body.firstElementChild.nextSibling);
+        document.body.insertBefore(mount, document.querySelector(".lp-breadcrumbs") || document.querySelector(".breadcrumbs") || document.querySelector(".page-header") || document.body.firstElementChild.nextSibling);
       } else {
         document.body.appendChild(mount);
       }
@@ -180,6 +138,12 @@
     var phase = document.querySelector("[data-current-phase]");
     if (phase) phase.textContent = config.currentPhase;
   }
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && navigationController) {
+      navigationController.closeMenu(true);
+    }
+  });
 
   utils.onReady(function () {
     renderHeader();

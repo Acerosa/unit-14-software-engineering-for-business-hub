@@ -3,15 +3,24 @@
 
   var utils = window.AppUtils;
   var engine = window.LearningPlatformContent;
+  var core = window.LearningPlatformCore;
 
   function mountWeek(pkg, body) {
     var weekId = body.dataset.lpWeek || ("week-" + body.dataset.week);
     var mount = document.querySelector("[data-lp-mount]") || document.getElementById("main-content");
     var resolved;
-    if (!mount || !weekId) return;
+    var presentation;
+    if (!mount || !weekId || !core || !window.Unit14WeekPresentation) return;
     resolved = engine.resolveWeek(pkg, weekId);
     if (!resolved) return;
-    mount.innerHTML = engine.renderWeek(resolved, { root: body.dataset.root || "." });
+    presentation = window.Unit14WeekPresentation.fromResolvedWeek(resolved, {
+      engine: engine,
+      utils: utils,
+      root: body.dataset.root || ".",
+      weeks: window.Unit14Curriculum && window.Unit14Curriculum.weeks,
+      features: (window.APP_CONFIG && window.APP_CONFIG.ui) || {}
+    });
+    mount.replaceChildren(core.createWeekView(presentation));
   }
 
   function stageStatus(stage, pkg) {

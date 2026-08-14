@@ -23,8 +23,9 @@ test("accessibility fundamentals are present in the shell and CSS", function () 
   assert.match(css, /:focus-visible/);
   assert.match(css, /skip-link/);
   assert.match(css, /@media \(max-width: 48rem\)/);
-  assert.match(shell, /aria-label="Main"/);
-  assert.match(shell, /aria-expanded/);
+  const coreUi = read("vendor/learning-platform-core/0.2.0/learning-platform-core.iife.js");
+  assert.match(shell, /createNavigationShell/);
+  assert.match(coreUi, /aria-expanded/);
   assert.match(shell, /Escape/);
   assert.match(home, /Skip to main content/);
   assert.match(week1, /data-lp-view="week"/);

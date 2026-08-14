@@ -25,6 +25,7 @@
         path: item.id === "home" ? "./" : item.path
       });
     }),
+    navigationMode: "as-supplied",
     features: app.features,
     theme: app.theme
   });

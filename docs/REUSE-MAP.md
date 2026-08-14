@@ -19,8 +19,10 @@ Classification used here:
 | Week-centred IA | Unit 3 | Adapted | Activities belong in the week journey | Weeks index plus week pages; no dump Activities route; no exam-practice layer |
 | Session 1 / Session 2 disclosure | Unit 3 `details`/`summary` | Adapted | Familiar learning-page hierarchy | Used on Week 1; planned weeks stay as outlines |
 | Coming-soon cards | Unit 3 | Adapted | Honest unfinished states | Non-linked planned activity cards; colour is not the only status cue |
-| Breadcrumbs and skip link | Unit 3 / T Level | Adapted | Accessibility and orientation | Generated from `data-items` in the hub shell |
-| Mobile menu | Unit 3 / T Level / Core nav | Adapted | Keyboard-accessible small-viewport nav | Hub-owned header because Core 0.1.0 cannot order extra sections as required |
+| Breadcrumbs and skip link | Core `createBreadcrumbs` + shared skip-link CSS | Core | Proven across hubs | Mounted from `data-items` |
+| Mobile menu | Core `createNavigationShell` | Core | 0.2.0 ordered navigation | `navigationMode: "as-supplied"` |
+| Week / session chrome | Core `createWeekView` / `createSessionSection` | Core | Presentation only | Hub maps Content `resolveWeek()` |
+| Activity listing cards | Core `createActivityCard` | Core | Outer presentation | Content still renders activity interiors |
 | Programming activities | T Level Foundations `programming-checker.js` | Adapted | Deterministic regex/structure checks, no in-browser execution | Generic `python-exercise` checks in `@learning-platform/content`; Python-only UI; no T Level questions copied |
 | Classification items | T Level labelled categories | Adapted | Reusable categories belong in content | Generic `classification` block; Unit 14 supplies integer/float/string/Boolean labels in JSON |
 | Browser draft recovery | T Level `activity-state.js` | Adapted | Draft continuity without a second identity store | Prefix `learning-platform.content.draft.v1`; guest vs `auth:{user.id}`; reset is per activity |

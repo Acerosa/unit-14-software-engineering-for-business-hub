@@ -2,8 +2,7 @@
   "use strict";
 
   var utils = window.AppUtils;
-  var curriculum = window.Unit14Curriculum;
-  var assignments = window.Unit14Assignments;
+  var core = window.LearningPlatformCore;
 
   function statusClass(status) {
     if (status === "available") return "status-label-available";
@@ -12,49 +11,54 @@
   }
 
   function renderWeekCards(mount, weeks, root) {
-    if (!mount || !weeks) return;
-    mount.innerHTML = weeks.map(function (week) {
+    if (!mount || !weeks || !core) return;
+    mount.classList.add("lp-card-grid");
+    mount.replaceChildren();
+    weeks.forEach(function (week) {
       var available = week.status === "available";
-      var href = utils.createSitePath(root, week.route);
-      var heading = "Week " + week.teachingWeek + ": " + utils.escapeHtml(week.title);
-      var body =
-        '<article class="hub-card' + (available ? "" : " is-coming-soon") + '">' +
-        '<span class="status-label ' + statusClass(week.status) + '" role="status">' +
-        '<span aria-hidden="true">●</span> ' + utils.statusLabel(week.status) + "</span>" +
-        "<h2>Week " + week.teachingWeek + "</h2>" +
-        "<p>" + utils.escapeHtml(week.title) + "</p>" +
-        "<p>" + week.learningOutcomes.join(", ") + " · " + week.assignment + "</p>" +
-        (available
-          ? '<a class="card-link" href="' + href + '">Open ' + heading + "</a>"
-          : '<p class="panel-note">This week page is a planned outline until teaching content is added.</p>' +
-            '<a class="card-link" href="' + href + '">Open Week ' + week.teachingWeek + " outline</a>") +
-        "</article>";
-      return body;
-    }).join("");
+      var card = core.createActivityCard({
+        title: "Week " + week.teachingWeek,
+        description: week.title + " · " + week.learningOutcomes.join(", ") + " · " + week.assignment,
+        activityType: available ? "Teaching week" : "Planned week",
+        status: utils.statusLabel(week.status),
+        badge: true,
+        badgeStatus: week.status,
+        href: utils.createSitePath(root, week.route),
+        actionLabel: available
+          ? "Open Week " + week.teachingWeek + ": " + week.title
+          : "Open Week " + week.teachingWeek + " outline",
+        headingLevel: 2
+      });
+      if (!available) card.classList.add("lp-card--muted", "is-coming-soon");
+      mount.append(card);
+    });
   }
 
   function renderAssignmentCards(mount, items, root) {
-    if (!mount || !items) return;
-    mount.innerHTML = items.map(function (item) {
-      var href = utils.createSitePath(root, item.route);
-      return (
-        '<article class="hub-card' + (item.status === "available" ? "" : " is-coming-soon") + '">' +
-        '<span class="status-label ' + statusClass(item.status) + '" role="status">' +
-        '<span aria-hidden="true">●</span> ' + utils.statusLabel(item.status) + "</span>" +
-        "<h2>" + utils.escapeHtml(item.id) + ": " + utils.escapeHtml(item.title) + "</h2>" +
-        "<p>" + item.learningOutcomes.join(", ") + " · criteria " +
-        item.criteria.map(function (criterion) { return criterion.id; }).join(", ") + "</p>" +
-        '<a class="card-link" href="' + href + '">Open ' + utils.escapeHtml(item.id) + "</a>" +
-        "</article>"
-      );
-    }).join("");
+    if (!mount || !items || !core) return;
+    mount.classList.add("lp-card-grid");
+    mount.replaceChildren();
+    items.forEach(function (item) {
+      var card = core.createActivityCard({
+        title: item.id + ": " + item.title,
+        description: item.learningOutcomes.join(", ") + " · criteria " +
+          item.criteria.map(function (criterion) { return criterion.id; }).join(", "),
+        activityType: "Assignment",
+        status: utils.statusLabel(item.status),
+        badge: true,
+        badgeStatus: item.status,
+        href: utils.createSitePath(root, item.route),
+        actionLabel: "Open " + item.id,
+        headingLevel: 2
+      });
+      if (item.status !== "available") card.classList.add("lp-card--muted", "is-coming-soon");
+      mount.append(card);
+    });
   }
 
   window.Unit14Render = Object.freeze({
     statusClass: statusClass,
     renderWeekCards: renderWeekCards,
-    renderAssignmentCards: renderAssignmentCards,
-    curriculum: curriculum,
-    assignments: assignments
+    renderAssignmentCards: renderAssignmentCards
   });
 })();

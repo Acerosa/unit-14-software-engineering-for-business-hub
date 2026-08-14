@@ -111,7 +111,7 @@ test("direct nested Week 1 and Assignment 1 routes remain self-contained", funct
   const assignment1 = read("assignments/assignment-1/index.html");
   const week1Content = read("content/unit-14/weeks.json") + read("content/unit-14/activities.json") + read("content/unit-14/sessions.json");
   assert.match(week1, /data-root="\.\.\/\.\."/);
-  assert.match(week1, /\.\.\/\.\.\/vendor\/learning-platform-core\/0\.1\.0\/theme\.css/);
+  assert.match(week1, /\.\.\/\.\.\/vendor\/learning-platform-core\/0\.2\.0\/theme\.css/);
   assert.match(week1, /data-lp-view="week"/);
   assert.match(week1, /data-lp-week="week-1"/);
   assert.match(week1, /vendor\/learning-platform-content\/0\.1\.0\/learning-platform-content\.iife\.js/);

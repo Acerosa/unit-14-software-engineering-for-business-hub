@@ -12,7 +12,7 @@ const engineDir = path.join(__dirname, "../content/engine");
 function loadCore() {
   if (globalThis.LearningPlatformCore) return;
   const source = fs.readFileSync(
-    path.join(__dirname, "../vendor/learning-platform-core/0.1.0/learning-platform-core.iife.js"),
+    path.join(__dirname, "../vendor/learning-platform-core/0.2.0/learning-platform-core.iife.js"),
     "utf8"
   );
   vm.runInThisContext(source + "\n;globalThis.LearningPlatformCore = LearningPlatformCore;");
