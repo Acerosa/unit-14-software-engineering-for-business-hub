@@ -4,21 +4,20 @@
   var ns = root.LearningPlatformContent = root.LearningPlatformContent || {};
   var SUPPORTED_SCHEMA = "0.1.0";
   var SUPPORTED_PACKAGE = "0.1.0";
+  var CACHE_PREFIX = "lp.curriculum.cache.v1:";
   var currentState = null;
 
   var LEARNER_COPY = {
-    MATCHED: "This teaching copy matches the official course version.",
-    LOCAL_BEHIND: "An updated version of this course is available. This page still shows the current teaching copy. Progress cannot be saved to your learning record until this hub is updated.",
-    LOCAL_AHEAD: "This teaching copy is not the official published version yet. You can still practise here. Progress will not be saved to your learning record until it is published.",
+    PUBLISHED: "This teaching copy is the official published course version.",
+    FALLBACK: "This page is showing the saved teaching copy because the live course version could not be loaded. You can still read and practise. Progress will not be saved to your learning record until the live version is available.",
     NO_PUBLICATION: "This course version is not officially published yet. You can still read and practise. Progress will not be saved to your learning record yet.",
-    INCOMPATIBLE: "This teaching copy cannot be checked against the official course version. You can still read this page. Progress cannot be saved to your learning record.",
-    ERROR: "The official course version could not be confirmed. You can still read this page. Saving progress is temporarily unavailable."
+    INCOMPATIBLE: "This teaching copy cannot be used as the live course version. You can still read the saved copy. Progress cannot be saved to your learning record.",
+    ERROR: "The live course version could not be confirmed. You can still read the saved teaching copy. Saving progress is temporarily unavailable."
   };
 
   var LEARNER_LABELS = {
-    MATCHED: "Current",
-    LOCAL_BEHIND: "Update pending",
-    LOCAL_AHEAD: "Preview",
+    PUBLISHED: "Current",
+    FALLBACK: "Saved copy",
     NO_PUBLICATION: "Preview",
     INCOMPATIBLE: "Unavailable to save",
     ERROR: "Temporarily unable to save progress"
@@ -37,12 +36,12 @@
 
   function localContext(pkg, config) {
     var curriculum = pkg && pkg.curriculum;
-    var indexVersion = pkg && pkg.version;
+    var indexVersion = (pkg && pkg.indexFile && pkg.indexFile.version) || (pkg && pkg.version);
     return {
       hubCode: (config && config.hubId) || (pkg && pkg.hub && pkg.hub.id) || "",
       courseKey: (config && config.courseKey) || (curriculum && curriculum.metadata && curriculum.metadata.course) || "",
-      packageVersion: (config && config.curriculumVersion) || indexVersion || (curriculum && curriculum.version) || "",
-      schemaVersion: (config && config.schemaVersion) || (pkg && pkg.schemaVersion) || (curriculum && curriculum.schemaVersion) || "",
+      packageVersion: (pkg && pkg.version) || indexVersion || (curriculum && curriculum.version) || "",
+      schemaVersion: (pkg && pkg.schemaVersion) || (config && config.schemaVersion) || (curriculum && curriculum.schemaVersion) || "",
       contentPackageVersion: (config && config.contentPackageVersion) || SUPPORTED_PACKAGE
     };
   }
@@ -50,23 +49,13 @@
   function result(state, local, publication) {
     return {
       state: state,
+      source: state === "PUBLISHED" ? "published" : "fallback",
       label: LEARNER_LABELS[state],
       message: LEARNER_COPY[state],
-      allowsSubmission: state === "MATCHED",
+      allowsSubmission: state === "PUBLISHED",
       local: local || null,
       publication: publication || null
     };
-  }
-
-  function findPublication(rows, hubCode, courseKey) {
-    var list = Array.isArray(rows) ? rows : [];
-    var i;
-    var row;
-    for (i = 0; i < list.length; i += 1) {
-      row = list[i] || {};
-      if (row.hub_code === hubCode && row.course_key === courseKey) return row;
-    }
-    return null;
   }
 
   function mapPublication(row) {
@@ -78,8 +67,19 @@
       schemaVersion: row.schema_version,
       sourcePackageVersion: row.source_package_version,
       publishedAt: row.published_at,
+      contentHash: row.content_hash || "",
       status: "published"
     };
+  }
+
+  function firstRow(payload) {
+    if (Array.isArray(payload)) return payload[0] || null;
+    if (payload && typeof payload === "object") return payload;
+    return null;
+  }
+
+  function cacheKey(hubId, courseKey) {
+    return CACHE_PREFIX + String(hubId || "") + ":" + String(courseKey || "");
   }
 
   ns.PUBLICATION_STATES = Object.freeze(Object.keys(LEARNER_COPY));
@@ -87,14 +87,76 @@
     schemaVersion: SUPPORTED_SCHEMA,
     contentPackageVersion: SUPPORTED_PACKAGE
   });
+  ns.CURRICULUM_CACHE_PREFIX = CACHE_PREFIX;
 
   ns.localPublicationContext = localContext;
   ns.compareCurriculumVersion = compareSemver;
 
+  ns.hydratePublishedPackage = function (row) {
+    var pkg = row && row.package;
+    if (!pkg || typeof pkg !== "object") {
+      throw new Error("published-package-invalid");
+    }
+    pkg.version = row.package_version || pkg.version;
+    pkg.schemaVersion = row.source_package_version || pkg.schemaVersion;
+    pkg.id = pkg.id || (pkg.hub && pkg.hub.id) || "";
+    pkg.indexFile = pkg.indexFile || {
+      schema: "lp.content.package",
+      schemaVersion: pkg.schemaVersion || SUPPORTED_PACKAGE,
+      id: pkg.id,
+      version: pkg.version
+    };
+    return pkg;
+  };
+
+  ns.curriculumCacheKey = cacheKey;
+
+  ns.writeCurriculumCache = function (storage, hubId, courseKey, row, pkg) {
+    if (!storage || typeof storage.setItem !== "function" || !hubId || !courseKey || !pkg) return false;
+    try {
+      storage.setItem(cacheKey(hubId, courseKey), JSON.stringify({
+        hubId: hubId,
+        courseKey: courseKey,
+        packageVersion: row && row.package_version,
+        schemaVersion: row && row.schema_version,
+        sourcePackageVersion: row && row.source_package_version,
+        contentHash: row && row.content_hash,
+        publishedAt: row && row.published_at,
+        cachedAt: new Date().toISOString(),
+        package: pkg
+      }));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  ns.readCurriculumCache = function (storage, hubId, courseKey, validate) {
+    var raw;
+    var parsed;
+    var validation;
+    if (!storage || typeof storage.getItem !== "function" || !hubId || !courseKey) return null;
+    try {
+      raw = storage.getItem(cacheKey(hubId, courseKey));
+      parsed = raw ? JSON.parse(raw) : null;
+    } catch (error) {
+      return null;
+    }
+    if (!parsed || parsed.hubId !== hubId || parsed.courseKey !== courseKey || !parsed.package) {
+      return null;
+    }
+    if (typeof validate === "function") {
+      validation = validate(parsed.package);
+      if (!validation || validation.valid === false) return null;
+    }
+    return parsed;
+  };
+
   ns.resolvePublicationState = function (local, rows, lookupError) {
     var publication;
+    var row;
     if (lookupError) return result("ERROR", local, null);
-    if (!local || !local.hubCode || !local.courseKey || !local.packageVersion) {
+    if (!local || !local.hubCode || !local.courseKey) {
       return result("ERROR", local, null);
     }
     if (local.schemaVersion && local.schemaVersion !== SUPPORTED_SCHEMA) {
@@ -103,18 +165,13 @@
     if (local.contentPackageVersion && local.contentPackageVersion !== SUPPORTED_PACKAGE) {
       return result("INCOMPATIBLE", local, null);
     }
-    publication = mapPublication(findPublication(rows, local.hubCode, local.courseKey));
+    row = firstRow(rows);
+    publication = mapPublication(row);
     if (!publication) return result("NO_PUBLICATION", local, null);
     if (publication.schemaVersion !== SUPPORTED_SCHEMA || publication.sourcePackageVersion !== SUPPORTED_PACKAGE) {
       return result("INCOMPATIBLE", local, publication);
     }
-    if (compareSemver(local.packageVersion, publication.packageVersion) === 0) {
-      return result("MATCHED", local, publication);
-    }
-    if (compareSemver(local.packageVersion, publication.packageVersion) < 0) {
-      return result("LOCAL_BEHIND", local, publication);
-    }
-    return result("LOCAL_AHEAD", local, publication);
+    return result("PUBLISHED", local, publication);
   };
 
   ns.setPublicationState = function (state) {
@@ -137,19 +194,23 @@
     return resolved.message;
   };
 
-  ns.fetchPublishedCurriculum = function (options) {
+  ns.fetchPublishedCurriculumPackage = function (options) {
     var config = (options && options.config) || {};
+    var appConfig = (options && options.appConfig) || {};
+    var local = (options && options.local) || {};
     var session = options && options.session;
     var fetchFn = (options && options.fetch) || root.fetch;
     var projectUrl = String(config.projectUrl || "").replace(/\/+$/, "");
     var key = config.publishableKey || "";
     var token = session && session.access_token ? session.access_token : key;
+    var hubCode = local.hubCode || appConfig.hubId || "";
+    var courseKey = local.courseKey || appConfig.courseKey || "";
 
-    if (typeof fetchFn !== "function" || !projectUrl || !key) {
+    if (typeof fetchFn !== "function" || !projectUrl || !key || !hubCode || !courseKey) {
       return Promise.reject(new Error("publication-lookup-unavailable"));
     }
 
-    return fetchFn(projectUrl + "/rest/v1/rpc/published_curriculum", {
+    return fetchFn(projectUrl + "/rest/v1/rpc/published_curriculum_package", {
       method: "POST",
       headers: {
         apikey: key,
@@ -159,19 +220,113 @@
         "Content-Type": "application/json",
         Accept: "application/json"
       },
-      body: "{}"
+      body: JSON.stringify({
+        p_hub_code: hubCode,
+        p_course_key: courseKey
+      })
     }).then(function (response) {
       if (!response || !response.ok) throw new Error("publication-lookup-failed");
       return response.json();
     }).then(function (payload) {
-      return Array.isArray(payload) ? payload : [];
+      var row = firstRow(payload);
+      if (!row || !row.package) throw new Error("publication-lookup-empty");
+      return row;
+    });
+  };
+
+  ns.loadCurriculumRuntime = function (options) {
+    var appConfig = (options && options.appConfig) || {};
+    var loadBundled = options && options.loadBundled;
+    var validate = options && options.validate;
+    var storage = (options && options.storage) || (typeof root.localStorage !== "undefined" ? root.localStorage : null);
+    var hubId = appConfig.hubId || "";
+    var courseKey = appConfig.courseKey || "";
+
+    function fallback(reason) {
+      if (typeof loadBundled !== "function") {
+        return Promise.reject(new Error(reason || "curriculum-unavailable"));
+      }
+      return Promise.resolve(loadBundled()).then(function (pkg) {
+        var validation = typeof validate === "function" ? validate(pkg) : { valid: true };
+        var cached;
+        if (!validation || validation.valid === false) {
+          cached = ns.readCurriculumCache(storage, hubId, courseKey, validate);
+          if (cached && cached.package) {
+            ns.setPublicationState(result("FALLBACK", localContext(cached.package, appConfig), mapPublication({
+              hub_code: hubId,
+              course_key: courseKey,
+              package_version: cached.packageVersion,
+              schema_version: cached.schemaVersion,
+              source_package_version: cached.sourcePackageVersion,
+              published_at: cached.publishedAt,
+              content_hash: cached.contentHash
+            })));
+            currentState.reason = reason;
+            return {
+              source: "cache",
+              package: cached.package,
+              state: currentState,
+              publication: currentState.publication
+            };
+          }
+          throw new Error("bundled-package-invalid");
+        }
+        ns.setPublicationState(result("FALLBACK", localContext(pkg, appConfig), null));
+        currentState.reason = reason;
+        return {
+          source: "bundled",
+          package: pkg,
+          state: currentState,
+          publication: null
+        };
+      });
+    }
+
+    return ns.fetchPublishedCurriculumPackage(options).then(function (row) {
+      var pkg = ns.hydratePublishedPackage(row);
+      var validation = typeof validate === "function" ? validate(pkg) : { valid: true };
+      if (!validation || validation.valid === false) {
+        return fallback("invalid-package");
+      }
+      if (row.schema_version !== SUPPORTED_SCHEMA || row.source_package_version !== SUPPORTED_PACKAGE) {
+        return fallback("incompatible");
+      }
+      ns.writeCurriculumCache(storage, hubId, courseKey, row, pkg);
+      ns.setPublicationState(result("PUBLISHED", localContext(pkg, appConfig), mapPublication(row)));
+      return {
+        source: "published",
+        package: pkg,
+        state: currentState,
+        publication: currentState.publication
+      };
+    }).catch(function () {
+      var cached = ns.readCurriculumCache(storage, hubId, courseKey, validate);
+      if (cached && cached.package) {
+        ns.setPublicationState(result("FALLBACK", localContext(cached.package, appConfig), mapPublication({
+          hub_code: hubId,
+          course_key: courseKey,
+          package_version: cached.packageVersion,
+          schema_version: cached.schemaVersion,
+          source_package_version: cached.sourcePackageVersion,
+          published_at: cached.publishedAt,
+          content_hash: cached.contentHash
+        })));
+        currentState.reason = "unavailable";
+        return {
+          source: "cache",
+          package: cached.package,
+          state: currentState,
+          publication: currentState.publication
+        };
+      }
+      return fallback("unavailable");
     });
   };
 
   ns.lookupPublicationState = function (options) {
     var local = (options && options.local) || localContext(options && options.package, options && options.appConfig);
-    return ns.fetchPublishedCurriculum(options).then(function (rows) {
-      return ns.setPublicationState(ns.resolvePublicationState(local, rows, null));
+    return ns.fetchPublishedCurriculumPackage(Object.assign({}, options, { local: local })).then(function (row) {
+      return ns.setPublicationState(ns.resolvePublicationState(local, row, null));
     }).catch(function () {
       return ns.setPublicationState(ns.resolvePublicationState(local, [], true));
     });
@@ -179,9 +334,9 @@
 
   ns.renderPublicationStatus = function (state) {
     if (!state) return "";
-    if (state.state === "MATCHED") {
-      return '<p class="visually-hidden" role="status" data-publication-state="MATCHED">' +
-        LEARNER_COPY.MATCHED + "</p>";
+    if (state.state === "PUBLISHED") {
+      return '<p class="visually-hidden" role="status" data-publication-state="PUBLISHED">' +
+        LEARNER_COPY.PUBLISHED + "</p>";
     }
     return '<section class="publication-banner publication-banner--' + state.state.toLowerCase().replace(/_/g, "-") +
       '" role="status" data-publication-state="' + state.state + '">' +
@@ -189,36 +344,4 @@
       "<p>" + LEARNER_COPY[state.state] + "</p>" +
       "</section>";
   };
-
-  function bootLookup() {
-    var app = root.APP_CONFIG;
-    var supabase = root.SUPABASE_CONFIG;
-    var platform = root.LearningPlatform && root.LearningPlatform.platform;
-    var session;
-    if (!app || !supabase || !supabase.projectUrl || typeof ns.lookupPublicationState !== "function") return;
-    session = platform && platform.auth && typeof platform.auth.getSession === "function"
-      ? platform.auth.getSession()
-      : null;
-    ns.lookupPublicationState({
-      appConfig: app,
-      config: supabase,
-      session: session
-    }).then(function (state) {
-      var event;
-      if (typeof document === "undefined" || typeof document.dispatchEvent !== "function") return state;
-      try {
-        event = new CustomEvent("lp:publication-resolved", { detail: state });
-        document.dispatchEvent(event);
-      } catch (error) {}
-      return state;
-    });
-  }
-
-  if (typeof document !== "undefined") {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", bootLookup, { once: true });
-    } else {
-      bootLookup();
-    }
-  }
 })(typeof globalThis !== "undefined" ? globalThis : this);

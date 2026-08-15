@@ -80,12 +80,11 @@ This hub is not LHDS-certified. The Pages site is the static learner hub, not a 
 
 ## Curriculum ownership
 
-The hub owns the Unit 14 Scheme of Learning sequence, assignment phases and learner-facing guidance as canonical JSON (`content/unit-14/`). Authoritative OCR documents remain outside the repository. Calendar dates are stored as metadata and are `null` until taken from the curriculum planner. See [docs/curriculum-engine.md](docs/curriculum-engine.md) and [docs/week-1-activities.md](docs/week-1-activities.md).
+The hub owns the Unit 14 Scheme of Learning sequence, assignment phases and learner-facing guidance as a canonical JSON package (`content/unit-14/`) used as fallback/provenance. At runtime the published Supabase package is authoritative. Authoritative OCR documents remain outside the repository. Calendar dates are stored as metadata and are `null` until taken from the curriculum planner. See [docs/curriculum-engine.md](docs/curriculum-engine.md) and [docs/week-1-activities.md](docs/week-1-activities.md).
 
 The shared backend is the official publication authority. This static hub
-compares its local curriculum package version with
-`api.published_curriculum()` and only treats signed-in submissions as
-authoritative when the versions match. See
+loads `api.published_curriculum_package()` and only treats signed-in
+submissions as authoritative when that live package is in use. See
 [docs/publication-consumption.md](docs/publication-consumption.md).
 
 ## Backend trust boundary

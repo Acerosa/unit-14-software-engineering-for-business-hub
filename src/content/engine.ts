@@ -19,6 +19,20 @@ export type ContentEngine = {
   summariseDraft: (activity: unknown) => { status: string };
   renderPublicationStatus: (state: unknown) => string;
   getPublicationState?: () => unknown;
+  loadCurriculumRuntime: (options: {
+    appConfig: unknown;
+    config: unknown;
+    session?: unknown;
+    fetch?: typeof fetch;
+    loadBundled: () => Promise<unknown> | unknown;
+    validate: (pkg: unknown) => { valid: boolean; issues?: unknown[] };
+    storage?: Storage;
+  }) => Promise<{
+    source: "published" | "cache" | "bundled";
+    package: unknown;
+    state: { state?: string };
+    publication: unknown;
+  }>;
 };
 
 export type ResolvedWeek = {

@@ -135,7 +135,8 @@ body {
 }
 
 .publication-banner--error,
-.publication-banner--incompatible {
+.publication-banner--incompatible,
+.publication-banner--fallback {
   border-color: var(--lp-warning);
 }
 
