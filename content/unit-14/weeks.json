@@ -36,7 +36,7 @@
     "metadata": {
       "teachingWeek": 2,
       "title": "Data Type Conversion and Predefined Subroutines",
-      "status": "planned",
+      "status": "available",
       "phase": "teaching",
       "professionalPractice": ".gitignore and a named feature branch.",
       "route": "weeks/week-2/",
@@ -50,7 +50,11 @@
         "LO1"
       ],
       "assignment": "A1",
-      "sessions": []
+      "sessions": [
+        "week-2-session-1",
+        "week-2-session-2",
+        "week-2-independent-study"
+      ]
     }
   },
   {
@@ -313,7 +317,7 @@
       "title": "Building the Prototype and Using Debug Tools",
       "status": "planned",
       "phase": "teaching",
-      "professionalPractice": "Requirement \u2192 Issue \u2192 branch \u2192 commits \u2192 pull request \u2192 merge.",
+      "professionalPractice": "Requirement → Issue → branch → commits → pull request → merge.",
       "route": "weeks/week-13/",
       "weekCommencing": null,
       "releaseDate": null,

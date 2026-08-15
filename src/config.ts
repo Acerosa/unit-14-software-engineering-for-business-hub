@@ -2,7 +2,7 @@ export const APP_CONFIG = Object.freeze({
   hubId: "unit-14-software-engineering-for-business",
   hubVersion: "0.1.0",
   courseKey: "ocr-level-3-it",
-  curriculumVersion: "0.1.0",
+  curriculumVersion: "0.2.0",
   schemaVersion: "0.1.0",
   contentPackageVersion: "0.1.0",
   siteName: "Unit 14 Software Engineering for Business Hub",
@@ -14,7 +14,7 @@ export const APP_CONFIG = Object.freeze({
   learnerApiContractVersion: "0.1.0",
   submissionContractVersion: "0.1.0",
   academicYear: "2026/27",
-  currentPhase: "Foundation: Week 1 and assignment workspace",
+  currentPhase: "Foundation: Weeks 1–2 and assignment workspace",
   navigation: Object.freeze([
     Object.freeze({ id: "home", label: "Home", path: "" }),
     Object.freeze({ id: "learning", label: "Weeks", path: "weeks/" }),

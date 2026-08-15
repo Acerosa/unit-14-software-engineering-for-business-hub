@@ -63,5 +63,72 @@
         "week-1-homework-extension"
       ]
     }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-2-session-1",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 1",
+      "kind": "session",
+      "summary": "Theory and demonstration: Week 1 retrieval, conversion, predefined subroutines, formatted output and .gitignore.",
+      "sortOrder": 1,
+      "defaultOpen": true
+    },
+    "relationships": {
+      "week": "week-2",
+      "activities": [
+        "week-2-week-1-retrieval",
+        "week-2-conversion-problem",
+        "week-2-conversion-demonstration",
+        "week-2-predefined-subroutines",
+        "week-2-formatted-output",
+        "week-2-gitignore"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-2-session-2",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 2",
+      "kind": "session",
+      "summary": "Practical lab: conversion debugging, customer-data cleaning, a business calculation, Git branch guidance and Assignment 1 notes.",
+      "sortOrder": 2,
+      "defaultOpen": false
+    },
+    "relationships": {
+      "week": "week-2",
+      "activities": [
+        "week-2-review",
+        "week-2-conversion-debugging",
+        "week-2-customer-data-cleaning",
+        "week-2-business-calculation",
+        "week-2-git-branch-guidance",
+        "week-2-assignment-1-guide"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-2-independent-study",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Directed independent study",
+      "kind": "independent-study",
+      "summary": "Finish the business calculation, complete P1 conversion and subroutine notes, then optional stretch on try/except, truncation and cleaner branch history.",
+      "sortOrder": 3,
+      "defaultOpen": false
+    },
+    "relationships": {
+      "week": "week-2",
+      "activities": [
+        "week-2-homework"
+      ]
+    }
   }
 ]

@@ -19,7 +19,7 @@ function loadCore() {
 const local = {
   hubCode: "unit-14-software-engineering-for-business",
   courseKey: "ocr-level-3-it",
-  packageVersion: "0.1.0",
+  packageVersion: "0.2.0",
   schemaVersion: "0.1.0",
   contentPackageVersion: "0.1.0"
 };
@@ -32,21 +32,41 @@ function row(overrides) {
   return Object.assign({
     hub_code: "unit-14-software-engineering-for-business",
     course_key: "ocr-level-3-it",
-    package_version: "0.1.0",
+    package_version: "0.2.0",
     schema_version: "0.1.0",
     source_package_version: "0.1.0",
-    published_at: "2026-08-13T12:00:00Z"
+    published_at: "2026-08-13T12:00:00Z",
+    content_hash: "abc123",
+    package: {
+      schema: "lp.content.package",
+      schemaVersion: "0.1.0",
+      id: "unit-14-software-engineering-for-business-content",
+      version: "0.2.0",
+      hub: { id: "unit-14-software-engineering-for-business" },
+      curriculum: { metadata: { course: "ocr-level-3-it" } },
+      learningOutcomes: [],
+      assignments: [],
+      weeks: [],
+      sessions: [],
+      activities: [],
+      questions: [],
+      assets: []
+    }
   }, overrides);
 }
 
-test("MATCHED when local package version equals the published backend version", function () {
+function bundledPackage() {
+  return engine.loadPackageFromDirectory(path.join(__dirname, "../content/unit-14"));
+}
+
+test("PUBLISHED when the live package is current and compatible", function () {
   const state = engine.resolvePublicationState(local, [row()]);
-  assert.equal(state.state, "MATCHED");
+  assert.equal(state.state, "PUBLISHED");
   assert.equal(state.allowsSubmission, true);
-  assert.equal(state.publication.packageVersion, "0.1.0");
+  assert.equal(state.publication.packageVersion, "0.2.0");
   assert.doesNotMatch(engine.renderPublicationStatus(state), /content hash|RLS|RPC|schema validation/i);
   assert.match(engine.renderPublicationStatus(state), /visually-hidden/);
-  assert.match(engine.renderPublicationStatus(state), /data-publication-state="MATCHED"/);
+  assert.match(engine.renderPublicationStatus(state), /data-publication-state="PUBLISHED"/);
 });
 
 test("NO_PUBLICATION when the backend has no current row for this hub and course", function () {
@@ -56,21 +76,20 @@ test("NO_PUBLICATION when the backend has no current row for this hub and course
   assert.match(state.message, /not officially published/);
 });
 
-test("LOCAL_BEHIND when the backend published version is newer", function () {
-  const state = engine.resolvePublicationState(local, [row({ package_version: "0.1.1" })]);
-  assert.equal(state.state, "LOCAL_BEHIND");
-  assert.equal(state.allowsSubmission, false);
-  assert.match(engine.renderPublicationStatus(state), /Update pending/);
+test("a newer published version still renders from the database package", function () {
+  const state = engine.resolvePublicationState(local, [row({ package_version: "0.2.1" })]);
+  assert.equal(state.state, "PUBLISHED");
+  assert.equal(state.allowsSubmission, true);
+  assert.doesNotMatch(engine.renderPublicationStatus(state), /Update pending/);
 });
 
-test("LOCAL_AHEAD when the hub package is newer than the published version", function () {
+test("a bundled copy that is ahead does not block the published package", function () {
   const state = engine.resolvePublicationState(
-    Object.assign({}, local, { packageVersion: "0.2.0" }),
+    Object.assign({}, local, { packageVersion: "0.3.0" }),
     [row()]
   );
-  assert.equal(state.state, "LOCAL_AHEAD");
-  assert.equal(state.allowsSubmission, false);
-  assert.match(engine.renderPublicationStatus(state), /Preview/);
+  assert.equal(state.state, "PUBLISHED");
+  assert.equal(state.allowsSubmission, true);
 });
 
 test("INCOMPATIBLE when schema or content package versions are unsupported", function () {
@@ -94,11 +113,15 @@ test("ERROR when publication lookup fails", function () {
   assert.doesNotMatch(engine.renderPublicationStatus(state), /content hash|RLS|RPC/i);
 });
 
-test("lookup uses the approved api RPC and never asks for a package body", async function () {
+test("runtime fetch uses the published package RPC for this hub and course", async function () {
   const calls = [];
-  const rows = [row()];
-  const state = await engine.lookupPublicationState({
-    local: local,
+  const published = row({ package_version: "0.2.1" });
+  const runtime = await engine.loadCurriculumRuntime({
+    appConfig: {
+      hubId: local.hubCode,
+      courseKey: local.courseKey,
+      contentPackageVersion: "0.1.0"
+    },
     config: {
       projectUrl: "https://example.supabase.co",
       publishableKey: "sb_publishable_example"
@@ -107,35 +130,92 @@ test("lookup uses the approved api RPC and never asks for a package body", async
       calls.push({ url: url, options: options });
       return Promise.resolve({
         ok: true,
-        json: function () { return Promise.resolve(rows); }
+        json: function () { return Promise.resolve([published]); }
       });
-    }
+    },
+    loadBundled: bundledPackage,
+    validate: function () { return { valid: true }; },
+    storage: engine.createMemoryStorage()
   });
   assert.equal(calls.length, 1);
-  assert.equal(calls[0].url, "https://example.supabase.co/rest/v1/rpc/published_curriculum");
+  assert.equal(calls[0].url, "https://example.supabase.co/rest/v1/rpc/published_curriculum_package");
   assert.equal(calls[0].options.headers["Content-Profile"], "api");
-  assert.equal(calls[0].options.headers["Accept-Profile"], "api");
-  assert.equal(calls[0].options.body, "{}");
-  assert.doesNotMatch(JSON.stringify(calls[0]), /package\b|author|reviewer|notes/);
-  assert.equal(state.state, "MATCHED");
-  assert.equal(engine.getPublicationState().state, "MATCHED");
+  assert.match(calls[0].options.body, /p_hub_code/);
+  assert.match(calls[0].options.body, /unit-14-software-engineering-for-business/);
+  assert.doesNotMatch(JSON.stringify(calls[0]), /author|reviewer|question_marking|service_role/);
+  assert.equal(runtime.source, "published");
+  assert.equal(runtime.state.state, "PUBLISHED");
+  assert.equal(runtime.package.version, "0.2.1");
+  assert.equal(engine.getPublicationState().state, "PUBLISHED");
 });
 
-test("lookup failure becomes ERROR without throwing", async function () {
-  const state = await engine.lookupPublicationState({
-    local: local,
+test("invalid published packages fall back to the bundled snapshot", async function () {
+  const runtime = await engine.loadCurriculumRuntime({
+    appConfig: { hubId: local.hubCode, courseKey: local.courseKey },
+    config: {
+      projectUrl: "https://example.supabase.co",
+      publishableKey: "sb_publishable_example"
+    },
+    fetch: function () {
+      return Promise.resolve({
+        ok: true,
+        json: function () { return Promise.resolve([row({ package: { not: "a package" } })]); }
+      });
+    },
+    loadBundled: bundledPackage,
+    validate: function (pkg) {
+      return { valid: Boolean(pkg && pkg.hub && pkg.curriculum && pkg.weeks) };
+    },
+    storage: engine.createMemoryStorage()
+  });
+  assert.equal(runtime.source, "bundled");
+  assert.equal(runtime.state.state, "FALLBACK");
+  assert.equal(runtime.package.indexFile.version, "0.2.0");
+  assert.match(engine.renderPublicationStatus(runtime.state), /Saved copy/);
+});
+
+test("lookup failure uses the bundled snapshot instead of mixing versions", async function () {
+  const runtime = await engine.loadCurriculumRuntime({
+    appConfig: { hubId: local.hubCode, courseKey: local.courseKey },
     config: {
       projectUrl: "https://example.supabase.co",
       publishableKey: "sb_publishable_example"
     },
     fetch: function () {
       return Promise.resolve({ ok: false });
-    }
+    },
+    loadBundled: bundledPackage,
+    validate: function () { return { valid: true }; },
+    storage: engine.createMemoryStorage()
   });
-  assert.equal(state.state, "ERROR");
+  assert.equal(runtime.source, "bundled");
+  assert.equal(runtime.state.state, "FALLBACK");
+  assert.equal(runtime.allowsSubmission, undefined);
+  assert.equal(runtime.state.allowsSubmission, false);
 });
 
-test("authoritative submission is blocked unless the publication is MATCHED", async function () {
+test("cached packages are namespaced by hub and course", function () {
+  const storage = engine.createMemoryStorage();
+  const pkg = bundledPackage();
+  engine.writeCurriculumCache(storage, local.hubCode, local.courseKey, row(), pkg);
+  engine.writeCurriculumCache(storage, "unit-3-cyber-security", local.courseKey, row(), { id: "other" });
+  assert.equal(
+    engine.curriculumCacheKey(local.hubCode, local.courseKey),
+    "lp.curriculum.cache.v1:unit-14-software-engineering-for-business:ocr-level-3-it"
+  );
+  assert.notEqual(
+    engine.curriculumCacheKey(local.hubCode, local.courseKey),
+    engine.curriculumCacheKey("unit-3-cyber-security", local.courseKey)
+  );
+  const restored = engine.readCurriculumCache(storage, local.hubCode, local.courseKey, function () {
+    return { valid: true };
+  });
+  assert.equal(restored.hubId, local.hubCode);
+  assert.equal(restored.package.indexFile.version, "0.2.0");
+  assert.equal(storage.getItem("learning-platform.content.draft.v1:guest:week-1-baseline-diagnostic"), null);
+});
+
+test("authoritative submission is blocked unless the live published package is in use", async function () {
   loadCore();
   const captured = [];
   const activity = {
@@ -174,7 +254,7 @@ test("authoritative submission is blocked unless the publication is MATCHED", as
 
 test("public week rendering does not depend on publication lookup", function () {
   engine.setPublicationState(engine.resolvePublicationState(local, [], true));
-  const pkg = engine.loadPackageFromDirectory(path.join(__dirname, "../content/unit-14"));
+  const pkg = bundledPackage();
   const html = engine.renderWeek(engine.resolveWeek(pkg, "week-1"), { root: "../.." });
   assert.match(html, /Session 1/);
   assert.match(html, /data-lp-block="single-choice"/);
@@ -200,18 +280,15 @@ test("blocked submission preserves the existing draft store", function () {
   assert.equal(restored.activityId, activity.id);
 });
 
-test("local package version and Week 1 activity versions are separate", function () {
-  const pkg = engine.loadPackageFromDirectory(path.join(__dirname, "../content/unit-14"));
+test("curriculum package version and Week 1 activity versions are separate", function () {
+  const pkg = bundledPackage();
   const context = engine.localPublicationContext(pkg, {
     hubId: "unit-14-software-engineering-for-business",
     courseKey: "ocr-level-3-it",
-    curriculumVersion: pkg.version,
-    schemaVersion: pkg.schemaVersion,
     contentPackageVersion: "0.1.0"
   });
   const diagnostic = pkg.activities.filter(function (item) { return item.id === "week-1-baseline-diagnostic"; })[0];
-  assert.equal(context.packageVersion, "0.1.0");
-  assert.equal(context.schemaVersion, "0.1.0");
+  assert.equal(context.packageVersion, "0.2.0");
   assert.equal(diagnostic.version, "0.1.0");
   assert.equal(diagnostic.id, "week-1-baseline-diagnostic");
 });
@@ -222,7 +299,7 @@ test("historical progress reads are unchanged by publication state", function ()
     + fs.readFileSync(path.join(__dirname, "../src/App.tsx"), "utf8")
     + fs.readFileSync(path.join(__dirname, "../src/hooks/useContentPackage.ts"), "utf8");
   assert.doesNotMatch(source, /my_attempts|invalidate|delete.*attempt/i);
-  assert.match(source, /published_curriculum/);
-  assert.match(source, /lp:publication-resolved/);
+  assert.match(source, /published_curriculum_package/);
   assert.doesNotMatch(source, /createClient\(/);
+  assert.doesNotMatch(source, /service_role|SERVICE_ROLE/);
 });

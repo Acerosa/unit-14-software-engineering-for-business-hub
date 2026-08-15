@@ -3,11 +3,12 @@ import { getContentEngine } from "../content/engine";
 import { createSitePath } from "../paths";
 import type { AssignmentsAdapter, CurriculumAdapter } from "../content/engine";
 
-function week1Label(pkg: unknown): string {
+function stageLabel(pkg: unknown, weekNumber: number): string {
   const engine = getContentEngine();
-  const week = engine.resolveWeek(pkg, "week-1");
+  const week = engine.resolveWeek(pkg, `week-${weekNumber}`);
+  if (!week || !(week.sessions || []).length) return "Upcoming";
   let practised = false;
-  (week?.sessions || []).forEach((session) => {
+  (week.sessions || []).forEach((session) => {
     (session.activities || []).forEach((resolved) => {
       const summary = engine.summariseDraft(resolved.document);
       if (summary.status === "practised" || summary.status === "started") practised = true;
@@ -55,7 +56,7 @@ export function AssignmentPage({
         <h2 id="journey-heading">Learning journey</h2>
         <ol className="journey-list">
           {assignment.stages.map((stage) => {
-            const label = Number(stage.week) === 1 ? week1Label(pkg) : "Upcoming";
+            const label = stageLabel(pkg, Number(stage.week));
             const tone = label === "Upcoming" || label === "Not started" ? "planned" : "in-progress";
             return (
               <li key={stage.title}>

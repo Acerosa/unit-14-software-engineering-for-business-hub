@@ -110,10 +110,10 @@ GitHub Pages has no bundler. The hub vendors `learning-platform-content.iife.js`
 ## Published curriculum consumption
 
 The backend decides which curriculum **package version** is officially
-published. This hub still renders `content/unit-14/` and compares
-`APP_CONFIG.curriculumVersion` with `api.published_curriculum()`.
+published. This hub fetches `api.published_curriculum_package()` at runtime,
+validates it, and renders it. `content/unit-14/` is fallback/provenance only.
 
-Authoritative submission is allowed only in the `MATCHED` state. Drafts stay
+Authoritative submission is allowed only in the `PUBLISHED` state. Drafts stay
 on the device in every other state. Historical attempts are not rewritten.
 
 See [Publication consumption](publication-consumption.md) for states, metadata

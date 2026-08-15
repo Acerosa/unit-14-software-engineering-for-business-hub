@@ -40,8 +40,11 @@ test("week to learning-outcome mapping follows the Scheme of Learning", function
   assert.equal(curriculum.getWeek(1).title, "Programming for Business, Variables and Data Types");
   assert.equal(curriculum.getWeek(1).status, "available");
   assert.equal(curriculum.getWeek(1).assignment, "A1");
-  assert.ok(Array.isArray(curriculum.getWeek(1).sessions));
-  assert.equal(curriculum.getWeek(1).sessions.length, 3);
+  assert.equal(curriculum.getWeek(2).title, "Data Type Conversion and Predefined Subroutines");
+  assert.equal(curriculum.getWeek(2).status, "available");
+  assert.equal(curriculum.getWeek(2).assignment, "A1");
+  assert.ok(Array.isArray(curriculum.getWeek(2).sessions));
+  assert.equal(curriculum.getWeek(2).sessions.length, 3);
 });
 
 test("assignment registry maps criteria without awarding grades", function () {
