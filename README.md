@@ -2,7 +2,10 @@
 
 Learner hub for **OCR Level 3 IT Unit 14 – Software Engineering for Business** (H/507/5017).
 
-This is a new, unverified Learning Platform hub. It is not LHDS-certified and is not a production release.
+This repository is the **current reference** learner hub in the Contract-First
+Modular Hub Architecture (`learning-platform-backend` `docs/architecture.md`).
+It loads the published teaching package from Supabase at runtime. The bundled
+`content/unit-14/` snapshot is fallback only.
 
 ## Platform role
 
@@ -25,12 +28,12 @@ Reviewed build-time packages (see [docs/PROVENANCE.md](docs/PROVENANCE.md)):
 
 - `@learning-platform/core` **0.2.0** (`v0.2.0`)
 - `@learning-platform/content` **0.1.0** (`v0.1.0`)
-- `@learning-platform/ui` **0.1.0** (`v0.1.0`) from [Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui)
+- `@learning-platform/ui` **0.1.4** (`v0.1.4`) from [Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui)
 - Supabase JS **2.112.3**
 
 Vendored IIFE copies under `vendor/` remain for Node curriculum tests. The GitHub Pages bundle is produced by Vite from the `file:` packages.
 
-The hub is registered in the local shared backend as testing/active, with Week 1 catalogue publication for delivery, submission and progress. Hosted Supabase deployment is not authorised by this foundation.
+The hub is registered in the shared backend. Learners load the published teaching package from hosted Supabase at runtime; GitHub Pages hosts the application shell only.
 
 Learner chrome uses `@learning-platform/ui` React components on Core 0.2.0 contracts (`HubShell`, `WeekView`, activity cards). Curriculum JSON and activity-block rendering stay in `@learning-platform/content`. See [docs/shared-hub-ui.md](docs/shared-hub-ui.md) and [docs/react-vite.md](docs/react-vite.md).
 

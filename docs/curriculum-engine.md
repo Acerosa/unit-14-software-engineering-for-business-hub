@@ -73,6 +73,8 @@ Other registered types (for example multiple-choice, matching, debugging-exercis
 
 Interactive blocks stay generic. Categories, prompts, starter code and checks come from content JSON. The renderer never branches on Unit 14, week number, or assignment id.
 
+Week pages compose those blocks in React: `@learning-platform/ui` `InteractiveActivity` owns catalogue types (`single-choice`, `classification`, `short-response`, `reflection`). Remaining types — including `code-editor` and `python-exercise` — render with Content `renderBlock` HTML. `bindInteractive` skips React-owned roots and writes React drafts from `lp-block-result`. Short-response / reflection use catalogue minChars defaults (200 / 500) unless a block sets `content.minChars`.
+
 `python-exercise` extends the generic code editor with instructions, hints, expected constructs and optional regex checks. It does **not** execute Python in the browser. That matches the T Level hub’s deterministic checker: required/prohibited patterns, no `eval`, no remote runner.
 
 ## Learner state

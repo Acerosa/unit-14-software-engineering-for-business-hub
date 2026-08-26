@@ -34,8 +34,12 @@ It does not own identity, marks, enrolments, RLS, administration or GitHub itsel
 - `api.registration_options()`
 - `api.complete_learner_onboarding(...)`
 - `api.submit_attempt(...)`
+- `api.published_curriculum_package(hub, course)` (runtime teaching package)
 
-This hub is prepared to use those services through Core. It does not submit attempts in the foundation release because Week 1 activities are still planned shells.
+Authoritative submission is allowed only when the hub is rendering the live
+published package (`PUBLISHED`). The bundled `content/unit-14/` snapshot is
+fallback only. Platform-wide architecture is documented in
+`learning-platform-backend` `docs/architecture.md`.
 
 ## Admin responsibility
 
@@ -48,16 +52,17 @@ Vite builds a multi-page static site (`base: './'`). Each public route is a dire
 ```text
 theme bootstrap
   -> hub and public Supabase configuration
-  -> @learning-platform/core createPlatform
+  -> @learning-platform/core createPlatform (including platform.curriculum)
+  -> PublishedCurriculumService.loadLatest(hubCode, courseKey)
   -> @learning-platform/ui HubShell
-  -> Content loadPackage / resolveWeek / renderActivity / bindInteractive
+  -> Content renderers
 ```
 
 Shared packages are `file:` siblings pinned in CI to reviewed tags. See [PROVENANCE.md](PROVENANCE.md). GitHub Pages serves only the static `dist/` output.
 
 ## Shared learner UI
 
-`src/App.tsx` mounts `@learning-platform/ui` `HubShell`, `LearnerHeader`, `WeekView` and `ActivityCard`. Core `createAccountDialog` remains the account modal. Week pages map canonical Content `resolveWeek()` through `src/content/week-presentation.ts`. Activity interiors still come from Content `renderActivity` + `bindInteractive`.
+`src/App.tsx` mounts `@learning-platform/ui` `HubShell`, `LearnerHeader`, `WeekView` and `ActivityCard`. Core `createAccountDialog` remains the account modal. Week pages map canonical Content `resolveWeek()` through `src/content/week-presentation.ts`. Catalogue types (`single-choice`, `classification`, `short-response`, `reflection`) render through `InteractiveActivity`. Prose, `code-editor` and `python-exercise` stay Content HTML via `renderBlock` fallback; `bindInteractive` persists HTML drafts and React results via `lp-block-result`. A docked `PracticeProgressPanel` scores MCQ/classification only; Assignment 1 StatusBadge copy (“not P1 achieved”) stays hub-owned.
 
 Assignment workspace copy, P/M/D disclaimers and the project journey remain hub-owned.
 
@@ -81,7 +86,10 @@ Core 0.2.0 honours `navigationMode: "as-supplied"`. Unit 14 keeps Home, Weeks, A
 
 ## Submission boundary
 
-No activity in this foundation submits evidence. When activities are added, they must use Core evidence builders and `platform.submission`, or a documented compatibility adapter if contract 0.1.0 still requires client formative scores. The browser must not send identity or assignment IDs.
+Week 1 and Week 2 activities capture evidence locally and submit through Core
+when the hub is rendering the live published package (`PUBLISHED`). Fallback
+copies disable authoritative submission. Activities use Core evidence builders
+and `platform.submission`. The browser must not send identity or assignment IDs.
 
 ## Content architecture
 
