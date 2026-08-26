@@ -1,10 +1,96 @@
-import { LoadingState, StatusBadge, WeekView } from "@learning-platform/ui";
-import { useEffect, useMemo, useRef } from "react";
+import {
+  InteractiveActivity,
+  LoadingState,
+  PracticeProgressPanel,
+  StatusBadge,
+  WeekView,
+  questionIdFor,
+  type ActivityBlockDocument,
+  type ActivityDocument,
+  type ActivityResult,
+  type ActivityScore
+} from "@learning-platform/ui";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { APP_CONFIG } from "../config";
-import { getContentEngine } from "../content/engine";
-import { fromResolvedWeek } from "../content/week-presentation";
+import { getContentEngine, type CurriculumAdapter, type ResolvedWeek } from "../content/engine";
+import { fromResolvedWeek, type ResolvedActivity } from "../content/week-presentation";
 import { createSitePath } from "../paths";
-import type { CurriculumAdapter } from "../content/engine";
+
+function normaliseBlockType(value: string | undefined): string {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/_/g, "-");
+}
+
+function persistableResponse(block: ActivityBlockDocument, result: ActivityResult): unknown {
+  const type = normaliseBlockType(block.type);
+  const responses = result.responses;
+  if (type === "single-choice" || type === "option-cards") {
+    if (responses && typeof responses === "object" && !Array.isArray(responses) && "optionId" in responses) {
+      const optionId = (responses as { optionId?: string | null }).optionId;
+      return optionId == null ? "" : optionId;
+    }
+    return responses == null ? "" : responses;
+  }
+  if (type === "short-response" || type === "reflection") {
+    if (typeof responses === "string") return responses.trim();
+    if (responses == null) return "";
+    return String(responses).trim();
+  }
+  return responses && typeof responses === "object" ? responses : {};
+}
+
+function activityDocument(resolved: ResolvedActivity): ActivityDocument {
+  return resolved.document as ActivityDocument;
+}
+
+function isScorableReactBlock(block: ActivityBlockDocument): boolean {
+  const type = normaliseBlockType(block.type);
+  return type === "single-choice" || type === "option-cards" || type === "classification";
+}
+
+function blockScorableTotal(block: ActivityBlockDocument): number {
+  const type = normaliseBlockType(block.type);
+  if (type === "single-choice" || type === "option-cards") return 1;
+  if (type === "classification") return ((block.content && block.content.items) || []).length;
+  return 0;
+}
+
+function weekScorableTotal(week: ResolvedWeek | null): number {
+  if (!week) return 0;
+  let total = 0;
+  (week.sessions || []).forEach((session) => {
+    (session.activities || []).forEach((resolved) => {
+      const activity = activityDocument(resolved as ResolvedActivity);
+      (activity.blocks || []).forEach((block) => {
+        total += blockScorableTotal(block);
+      });
+    });
+  });
+  return total;
+}
+
+function sumScores(scores: Record<string, ActivityScore>): ActivityScore {
+  return Object.values(scores).reduce(
+    (total, score) => ({
+      correct: total.correct + score.correct,
+      total: total.total + score.total
+    }),
+    { correct: 0, total: 0 }
+  );
+}
+
+function draftResponsesFor(activity: ActivityDocument): Record<string, unknown> {
+  const engine = getContentEngine();
+  if (!engine.createDraftStore) return {};
+  try {
+    const draft = engine.createDraftStore(activity).load();
+    return draft?.responses && typeof draft.responses === "object" ? draft.responses : {};
+  } catch {
+    return {};
+  }
+}
 
 function stageStatus(stage: { week: number; title: string }, pkg: unknown): string {
   const engine = getContentEngine();
@@ -33,23 +119,69 @@ export function WeekPage({
 }) {
   const engine = getContentEngine();
   const mountRef = useRef<HTMLDivElement>(null);
+  const scoresRef = useRef<Record<string, ActivityScore>>({});
+  const [practiceScore, setPracticeScore] = useState<ActivityScore>({ correct: 0, total: 0 });
   const resolved = pkg ? engine.resolveWeek(pkg, weekId) : null;
+  const scorableTotal = useMemo(() => weekScorableTotal(resolved), [resolved]);
+
+  useEffect(() => {
+    scoresRef.current = {};
+    setPracticeScore({ correct: 0, total: 0 });
+  }, [weekId]);
+
+  const recordPracticeResult = useCallback((result: ActivityResult, block: ActivityBlockDocument) => {
+    if (!result.completed || !result.score || result.score.total <= 0) return;
+    if (!isScorableReactBlock(block)) return;
+    scoresRef.current = {
+      ...scoresRef.current,
+      [questionIdFor(block)]: result.score
+    };
+    setPracticeScore(sumScores(scoresRef.current));
+  }, []);
+
   const presentation = useMemo(() => {
     if (!resolved) return null;
     return fromResolvedWeek(resolved, {
       engine,
       root,
       weeks: weeks || [],
-      features: APP_CONFIG.ui
+      features: APP_CONFIG.ui,
+      renderActivity: (activityResolved: ResolvedActivity) => {
+        const activity = activityDocument(activityResolved);
+        return {
+          children: (
+            <InteractiveActivity
+              activity={activity}
+              initialResponses={draftResponsesFor(activity)}
+              renderFallback={(block) => (
+                <div dangerouslySetInnerHTML={{ __html: engine.renderBlock(block) }} />
+              )}
+              onResult={(result: ActivityResult, block: ActivityBlockDocument) => {
+                const article = mountRef.current?.querySelector(`[data-lp-activity="${activity.id}"]`);
+                article?.dispatchEvent(new CustomEvent("lp-block-result", {
+                  bubbles: true,
+                  detail: {
+                    questionId: questionIdFor(block),
+                    response: persistableResponse(block, result),
+                    completed: result.completed
+                  }
+                }));
+                recordPracticeResult(result, block);
+              }}
+            />
+          )
+        };
+      }
     });
-  }, [engine, resolved, root, weeks]);
+  }, [engine, recordPracticeResult, resolved, root, weeks]);
 
-  useEffect(() => {
-    if (!pkg || !mountRef.current) return;
+  // Re-bind after every commit so React fallback HTML retains draft listeners.
+  useLayoutEffect(() => {
+    if (!pkg || !mountRef.current || !presentation) return;
     engine.bindInteractive(mountRef.current, pkg, {
       sourcePage: window.location.pathname
     });
-  }, [engine, pkg, presentation]);
+  });
 
   if (!pkg) return <LoadingState message="Loading this week's sessions" />;
   if (!resolved || !presentation) {
@@ -57,6 +189,14 @@ export function WeekPage({
   }
 
   const showAssignmentProgress = Boolean(resolved.assignment && (resolved.sessions || []).length);
+  const weekNumber = resolved.document.metadata.teachingWeek;
+  const weekBadge = `Week ${weekNumber}: ${resolved.document.metadata.title}`;
+  const summaryScore = {
+    correct: practiceScore.correct,
+    total: Math.max(scorableTotal, practiceScore.total, 1)
+  };
+  const coverage = summaryScore.total > 0 ? practiceScore.total / summaryScore.total : 0;
+  const practiceComplete = scorableTotal > 0 && practiceScore.total >= scorableTotal;
 
   return (
     <div data-lp-mount="" ref={mountRef}>
@@ -86,6 +226,20 @@ export function WeekPage({
           ) : null}
         </section>
       ) : null}
+      {scorableTotal > 0 ? (
+        <PracticeProgressPanel
+          title="Practice progress"
+          badge={weekBadge}
+          score={summaryScore}
+          progress={coverage}
+          completed={practiceComplete}
+          message="Check scored activities to update. Formative practice only — not assignment evidence and not P1."
+          defaultCollapsed
+        />
+      ) : null}
     </div>
   );
 }
+
+/** Exported for focused tests — mirrors the WeekPage draft payload mapping. */
+export { persistableResponse };

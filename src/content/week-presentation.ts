@@ -1,4 +1,5 @@
-import type { WeekViewProps } from "@learning-platform/ui";
+import type { ReactNode } from "react";
+import type { WeekActivity, WeekViewProps } from "@learning-platform/ui";
 import type { ContentEngine, ResolvedWeek } from "./engine";
 import { createSitePath } from "../paths";
 
@@ -6,6 +7,17 @@ type WeekSummary = {
   teachingWeek: number;
   title: string;
   route: string;
+};
+
+export type ResolvedActivity = {
+  document: {
+    id: string;
+    version?: string;
+    metadata?: { title?: string; summary?: string; status?: string };
+    blocks?: Array<{ id: string; type: string; content?: Record<string, unknown> }>;
+  };
+  questions?: unknown[];
+  assets?: unknown[];
 };
 
 function outcomeValue(outcomes: ResolvedWeek["learningOutcomes"]): string {
@@ -38,6 +50,7 @@ export function fromResolvedWeek(
       showAssignmentContext?: boolean;
       showIndependentStudy?: boolean;
     };
+    renderActivity?: (activity: ResolvedActivity) => WeekActivity | { children: ReactNode } | { html: string };
   }
 ): WeekViewProps {
   const week = resolved.document;
@@ -85,9 +98,13 @@ export function fromResolvedWeek(
       kind: session.document.metadata.kind,
       summary: session.document.metadata.summary,
       defaultOpen: session.document.metadata.defaultOpen,
-      activities: (session.activities || []).map((activity) => ({
-        html: options.engine.renderActivity(activity, { root: options.root })
-      }))
+      activities: (session.activities || []).map((activity) => {
+        const resolvedActivity = activity as ResolvedActivity;
+        if (options.renderActivity) return options.renderActivity(resolvedActivity);
+        return {
+          html: options.engine.renderActivity(resolvedActivity, { root: options.root })
+        };
+      })
     })),
     previousWeek: weekLink(neighbour(weeks, meta.teachingWeek, -1), options.root),
     nextWeek: weekLink(neighbour(weeks, meta.teachingWeek, 1), options.root),

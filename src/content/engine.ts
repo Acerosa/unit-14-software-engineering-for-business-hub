@@ -11,7 +11,12 @@ export type ContentEngine = {
   browserIo: () => unknown;
   resolveWeek: (pkg: unknown, weekId: string) => ResolvedWeek | null;
   renderActivity: (activity: unknown, options?: { root?: string }) => string;
-  bindInteractive: (root: ParentNode | null, pkg: unknown, options?: { sourcePage?: string }) => void;
+  renderBlock: (block: unknown, options?: { root?: string }) => string;
+  bindInteractive: (
+    root: ParentNode | null,
+    pkg: unknown,
+    options?: { sourcePage?: string; storage?: Storage; learnerKey?: string; platform?: unknown }
+  ) => void;
   validatePackage: (pkg: unknown) => { valid: boolean; issues?: unknown[] };
   formatIssues: (issues: unknown) => string;
   adaptCurriculum: (pkg: unknown) => CurriculumAdapter;
@@ -19,6 +24,13 @@ export type ContentEngine = {
   summariseDraft: (activity: unknown) => { status: string };
   renderPublicationStatus: (state: unknown) => string;
   getPublicationState?: () => unknown;
+  createDraftStore?: (
+    activity: { id: string; version?: string },
+    options?: { storage?: Storage; learnerKey?: string }
+  ) => {
+    load: () => { responses: Record<string, unknown>; activityId: string };
+    save: (draft: unknown) => unknown;
+  };
   loadCurriculumRuntime: (options: {
     appConfig: unknown;
     config: unknown;
@@ -58,7 +70,7 @@ export type ResolvedWeek = {
   learningOutcomes?: Array<{ id: string; metadata?: { title?: string } }>;
   sessions?: Array<{
     document: { id: string; metadata: { title: string; kind: string; summary?: string; defaultOpen?: boolean } };
-    activities?: Array<{ document: unknown }>;
+    activities?: Array<{ document: unknown; questions?: unknown[]; assets?: unknown[] }>;
   }>;
 };
 

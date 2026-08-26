@@ -95,5 +95,6 @@ Published Week 1 activity keys are registered in the shared backend. See
 - No GitHub API / Classroom client
 - No Admin authoring UI
 - No automatic P1 grading
+- Short-response / reflection use UI catalogue minChars defaults (200 / 500); no per-block overrides in this package
 - Formative answers are visible in JSON
 - OCR Assignments 1–4 remain hub-owned; the backend has no OCR assignment catalogue

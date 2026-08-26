@@ -10,7 +10,7 @@ GitHub Actions builds a static `dist/` and publishes it to GitHub Pages. There i
 2. Check out reviewed siblings into a workspace:
    - `Acerosa/learning-platform-core` @ `v0.2.0` → `learning-platform-core`
    - `Acerosa/learning-platform-content` @ `v0.1.0` → `learning-platform-content`
-   - `Acerosa/Acerosa-learning-platform-ui` @ `v0.1.0` → `learning-platform-ui`
+   - `Acerosa/Acerosa-learning-platform-ui` @ `v0.1.4` → `learning-platform-ui`
    - `Acerosa/learning-platform-backend` @ `f21dc41` → `learning-platform-backend` (manifest validator only)
 3. Node 22, `npm ci`
 4. `npm test` (Node tests, Vitest, Vite production build, post-build route checks)

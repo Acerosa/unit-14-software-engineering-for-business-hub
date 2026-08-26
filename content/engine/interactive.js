@@ -11,6 +11,23 @@
     return (block.content && block.content.questionId) || block.id;
   }
 
+  function shouldSkipHtmlBlockBind(blockRoot, type) {
+    // React OptionCards / Classification / TextResponse own their UX; do not restore or mark via HTML.
+    if (blockRoot.getAttribute("data-lp-block") === "option-cards") return true;
+    // HTML classification uses [data-lp-item] selects; React classification does not.
+    if (type === "classification" && !blockRoot.querySelector("[data-lp-item], [data-lp-sort-board]")) {
+      return true;
+    }
+    // React text already mounts char-count / minChars; HTML text does not.
+    if (
+      (type === "short-response" || type === "reflection") &&
+      blockRoot.querySelector("[data-lp-char-count], textarea[data-lp-min-chars]")
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   function collectResponse(blockRoot, block) {
     var type = ns.normaliseBlockType(block.type);
     var selected;
@@ -116,19 +133,45 @@
     }
 
     activityInteractiveBlocks(activity).forEach(function (block) {
+      var type = ns.normaliseBlockType(block.type);
       var blockRoot = article.querySelector('[data-lp-block-id="' + block.id + '"]');
       var qid = questionId(block);
       if (!blockRoot) return;
+      if (shouldSkipHtmlBlockBind(blockRoot, type)) return;
       restoreResponse(blockRoot, block, draft.responses[qid]);
       if (draft.checked[qid]) setFeedback(blockRoot, block, draft.responses[qid], true);
     });
     updateActivityStatus(article, activity, draft);
+
+    article.addEventListener("lp-block-result", function (event) {
+      var detail = event.detail || {};
+      var qid = detail.questionId;
+      if (!qid) return;
+      if (detail.completed === false) {
+        if (detail.response == null || detail.response === "") delete draft.responses[qid];
+        else draft.responses[qid] = detail.response;
+        draft.checked[qid] = false;
+        persist();
+        return;
+      }
+      draft.responses[qid] = detail.response;
+      if (detail.completed) draft.checked[qid] = true;
+      persist();
+      if (detail.completed) {
+        ns.submitActivityDraft(activity, draft, Object.assign({}, options, {
+          publication: ns.getPublicationState()
+        }));
+      }
+    });
 
     article.addEventListener("change", function (event) {
       var blockRoot = event.target.closest("[data-lp-block-id]");
       var block;
       var qid;
       if (!blockRoot) return;
+      if (shouldSkipHtmlBlockBind(blockRoot, ns.normaliseBlockType(
+        (blockById(activity, blockRoot.getAttribute("data-lp-block-id")) || {}).type
+      ))) return;
       block = blockById(activity, blockRoot.getAttribute("data-lp-block-id"));
       if (!block) return;
       qid = questionId(block);
@@ -143,16 +186,25 @@
       if (!blockRoot || !event.target.matches("[data-lp-response]")) return;
       block = blockById(activity, blockRoot.getAttribute("data-lp-block-id"));
       if (!block) return;
+      if (shouldSkipHtmlBlockBind(blockRoot, ns.normaliseBlockType(block.type))) return;
       qid = questionId(block);
       draft.responses[qid] = collectResponse(blockRoot, block);
       persist();
     });
 
     article.addEventListener("click", function (event) {
-      var checkId = event.target.getAttribute("data-lp-check");
-      var resetBlockId = event.target.getAttribute("data-lp-reset-block");
-      var copyId = event.target.getAttribute("data-lp-copy");
-      var resetActivity = event.target.getAttribute("data-lp-reset-activity");
+      var target = event.target;
+      if (target && target.nodeType === 3) target = target.parentElement;
+      if (!target || typeof target.closest !== "function") return;
+
+      var checkEl = target.closest("[data-lp-check]");
+      var resetBlockEl = target.closest("[data-lp-reset-block]");
+      var copyEl = target.closest("[data-lp-copy]");
+      var resetActivityEl = target.closest("[data-lp-reset-activity]");
+      var checkId = checkEl && checkEl.getAttribute("data-lp-check");
+      var resetBlockId = resetBlockEl && resetBlockEl.getAttribute("data-lp-reset-block");
+      var copyId = copyEl && copyEl.getAttribute("data-lp-copy");
+      var resetActivity = resetActivityEl && resetActivityEl.getAttribute("data-lp-reset-activity");
       var block;
       var blockRoot;
       var qid;
@@ -162,6 +214,7 @@
         block = blockById(activity, checkId);
         blockRoot = article.querySelector('[data-lp-block-id="' + checkId + '"]');
         if (!block || !blockRoot) return;
+        if (shouldSkipHtmlBlockBind(blockRoot, ns.normaliseBlockType(block.type))) return;
         qid = questionId(block);
         draft.responses[qid] = collectResponse(blockRoot, block);
         draft.checked[qid] = true;
@@ -175,7 +228,9 @@
       if (resetBlockId) {
         block = blockById(activity, resetBlockId);
         blockRoot = article.querySelector('[data-lp-block-id="' + resetBlockId + '"]');
-        field = blockRoot && blockRoot.querySelector("[data-lp-response]");
+        if (!block || !blockRoot) return;
+        if (shouldSkipHtmlBlockBind(blockRoot, ns.normaliseBlockType(block.type))) return;
+        field = blockRoot.querySelector("[data-lp-response]");
         if (field) {
           field.value = field.defaultValue;
           qid = questionId(block);
@@ -198,12 +253,15 @@
         activityInteractiveBlocks(activity).forEach(function (item) {
           var rootEl = article.querySelector('[data-lp-block-id="' + item.id + '"]');
           var responseField;
+          var type;
           if (!rootEl) return;
-          if (ns.normaliseBlockType(item.type) === "single-choice") {
+          type = ns.normaliseBlockType(item.type);
+          if (shouldSkipHtmlBlockBind(rootEl, type)) return;
+          if (type === "single-choice") {
             Array.prototype.forEach.call(rootEl.querySelectorAll("[data-lp-response]"), function (input) {
               input.checked = false;
             });
-          } else if (ns.normaliseBlockType(item.type) === "classification") {
+          } else if (type === "classification") {
             Array.prototype.forEach.call(rootEl.querySelectorAll("[data-lp-item]"), function (select) {
               select.selectedIndex = 0;
             });
@@ -223,7 +281,10 @@
     Array.prototype.forEach.call(rootEl.querySelectorAll("[data-lp-activity]"), function (article) {
       var activityId = article.getAttribute("data-lp-activity");
       var activity = (pkg.activities || []).filter(function (item) { return item.id === activityId; })[0];
-      if (activity) bindActivity(article, activity, options || {});
+      if (!activity) return;
+      if (article.getAttribute("data-lp-bound") === activityId) return;
+      article.setAttribute("data-lp-bound", activityId);
+      bindActivity(article, activity, options || {});
     });
   };
 })(typeof globalThis !== "undefined" ? globalThis : this);
