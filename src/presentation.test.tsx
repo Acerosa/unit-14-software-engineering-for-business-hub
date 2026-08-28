@@ -1,15 +1,23 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import pkg from "./test-support/unit14-package.cjs";
+import type { ContentPackage } from "./curriculum/from-package";
+import { configureBundledPackage } from "./curriculum/runtime-weeks";
 import { HomePage } from "./pages/HomePage";
 import { WeekPage, persistableResponse } from "./pages/WeekPage";
 import { breadcrumbs } from "./page-copy";
 
+const bundled = pkg as ContentPackage;
+
+beforeAll(() => {
+  configureBundledPackage(bundled);
+});
+
 afterEach(cleanup);
 
 describe("Unit 14 presentation", () => {
-  it("keeps Week 1, Week 2 and Assignment 1 as the home starting points", () => {
-    render(<HomePage root="." />);
+  it("keeps Week 1, Week 2 and Assignment 1 as the home starting points when published available", () => {
+    render(<HomePage root="." livePackage={bundled} />);
     const week1 = screen.getByRole("link", { name: "Open Week 1" });
     const week2 = screen.getByRole("link", { name: "Open Week 2" });
     const assignment = screen.getByRole("link", { name: "Open Assignment 1 workspace" });
