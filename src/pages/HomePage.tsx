@@ -1,7 +1,34 @@
-import { StatusBadge } from "@learning-platform/ui";
+import { LoadingState, StatusBadge, WeekAccessLink } from "@learning-platform/ui";
+import type { ContentPackage } from "../curriculum/from-package";
+import { unit14RuntimeWeeks } from "../curriculum/runtime-weeks";
 import { createSitePath } from "../paths";
 
-export function HomePage({ root }: { root: string }) {
+const HOME_WEEK_COPY: Record<number, { description: string }> = {
+  1: {
+    description: "Programming for Business, Variables and Data Types. Supports LO1 and Assignment 1 / P1."
+  },
+  2: {
+    description: "Data Type Conversion and Predefined Subroutines. Supports LO1 and Assignment 1 / P1."
+  }
+};
+
+function homeBadgeLabel(week: { available: boolean; status: string }) {
+  if (week.available) return "Available";
+  return week.status === "archived" ? "Archived" : "Planned";
+}
+
+export function HomePage({
+  root,
+  livePackage
+}: {
+  root: string;
+  livePackage?: ContentPackage | null;
+}) {
+  const weeks = unit14RuntimeWeeks(livePackage).filter((week) => week.teachingWeek <= 2);
+  if (!weeks.length) {
+    return <LoadingState message="Loading the weekly teaching sequence." />;
+  }
+
   return (
     <>
       <section className="panel" aria-labelledby="welcome-heading">
@@ -12,18 +39,30 @@ export function HomePage({ root }: { root: string }) {
       <section aria-labelledby="start-heading">
         <h2 id="start-heading">Where to start</h2>
         <div className="card-grid">
-          <article className="hub-card">
-            <StatusBadge status="available" />
-            <h3>Week 1</h3>
-            <p>Programming for Business, Variables and Data Types. Supports LO1 and Assignment 1 / P1.</p>
-            <a className="card-link" href={createSitePath(root, "weeks/week-1/")}>Open Week 1</a>
-          </article>
-          <article className="hub-card">
-            <StatusBadge status="available" />
-            <h3>Week 2</h3>
-            <p>Data Type Conversion and Predefined Subroutines. Supports LO1 and Assignment 1 / P1.</p>
-            <a className="card-link" href={createSitePath(root, "weeks/week-2/")}>Open Week 2</a>
-          </article>
+          {weeks.map((week) => {
+            const copy = HOME_WEEK_COPY[week.teachingWeek];
+            return (
+              <article className="hub-card" key={week.id}>
+                <StatusBadge
+                  status={week.available ? "available" : (week.status || "planned")}
+                  label={homeBadgeLabel(week)}
+                />
+                <h3>{`Week ${week.teachingWeek}`}</h3>
+                <p>{copy?.description || week.title}</p>
+                <WeekAccessLink
+                  week={week}
+                  href={createSitePath(root, `weeks/${week.id}/`)}
+                  className="card-link"
+                  lockedClassName="card-link card-link--locked"
+                  renderLink={({ href, children, className }) => (
+                    <a className={className} href={href}>{children}</a>
+                  )}
+                >
+                  {`Open Week ${week.teachingWeek}`}
+                </WeekAccessLink>
+              </article>
+            );
+          })}
           <article className="hub-card">
             <StatusBadge status="available" />
             <h3>Assignment 1</h3>

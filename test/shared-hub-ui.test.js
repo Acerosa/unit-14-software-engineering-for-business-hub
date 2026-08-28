@@ -61,7 +61,8 @@ test("weeks index and assignment context remain visible through shared cards", f
   const weeks = read("weeks/index.html");
   assert.match(weeksPage, /ActivityCard/);
   assert.match(weeks, /data-page="learning"/);
-  assert.match(home, /Open Week 1/);
+  assert.match(home, /WeekAccessLink/);
+  assert.match(home, /Open Week \$\{week\.teachingWeek\}/);
   assert.match(home, /Assignment 1/);
   assert.doesNotMatch(read("src/App.tsx"), /if hub ===/);
 });

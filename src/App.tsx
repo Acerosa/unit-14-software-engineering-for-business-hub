@@ -14,11 +14,21 @@ import { WeeksPage } from "./pages/WeeksPage";
 import { createSitePath, navigationItems } from "./paths";
 
 function PageBody({ context }: { context: PageContext }) {
-  const { pkg, curriculum, assignments } = useLoadedContent();
-  if (context.page === "home") return <HomePage root={context.root} />;
-  if (context.page === "learning") return <WeeksPage root={context.root} weeks={curriculum?.weeks} />;
+  const { pkg, livePackage, curriculum, assignments } = useLoadedContent();
+  if (context.page === "home") return <HomePage root={context.root} livePackage={livePackage} />;
+  if (context.page === "learning") {
+    return <WeeksPage root={context.root} weeks={curriculum?.weeks} livePackage={livePackage} />;
+  }
   if (context.view === "week" && context.week) {
-    return <WeekPage root={context.root} weekId={context.week} pkg={pkg} weeks={curriculum?.weeks} />;
+    return (
+      <WeekPage
+        root={context.root}
+        weekId={context.week}
+        pkg={pkg}
+        weeks={curriculum?.weeks}
+        livePackage={livePackage}
+      />
+    );
   }
   if (context.page === "assignments") {
     return <AssignmentsPage root={context.root} assignments={assignments?.assignments} />;
@@ -38,7 +48,7 @@ function PageBody({ context }: { context: PageContext }) {
   if (context.page === "resources") return <ResourcesPage />;
   if (context.page === "help") return <HelpPage root={context.root} />;
   if (context.page === "account") return <AccountPage />;
-  return <HomePage root={context.root} />;
+  return <HomePage root={context.root} livePackage={livePackage} />;
 }
 
 export function App({ context }: { context: PageContext }) {

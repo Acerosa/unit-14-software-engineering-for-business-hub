@@ -6,6 +6,9 @@ declare global {
     APP_CONFIG: typeof APP_CONFIG;
     SUPABASE_CONFIG: typeof SUPABASE_CONFIG;
     LearningPlatform?: { platform: unknown; coreVersion: string };
+    __lpPackage?: unknown;
+    __lpLivePackage?: unknown;
+    __lpPublishedCurriculum?: boolean;
   }
 }
 

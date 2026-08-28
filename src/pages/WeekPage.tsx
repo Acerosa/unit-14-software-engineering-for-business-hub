@@ -3,6 +3,7 @@ import {
   LoadingState,
   PracticeProgressPanel,
   StatusBadge,
+  WeekAccessGuard,
   WeekView,
   questionIdFor,
   type ActivityBlockDocument,
@@ -12,6 +13,8 @@ import {
 } from "@learning-platform/ui";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { APP_CONFIG } from "../config";
+import type { ContentPackage } from "../curriculum/from-package";
+import { runtimeWeekForId, unit14RuntimeWeeks } from "../curriculum/runtime-weeks";
 import { getContentEngine, type CurriculumAdapter, type ResolvedWeek } from "../content/engine";
 import { fromResolvedWeek, type ResolvedActivity } from "../content/week-presentation";
 import { createSitePath } from "../paths";
@@ -110,12 +113,14 @@ export function WeekPage({
   root,
   weekId,
   pkg,
-  weeks
+  weeks,
+  livePackage
 }: {
   root: string;
   weekId: string;
   pkg: unknown;
   weeks?: CurriculumAdapter["weeks"];
+  livePackage?: ContentPackage | null;
 }) {
   const engine = getContentEngine();
   const mountRef = useRef<HTMLDivElement>(null);
@@ -123,6 +128,20 @@ export function WeekPage({
   const [practiceScore, setPracticeScore] = useState<ActivityScore>({ correct: 0, total: 0 });
   const resolved = pkg ? engine.resolveWeek(pkg, weekId) : null;
   const scorableTotal = useMemo(() => weekScorableTotal(resolved), [resolved]);
+  const runtimeWeek = useMemo(() => runtimeWeekForId(livePackage, weekId), [livePackage, weekId]);
+  const guardWeek = runtimeWeek || {
+    id: weekId,
+    teachingWeek: Number(weekId.replace(/^week-/, "")) || 0,
+    status: "",
+    available: false,
+    title: resolved?.document.metadata.title || weekId
+  };
+  const accessibleWeeks = useMemo(() => {
+    const availableTeachingWeeks = new Set(
+      unit14RuntimeWeeks(livePackage).filter((week) => week.available).map((week) => week.teachingWeek)
+    );
+    return (weeks || []).filter((week) => availableTeachingWeeks.has(week.teachingWeek));
+  }, [livePackage, weeks]);
 
   useEffect(() => {
     scoresRef.current = {};
@@ -144,7 +163,7 @@ export function WeekPage({
     return fromResolvedWeek(resolved, {
       engine,
       root,
-      weeks: weeks || [],
+      weeks: accessibleWeeks,
       features: APP_CONFIG.ui,
       renderActivity: (activityResolved: ResolvedActivity) => {
         const activity = activityDocument(activityResolved);
@@ -173,11 +192,11 @@ export function WeekPage({
         };
       }
     });
-  }, [engine, recordPracticeResult, resolved, root, weeks]);
+  }, [accessibleWeeks, engine, recordPracticeResult, resolved, root]);
 
   // Re-bind after every commit so React fallback HTML retains draft listeners.
   useLayoutEffect(() => {
-    if (!pkg || !mountRef.current || !presentation) return;
+    if (!pkg || !mountRef.current || !presentation || !guardWeek.available) return;
     engine.bindInteractive(mountRef.current, pkg, {
       sourcePage: window.location.pathname
     });
@@ -199,45 +218,47 @@ export function WeekPage({
   const practiceComplete = scorableTotal > 0 && practiceScore.total >= scorableTotal;
 
   return (
-    <div data-lp-mount="" ref={mountRef}>
-      <WeekView {...presentation} />
-      {showAssignmentProgress ? (
-        <section className="panel" aria-labelledby="a1-progress-heading">
-          <h2 id="a1-progress-heading">{resolved.assignment!.id} learning progress</h2>
-          <p>This tracks preparation for the technical guide. Completing a hub activity is not P1 achieved. The hub does not award Pass, Merit or Distinction.</p>
-          <ol className="journey-list">
-            {(resolved.assignment!.metadata.stages || []).map((stage) => {
-              const label = stageStatus(stage, pkg);
-              const tone = label.includes("practised") || label.includes("Started") ? "in-progress" : "planned";
-              return (
-                <li key={stage.title}>
-                  <span>{stage.title}</span>
-                  <StatusBadge status={tone} label={label} />
-                </li>
-              );
-            })}
-          </ol>
-          {resolved.assignment!.metadata.route ? (
-            <p>
-              <a className="text-link" href={createSitePath(root, resolved.assignment!.metadata.route)}>
-                Open the Assignment 1 workspace
-              </a>
-            </p>
-          ) : null}
-        </section>
-      ) : null}
-      {scorableTotal > 0 ? (
-        <PracticeProgressPanel
-          title="Practice progress"
-          badge={weekBadge}
-          score={summaryScore}
-          progress={coverage}
-          completed={practiceComplete}
-          message="Check scored activities to update. Formative practice only — not assignment evidence and not P1."
-          defaultCollapsed
-        />
-      ) : null}
-    </div>
+    <WeekAccessGuard week={guardWeek}>
+      <div data-lp-mount="" ref={mountRef}>
+        <WeekView {...presentation} />
+        {showAssignmentProgress ? (
+          <section className="panel" aria-labelledby="a1-progress-heading">
+            <h2 id="a1-progress-heading">{resolved.assignment!.id} learning progress</h2>
+            <p>This tracks preparation for the technical guide. Completing a hub activity is not P1 achieved. The hub does not award Pass, Merit or Distinction.</p>
+            <ol className="journey-list">
+              {(resolved.assignment!.metadata.stages || []).map((stage) => {
+                const label = stageStatus(stage, pkg);
+                const tone = label.includes("practised") || label.includes("Started") ? "in-progress" : "planned";
+                return (
+                  <li key={stage.title}>
+                    <span>{stage.title}</span>
+                    <StatusBadge status={tone} label={label} />
+                  </li>
+                );
+              })}
+            </ol>
+            {resolved.assignment!.metadata.route ? (
+              <p>
+                <a className="text-link" href={createSitePath(root, resolved.assignment!.metadata.route)}>
+                  Open the Assignment 1 workspace
+                </a>
+              </p>
+            ) : null}
+          </section>
+        ) : null}
+        {scorableTotal > 0 ? (
+          <PracticeProgressPanel
+            title="Practice progress"
+            badge={weekBadge}
+            score={summaryScore}
+            progress={coverage}
+            completed={practiceComplete}
+            message="Check scored activities to update. Formative practice only — not assignment evidence and not P1."
+            defaultCollapsed
+          />
+        ) : null}
+      </div>
+    </WeekAccessGuard>
   );
 }
 
