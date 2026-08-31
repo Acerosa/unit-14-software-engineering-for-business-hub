@@ -22,6 +22,8 @@ The hub is curriculum-specific and platform-first:
 
 This repository must not own learner identity, RLS, database migrations, administration screens or a second Auth implementation.
 
+This hub conforms to Hub Security Baseline v1. See `learning-platform-core` `docs/hub-security-baseline-v1.md`.
+
 ## Shared dependencies
 
 Reviewed build-time packages (see [docs/PROVENANCE.md](docs/PROVENANCE.md)):
