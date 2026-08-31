@@ -1,5 +1,6 @@
 import react from "@vitejs/plugin-react";
-import { cpSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { copyLearnerSafeTree, learnerSafeContentPlugin } from "@learning-platform/content/learner-safe";
+import { readdirSync, statSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { defineConfig } from "vite";
 
@@ -28,7 +29,7 @@ function copyCurriculum() {
     name: "copy-curriculum",
     closeBundle() {
       const dist = resolve("dist");
-      cpSync(resolve("content/unit-14"), resolve(dist, "content/unit-14"), { recursive: true });
+      copyLearnerSafeTree(resolve("content/unit-14"), resolve(dist, "content/unit-14"));
       writeFileSync(resolve(dist, ".nojekyll"), "");
     }
   };
@@ -36,7 +37,7 @@ function copyCurriculum() {
 
 export default defineConfig({
   base: "./",
-  plugins: [react(), copyCurriculum()],
+  plugins: [react(), learnerSafeContentPlugin(), copyCurriculum()],
   build: {
     sourcemap: true,
     rollupOptions: {

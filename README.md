@@ -22,14 +22,14 @@ The hub is curriculum-specific and platform-first:
 
 This repository must not own learner identity, RLS, database migrations, administration screens or a second Auth implementation.
 
-This hub conforms to Hub Security Baseline v1. See `learning-platform-core` `docs/hub-security-baseline-v1.md`.
+This hub conforms to Hub Security Baseline v1. Learner bundles exclude authoritative marking data. See `learning-platform-core` `docs/hub-security-baseline-v1.md`.
 
 ## Shared dependencies
 
 Reviewed build-time packages (see [docs/PROVENANCE.md](docs/PROVENANCE.md)):
 
 - `@learning-platform/core` **0.2.0** (`v0.2.0`)
-- `@learning-platform/content` **0.1.0** (`v0.1.0`)
+- `@learning-platform/content` **0.1.2** (`v0.1.2`)
 - `@learning-platform/ui` **0.1.4** (`v0.1.4`) from [Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui)
 - Supabase JS **2.112.3**
 

@@ -31,4 +31,8 @@ test("the Vite production build is a static GitHub Pages site", function () {
   }, 0);
   assert.ok(total < 900 * 1024, "learner JS should stay under 900KB uncompressed, got " + total);
   assert.doesNotMatch(files.join("\n"), /xlsx/i);
+  const authoring = fs.readFileSync(path.resolve(__dirname, "../../content/unit-14/activities.json"), "utf8");
+  const bundled = fs.readFileSync(path.join(dist, "content/unit-14/activities.json"), "utf8");
+  assert.match(authoring, /"correctOptionId"/);
+  assert.doesNotMatch(bundled, /"correctOptionId"\s*:/);
 });
