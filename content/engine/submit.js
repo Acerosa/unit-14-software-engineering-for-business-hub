@@ -86,7 +86,7 @@
     var responses = (draft && draft.responses) || {};
     return {
       activityId: activity.id,
-      version: activity.version || "0.1.0",
+      version: ns.resolvedActivityVersion(activity),
       responses: Object.keys(responses).map(function (questionId) {
         var block = (activity.blocks || []).filter(function (item) {
           return ((item.content && item.content.questionId) || item.id) === questionId;
@@ -127,11 +127,15 @@
       result.reason = "The platform submission service is not available. Your draft remains on this device.";
       return Promise.resolve(result);
     }
+    if (!ns.resolvedActivityVersion(activity)) {
+      result.reason = "This activity cannot be saved because it has no published version.";
+      return Promise.resolve(result);
+    }
 
     try {
       var payload = {
         activityKey: activity.id,
-        activityVersion: activity.version || "0.1.0",
+        activityVersion: ns.resolvedActivityVersion(activity),
         responses: responses,
         sourcePage: options && options.sourcePage,
         startedAt: draft.startedAt,

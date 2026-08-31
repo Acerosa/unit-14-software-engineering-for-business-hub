@@ -1,4 +1,4 @@
-import { HubShell, LearnerHeader } from "@learning-platform/ui";
+import { HubShell, LearnerHeader, AuthoredHtml } from "@learning-platform/ui";
 import { ContentPackageProvider, useLoadedContent } from "./content/ContentPackageProvider";
 import { APP_CONFIG } from "./config";
 import { useHubPlatform } from "./hooks/useHubPlatform";
@@ -107,7 +107,7 @@ function HubApp({ context }: { context: PageContext }) {
           onSignOut={() => platform.auth.signOut()}
         />
       )}
-      notice={publicationHtml ? <div data-publication-status="" dangerouslySetInnerHTML={{ __html: publicationHtml }} /> : <div data-publication-status="" />}
+      notice={publicationHtml ? <AuthoredHtml html={publicationHtml} data-publication-status="" /> : <div data-publication-status="" />}
       footer={{
         lines: [
           "Unit 14 Software Engineering for Business Hub",

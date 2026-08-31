@@ -5,6 +5,7 @@ import {
   StatusBadge,
   WeekAccessGuard,
   WeekView,
+  AuthoredHtml,
   questionIdFor,
   type ActivityBlockDocument,
   type ActivityDocument,
@@ -173,7 +174,7 @@ export function WeekPage({
               activity={activity}
               initialResponses={draftResponsesFor(activity)}
               renderFallback={(block) => (
-                <div dangerouslySetInnerHTML={{ __html: engine.renderBlock(block) }} />
+                <AuthoredHtml html={engine.renderBlock(block)} />
               )}
               onResult={(result: ActivityResult, block: ActivityBlockDocument) => {
                 const article = mountRef.current?.querySelector(`[data-lp-activity="${activity.id}"]`);
