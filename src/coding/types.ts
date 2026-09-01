@@ -53,6 +53,9 @@ export type CodeBlockContent = {
   instructions?: string;
   starter?: string;
   hints?: string[];
+  /** Explicit learner interaction mode when set in authored content. */
+  interaction?: "read-only" | "local-only" | "ide";
+  readOnly?: boolean;
   checks?: {
     required?: Array<string | { pattern?: string; label?: string; flags?: string }>;
     prohibited?: Array<string | { pattern?: string; label?: string; flags?: string }>;

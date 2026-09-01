@@ -1,6 +1,23 @@
 import type { ActivityBlockDocument } from "@learning-platform/ui";
 import type { CodeBlockContent, RuntimeTestSpec } from "./types";
 
+export type CodeInteractionMode = "ide" | "read-only" | "local-only";
+
+/** Learner-facing blocks that are predict/read tasks, not editable programs. */
+const READ_ONLY_QUESTION_IDS = new Set([
+  "u14-w2-prob-demo",
+  "u14-w2-conv-examples",
+  "u14-w2-conv-fail",
+  "u14-w2-sub-examples",
+  "u14-w2-fmt-example",
+  "u14-w2-cln-sample"
+]);
+
+/** Editable snippets that are not executed in the browser (for example .gitignore). */
+const LOCAL_ONLY_QUESTION_IDS = new Set([
+  "u14-w2-gi-add"
+]);
+
 export function normaliseBlockType(value: string | undefined): string {
   return String(value || "")
     .trim()
@@ -24,7 +41,34 @@ export function starterCode(block: ActivityBlockDocument): string {
 
 export function editorFilename(block: ActivityBlockDocument): string {
   const content = blockContent(block);
-  return String(content.filename || "solution.py");
+  if (content.filename) return String(content.filename);
+  if (LOCAL_ONLY_QUESTION_IDS.has(String(content.questionId || ""))) return ".gitignore";
+  return "solution.py";
+}
+
+export function codeInteractionMode(block: ActivityBlockDocument): CodeInteractionMode {
+  const content = blockContent(block);
+  if (content.interaction === "read-only" || content.readOnly === true) return "read-only";
+  if (content.interaction === "local-only") return "local-only";
+  if (content.interaction === "ide") return "ide";
+  const questionId = String(content.questionId || "");
+  if (READ_ONLY_QUESTION_IDS.has(questionId)) return "read-only";
+  if (LOCAL_ONLY_QUESTION_IDS.has(questionId)) return "local-only";
+  if (/not python to run/i.test(content.instructions || "")) return "local-only";
+  return "ide";
+}
+
+export function isReadOnlyCodeBlock(block: ActivityBlockDocument): boolean {
+  return codeInteractionMode(block) === "read-only";
+}
+
+export function supportsBrowserExecution(block: ActivityBlockDocument): boolean {
+  return codeInteractionMode(block) === "ide";
+}
+
+export function usesTkinterCode(block: ActivityBlockDocument): boolean {
+  const starter = starterCode(block);
+  return /\bimport\s+tkinter\b|\bfrom\s+tkinter\b|\btkinter\./i.test(starter);
 }
 
 export function editorLabel(block: ActivityBlockDocument): string {

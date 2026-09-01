@@ -18,7 +18,7 @@ import type { ContentPackage } from "../curriculum/from-package";
 import { runtimeWeekForId, unit14RuntimeWeeks } from "../curriculum/runtime-weeks";
 import { getContentEngine, type CurriculumAdapter, type ResolvedWeek } from "../content/engine";
 import { fromResolvedWeek, type ResolvedActivity } from "../content/week-presentation";
-import { PythonCodeExercise } from "../coding/PythonCodeExercise";
+import { CodeBlockView } from "../coding/CodeBlockView";
 import { isCodeBlockType } from "../coding/blockConfig";
 import { createSitePath } from "../paths";
 
@@ -183,7 +183,7 @@ export function WeekPage({
                   const qid = questionIdFor(block);
                   const initial = draftResponsesFor(activity)[qid];
                   return (
-                    <PythonCodeExercise
+                    <CodeBlockView
                       block={block}
                       initialCode={typeof initial === "string" ? initial : undefined}
                       onResult={(result) => {

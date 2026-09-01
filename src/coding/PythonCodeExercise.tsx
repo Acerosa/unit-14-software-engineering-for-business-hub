@@ -43,30 +43,34 @@ function runtimeLabel(state: RuntimeState): string {
 export function PythonCodeExercise({
   block,
   initialCode,
+  executionMode = "browser",
   onResult
 }: {
   block: ActivityBlockDocument;
   initialCode?: string;
+  executionMode?: "browser" | "local-only";
   onResult?: (result: ActivityResult) => void;
 }) {
   const content = blockContent(block);
   const starter = starterCode(block);
+  const localOnly = executionMode === "local-only";
   const [code, setCode] = useState(typeof initialCode === "string" && initialCode.length ? initialCode : starter);
-  const [runtimeState, setRuntimeState] = useState<RuntimeState>("idle");
+  const [runtimeState, setRuntimeState] = useState<RuntimeState>(localOnly ? "ready" : "idle");
   const [outputMode, setOutputMode] = useState<"idle" | "output" | "error" | "tests">("idle");
   const [outputText, setOutputText] = useState("");
   const [testSummary, setTestSummary] = useState<RunTestsResult | null>(null);
-  const [statusMessage, setStatusMessage] = useState("");
+  const [statusMessage, setStatusMessage] = useState(localOnly ? "Edit here. Run locally in your Python environment." : "");
   const [runAttempts, setRunAttempts] = useState(0);
   const [editorFallback, setEditorFallback] = useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
   const statusId = useId();
   const outputId = useId();
-  const tests = runtimeTests(block);
+  const tests = localOnly ? [] : runtimeTests(block);
   const concepts = structureCheckLabels(block);
   const exercise = isPythonExercise(block);
 
   useEffect(function () {
+    if (localOnly) return;
     let cancelled = false;
     setRuntimeState("loading");
     setStatusMessage("Loading Python environment…");
@@ -80,7 +84,7 @@ export function PythonCodeExercise({
       setStatusMessage("Python environment unavailable. You can still edit code, but Run is disabled.");
     });
     return function () { cancelled = true; };
-  }, []);
+  }, [localOnly]);
 
   useEffect(function () {
     onResult?.(emitCodeResult(code, runAttempts));
@@ -151,7 +155,7 @@ export function PythonCodeExercise({
     }
   }, [code, onResult, runAttempts, runtimeState, tests]);
 
-  const runDisabled = runtimeState === "loading" || runtimeState === "running" || runtimeState === "error";
+  const runDisabled = localOnly || runtimeState === "loading" || runtimeState === "running" || runtimeState === "error";
 
   return (
     <div
@@ -159,6 +163,7 @@ export function PythonCodeExercise({
       data-lp-block={block.type}
       data-lp-block-id={block.id}
       data-lp-react-code="true"
+      data-lp-code-mode={localOnly ? "local-only" : "ide"}
     >
       {content.instructions ? <p className="lp-instructions">{content.instructions}</p> : null}
 
@@ -182,7 +187,7 @@ export function PythonCodeExercise({
             onClick={handleRun}
             disabled={runDisabled}
             aria-describedby={statusId}
-            aria-label="Run Python code"
+            aria-label={localOnly ? "Run unavailable for this exercise" : "Run Python code"}
           >
             Run ▶
           </button>
@@ -216,6 +221,12 @@ export function PythonCodeExercise({
           </details>
         );
       })}
+
+      {localOnly ? (
+        <p className="lp-python-ide__local-note">
+          This file is edited here for practice. Run it locally in your repository or Python environment — not in the browser.
+        </p>
+      ) : null}
 
       <section className="lp-python-ide__panel" aria-labelledby={outputId}>
         <div className="lp-python-ide__panel-header">

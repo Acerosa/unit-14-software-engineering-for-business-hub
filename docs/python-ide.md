@@ -153,6 +153,18 @@ Browser-side test results are **formative feedback only**. They help learners de
 - CDN/network failure disables Run but preserves editing via Monaco/textarea fallback.
 - Regex `checks.required` from the content package are display-only in the React IDE; execution uses Pyodide instead of the legacy “Check Python” HTML button.
 
+## Content migration (Weeks 1–2)
+
+`CodeBlockView` routes existing blocks without new block types:
+
+| Mode | When | Renderer |
+|------|------|----------|
+| `ide` | Editable Python practice | `PythonCodeExercise` with Pyodide Run |
+| `read-only` | Predict/read examples | `ReadOnlyCodeBlock` (no Run) |
+| `local-only` | `.gitignore`, tkinter, non-browser code | Monaco edit, Run disabled |
+
+Routing uses `content.interaction` when set, otherwise a question-id registry in `blockConfig.ts`.
+
 ## Files
 
 | File | Role |
