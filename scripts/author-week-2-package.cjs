@@ -388,7 +388,7 @@ function buildWeek2Package() {
       }),
       block("w2-gi-q1", "single-choice", {
         formative: true,
-        questionId: "u14-w2-gi-q1",
+        questionId: "u14-w2-gh-q1",
         prompt: "Why should __pycache__/ stay out of the repository?",
         options: [
           { id: "a", label: "It is generated cache, not source the team should review" },
