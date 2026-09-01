@@ -13,7 +13,7 @@ Unit 14 is the first consumer of Core 0.2.0 learner UI contracts and of `@learni
 
 React components in `@learning-platform/ui` reimplement that grammar. Core DOM factories remain available and unused by this Vite build. The account dialog remains Core `createAccountDialog`.
 
-Canonical UI package: `@learning-platform/ui` 0.1.4 from [Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui) tag `v0.1.4`.
+Canonical UI package: `@learning-platform/ui` 0.1.8 from [Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui) tag `v0.1.8`.
 
 ## What stayed in the hub
 

@@ -5,9 +5,9 @@ Unit 14 is a React + TypeScript + Vite multi-page app. Shared packages are insta
 ```text
 Projects/
 ├── unit-14-software-engineering-for-business-hub
-├── learning-platform-core          # tag v0.2.0
+├── learning-platform-core          # tag v0.2.5
 ├── learning-platform-content       # tag v0.1.2
-├── learning-platform-ui            # tag v0.1.4 (repo Acerosa/Acerosa-learning-platform-ui)
+├── learning-platform-ui            # tag v0.1.8 (repo Acerosa/Acerosa-learning-platform-ui)
 └── learning-platform-backend       # CI/local hub-manifest validation only
 ```
 

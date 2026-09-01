@@ -1,6 +1,7 @@
 import { createAccountDialog } from "@learning-platform/core";
 import { useEffect, useMemo, useState } from "react";
 import type { LearnerSummary, ThemeControl, ThemePreference } from "@learning-platform/ui";
+import { APP_CONFIG } from "../config";
 import { createHubPlatform, type HubPlatform } from "../platform";
 
 type AccountDialog = {
@@ -43,7 +44,7 @@ export function useHubPlatform(root: string) {
     });
     document.body.appendChild(dialog.element);
     setAccountDialog(dialog);
-    window.LearningPlatform = { platform, coreVersion: "0.1.0" };
+    window.LearningPlatform = { platform, coreVersion: APP_CONFIG.coreVersion };
     void platform.initialise();
 
     return () => {

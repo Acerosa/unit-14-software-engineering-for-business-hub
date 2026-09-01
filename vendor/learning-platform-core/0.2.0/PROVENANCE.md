@@ -1,5 +1,7 @@
 # learning-platform-core 0.2.0
 
+Legacy test fixture snapshot only. Production Pages builds use Core from CI tag `v0.2.5`.
+
 These browser assets are vendored from `learning-platform-core` commit
 `f59614ee0d77f43852f02b1eab6dfb176ddfbc40` (`feat: add shared hub learner UI
 primitives`, branch `feature/shared-hub-ui`). They are kept in a versioned
