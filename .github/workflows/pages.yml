@@ -50,7 +50,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: Acerosa/learning-platform-backend
-          ref: 46b0c7d19c41a1e0a79e8b32b8ef27d4784c0bd8
+          ref: 212f399f007ac186c229e70d98b04b71e4ac68dc
           path: learning-platform-backend
 
       - name: Set up Node.js
