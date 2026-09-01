@@ -3,6 +3,7 @@ import type { ActivityBlockDocument } from "@learning-platform/ui";
 import {
   codeInteractionMode,
   isReadOnlyCodeBlock,
+  monacoModelPath,
   supportsBrowserExecution,
   usesTkinterCode
 } from "./blockConfig";
@@ -69,5 +70,11 @@ describe("code block interaction modes", () => {
   it("honours explicit interaction metadata", () => {
     expect(codeInteractionMode(block({ content: { interaction: "read-only" } }))).toBe("read-only");
     expect(codeInteractionMode(block({ content: { interaction: "local-only" } }))).toBe("local-only");
+  });
+
+  it("builds unique Monaco model paths from block id and filename", () => {
+    expect(monacoModelPath("w2-dbg-1", "solution.py")).toBe("u14://w2-dbg-1/solution.py");
+    expect(monacoModelPath("w2-dbg-2", "solution.py")).toBe("u14://w2-dbg-2/solution.py");
+    expect(monacoModelPath("w2-dbg-1", "solution.py")).not.toBe(monacoModelPath("w2-dbg-2", "solution.py"));
   });
 });

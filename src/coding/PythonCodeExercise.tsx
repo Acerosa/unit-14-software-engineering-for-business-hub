@@ -204,6 +204,7 @@ export function PythonCodeExercise({
         <MonacoEditorField
           value={code}
           filename={editorFilename(block)}
+          modelId={block.id}
           onChange={handleCodeChange}
           onFallback={() => setEditorFallback(true)}
         />
