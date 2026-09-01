@@ -4,6 +4,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+BRAND_SHORT = "SEF"
 
 
 def page(
@@ -86,7 +87,7 @@ def main() -> None:
     ))
     for number, title, status in WEEKS:
         write(ROOT / f"weeks/week-{number}/index.html", page(
-            title=f"Week {number}: {title} | Unit 14 Hub",
+            title=f"Week {number}: {title} | {BRAND_SHORT}",
             description=f"Week {number} learning for OCR Unit 14: {title}.",
             page_id=f"week-{number}",
             section="learning",
@@ -102,7 +103,7 @@ def main() -> None:
     ))
     for code, key, title, status, lo, criteria in ASSIGNMENTS:
         write(ROOT / f"assignments/{key}/index.html", page(
-            title=f"{code}: {title} | Unit 14 Hub",
+            title=f"{code}: {title} | {BRAND_SHORT}",
             description=f"{code} workspace for OCR Unit 14: {title}.",
             page_id=key,
             section="assignments",
