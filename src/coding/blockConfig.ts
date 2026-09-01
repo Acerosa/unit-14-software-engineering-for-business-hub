@@ -46,6 +46,13 @@ export function editorFilename(block: ActivityBlockDocument): string {
   return "solution.py";
 }
 
+/** Stable Monaco model URI — internal only; displayed filename stays separate. */
+export function monacoModelPath(modelId: string, filename: string): string {
+  const id = String(modelId || "block").trim();
+  const name = String(filename || "solution.py").trim();
+  return `u14://${id}/${name}`;
+}
+
 export function codeInteractionMode(block: ActivityBlockDocument): CodeInteractionMode {
   const content = blockContent(block);
   if (content.interaction === "read-only" || content.readOnly === true) return "read-only";

@@ -3,10 +3,22 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PythonCodeExercise } from "./PythonCodeExercise";
 
 vi.mock("./MonacoEditorField", () => ({
-  MonacoEditorField({ value, onChange }: { value: string; onChange: (next: string) => void }) {
+  MonacoEditorField({
+    value,
+    onChange,
+    modelId,
+    filename
+  }: {
+    value: string;
+    onChange: (next: string) => void;
+    modelId: string;
+    filename: string;
+  }) {
     return (
       <textarea
-        aria-label="solution.py Python editor"
+        data-model-id={modelId}
+        data-filename={filename}
+        aria-label={`${filename} Python editor`}
         value={value}
         onChange={(event) => onChange(event.target.value)}
       />
@@ -151,5 +163,56 @@ describe("PythonCodeExercise", () => {
     await waitFor(function () {
       expect(screen.getByText(/NameError/)).toBeTruthy();
     });
+  });
+
+  it("keeps multiple exercises with the same filename independent", async () => {
+    const onResultA = vi.fn();
+    const onResultB = vi.fn();
+    const blockA = {
+      id: "w2-dbg-1",
+      type: "python-exercise",
+      content: {
+        questionId: "u14-w2-dbg-1",
+        filename: "solution.py",
+        starter: "print(1)",
+        instructions: "Fix program 1."
+      }
+    } as never;
+    const blockB = {
+      id: "w2-dbg-2",
+      type: "python-exercise",
+      content: {
+        questionId: "u14-w2-dbg-2",
+        filename: "solution.py",
+        starter: "print(2)",
+        instructions: "Fix program 2."
+      }
+    } as never;
+
+    render(
+      <>
+        <PythonCodeExercise block={blockA} onResult={onResultA} />
+        <PythonCodeExercise block={blockB} onResult={onResultB} />
+      </>
+    );
+
+    await waitFor(function () {
+      expect(screen.getAllByRole("button", { name: "Run Python code" })).toHaveLength(2);
+    });
+
+    const editors = screen.getAllByLabelText("solution.py Python editor");
+    expect(editors[0]).toHaveAttribute("data-model-id", "w2-dbg-1");
+    expect(editors[1]).toHaveAttribute("data-model-id", "w2-dbg-2");
+    expect(editors[0]).toHaveValue("print(1)");
+    expect(editors[1]).toHaveValue("print(2)");
+
+    fireEvent.change(editors[0], { target: { value: "print(\"changed-a\")" } });
+    expect(editors[1]).toHaveValue("print(2)");
+    expect(onResultA.mock.calls.at(-1)?.[0].responses).toBe("print(\"changed-a\")");
+    expect(onResultB.mock.calls.at(-1)?.[0].responses).toBe("print(2)");
+
+    fireEvent.click(screen.getAllByRole("button", { name: "Reset code to starter template" })[0]);
+    expect(editors[0]).toHaveValue("print(1)");
+    expect(editors[1]).toHaveValue("print(2)");
   });
 });

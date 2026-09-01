@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import type { EditorProps } from "@monaco-editor/react";
+import { monacoModelPath } from "./blockConfig";
 
 const Monaco = lazy(function () {
   return import("@monaco-editor/react").catch(function () {
@@ -36,15 +37,20 @@ export function MonacoEditorField({
   value,
   onChange,
   filename,
+  modelId,
   onFallback
 }: {
   value: string;
   onChange: (next: string) => void;
   filename: string;
+  modelId: string;
   onFallback?: () => void;
 }) {
   const [theme, setTheme] = useState(readTheme);
   const [useFallback, setUseFallback] = useState(false);
+  const modelPath = useMemo(function () {
+    return monacoModelPath(modelId, filename);
+  }, [filename, modelId]);
 
   useEffect(function () {
     import("@monaco-editor/react").catch(function () {
@@ -110,11 +116,11 @@ export function MonacoEditorField({
         height="16rem"
         language="python"
         theme={theme}
-        path={filename}
+        path={modelPath}
         value={value}
         options={options}
         onChange={(next) => onChange(next || "")}
-        wrapperProps={{ "data-lp-monaco": "true" }}
+        wrapperProps={{ "data-lp-monaco": "true", "data-lp-monaco-path": modelPath }}
       />
     </Suspense>
   );
