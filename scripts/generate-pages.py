@@ -4,7 +4,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BRAND_SHORT = "SEF"
+BRAND_SHORT = "SEB"
 
 
 def page(
