@@ -387,7 +387,15 @@
           "questionId": "u14-w1-var-code",
           "language": "python",
           "label": "Read these Python examples, then add one more variable of your own.",
-          "starter": "customer_name = \"Patel\"\nquantity = 3\nunit_price = 12.5\ndelivery_required = True\n"
+          "starter": "customer_name = \"Patel\"\nquantity = 3\nunit_price = 12.5\ndelivery_required = True\n",
+          "checks": {
+            "runtimeTests": [
+              { "label": "customer_name is a string", "assertion": "isinstance(customer_name, str)" },
+              { "label": "quantity is an integer", "assertion": "isinstance(quantity, int)" },
+              { "label": "unit_price is numeric", "assertion": "isinstance(unit_price, (int, float))" },
+              { "label": "delivery_required is Boolean", "assertion": "isinstance(delivery_required, bool)" }
+            ]
+          }
         }
       },
       {
@@ -490,7 +498,7 @@
           "questionId": "u14-w1-io-code",
           "language": "python",
           "label": "Python editor",
-          "instructions": "Complete the program so it asks for a product name and prints a confirmation. Do not run untrusted code in the browser; the check looks for input() and print() only.",
+          "instructions": "Complete the program so it asks for a product name and prints a confirmation. Use Run for formative checks, then test with input in your local Python environment.",
           "starter": "product_name = input(\"Product name: \")\n# Print a confirmation that includes the product name.\n",
           "hints": [
             "Call input() to capture the name.",
@@ -1818,7 +1826,7 @@
           "questionId": "u14-w2-conv-code",
           "language": "python",
           "label": "Python editor",
-          "instructions": "Convert quantity with int() and price with float() before any arithmetic. The check looks for those calls only. The browser does not execute the program.",
+          "instructions": "Convert quantity with int() and price with float() before any arithmetic. Use Run for formative checks where possible.",
           "starter": "quantity_text = input(\"Quantity: \")\nprice_text = input(\"Unit price: \")\n# Convert, then calculate a line total.\n",
           "hints": [
             "Use int() for quantity.",
@@ -2096,7 +2104,7 @@
           "questionId": "u14-w2-fmt-code",
           "language": "python",
           "label": "Python editor",
-          "instructions": "Complete the receipt using an f-string. Include subtotal, VAT and total. The browser does not execute this.",
+          "instructions": "Complete the receipt using an f-string. Include subtotal, VAT and total. Use Run to preview output where your code does not need typed input.",
           "starter": "customer = \"River Café\"\nsubtotal = 18.5\nvat_rate = 0.2\n# Calculate VAT and total, then print a labelled receipt with f-strings.\n",
           "hints": [
             "Calculate vat as subtotal * vat_rate.",
@@ -2257,7 +2265,8 @@
         "type": "code-editor",
         "content": {
           "questionId": "u14-w2-gi-add",
-          "language": "python",
+          "language": "text",
+          "filename": ".gitignore",
           "label": ".gitignore excerpt",
           "instructions": "This is not Python to run. Add one extra ignored entry such as .DS_Store or *.log under the comment.",
           "starter": "__pycache__/\n*.pyc\n.venv/\n.idea/\n.vscode/\n# Add one extra generated or local pattern below.\n"
@@ -2512,7 +2521,7 @@
         "relationships": {},
         "type": "paragraph",
         "content": {
-          "text": "Each program is deliberately broken. Inspect the problem, repair it in the editor, then explain the cause. Checks look for conversion calls. They do not execute Python in the browser."
+          "text": "Each program is deliberately broken. Inspect the problem, repair it in the editor, use Run for formative checks, then explain the cause below."
         }
       },
       {

@@ -280,6 +280,45 @@ body {
   resize: vertical;
 }
 
+.lp-code--readonly {
+  min-height: auto;
+  max-height: 24rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.lp-code-readonly {
+  display: grid;
+  gap: var(--lp-space-3);
+}
+
+.lp-code-readonly__header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lp-space-2);
+  align-items: center;
+}
+
+.lp-code-readonly__filename {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+}
+
+.lp-code-readonly__badge,
+.lp-code-readonly__note,
+.lp-python-ide__local-note {
+  font-size: 0.9rem;
+  color: var(--lp-text-muted);
+}
+
+.lp-code-readonly__badge {
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--lp-radius-sm);
+  background: var(--lp-surface-alt);
+  border: 0.0625rem solid var(--lp-border);
+}
+
 .lp-python-ide__panel {
   border: 0.125rem solid var(--lp-border);
   border-radius: var(--lp-radius-sm);
