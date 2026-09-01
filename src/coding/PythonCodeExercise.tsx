@@ -4,13 +4,24 @@ import {
   blockContent,
   editorFilename,
   editorLabel,
+  initialProgramInputText,
   isPythonExercise,
+  resolveInitialProgramInput,
   runtimeTests,
   starterCode,
   structureCheckLabels
 } from "./blockConfig";
 import { MonacoEditorField } from "./MonacoEditorField";
-import { ensurePythonWorker, runPythonCode, runPythonTests } from "./pythonWorkerClient";
+import { parseProgramInput } from "./pythonStdin";
+import {
+  PythonExecutionBusyError,
+  PythonExecutionStoppedError,
+  ensurePythonWorker,
+  runPythonCode,
+  runPythonTests,
+  stopPythonExecution,
+  subscribePythonExecution
+} from "./pythonWorkerClient";
 import type { RuntimeState, RunCodeResult, RunTestsResult } from "./types";
 
 function emitCodeResult(code: string, attempts: number): ActivityResult {
@@ -35,6 +46,7 @@ function runtimeLabel(state: RuntimeState): string {
   if (state === "ready") return "Ready";
   if (state === "running") return "Running…";
   if (state === "completed") return "Completed";
+  if (state === "stopped") return "Execution stopped";
   if (state === "timeout") return "Execution timed out";
   if (state === "error") return "Python environment unavailable";
   return "";
@@ -43,18 +55,26 @@ function runtimeLabel(state: RuntimeState): string {
 export function PythonCodeExercise({
   block,
   initialCode,
+  initialProgramInput,
   executionMode = "browser",
-  onResult
+  onResult,
+  onProgramInputChange
 }: {
   block: ActivityBlockDocument;
   initialCode?: string;
+  initialProgramInput?: string;
   executionMode?: "browser" | "local-only";
   onResult?: (result: ActivityResult) => void;
+  onProgramInputChange?: (value: string) => void;
 }) {
   const content = blockContent(block);
   const starter = starterCode(block);
+  const starterProgramInput = initialProgramInputText(block);
   const localOnly = executionMode === "local-only";
   const [code, setCode] = useState(typeof initialCode === "string" && initialCode.length ? initialCode : starter);
+  const [programInput, setProgramInput] = useState(function () {
+    return resolveInitialProgramInput(block, initialProgramInput);
+  });
   const [runtimeState, setRuntimeState] = useState<RuntimeState>(localOnly ? "ready" : "idle");
   const [outputMode, setOutputMode] = useState<"idle" | "output" | "error" | "tests">("idle");
   const [outputText, setOutputText] = useState("");
@@ -62,9 +82,12 @@ export function PythonCodeExercise({
   const [statusMessage, setStatusMessage] = useState(localOnly ? "Edit here. Run locally in your Python environment." : "");
   const [runAttempts, setRunAttempts] = useState(0);
   const [editorFallback, setEditorFallback] = useState(false);
+  const [executionLocked, setExecutionLocked] = useState(false);
+  const isRunning = runtimeState === "running";
   const outputRef = useRef<HTMLDivElement>(null);
   const statusId = useId();
   const outputId = useId();
+  const programInputId = useId();
   const tests = localOnly ? [] : runtimeTests(block);
   const concepts = structureCheckLabels(block);
   const exercise = isPythonExercise(block);
@@ -87,6 +110,13 @@ export function PythonCodeExercise({
   }, [localOnly]);
 
   useEffect(function () {
+    if (localOnly) return;
+    return subscribePythonExecution(function (active) {
+      setExecutionLocked(active);
+    });
+  }, [localOnly]);
+
+  useEffect(function () {
     onResult?.(emitCodeResult(code, runAttempts));
   }, [code, onResult, runAttempts]);
 
@@ -95,15 +125,40 @@ export function PythonCodeExercise({
   }, []);
 
   const handleReset = useCallback(function () {
-    const dirty = code !== starter;
+    const dirty = code !== starter || programInput !== starterProgramInput;
     if (dirty && !window.confirm("Reset this exercise back to the starter code?")) return;
     setCode(starter);
+    setProgramInput(starterProgramInput);
     setOutputMode("idle");
     setOutputText("");
     setTestSummary(null);
     setStatusMessage(runtimeState === "ready" ? "Ready" : runtimeLabel(runtimeState));
     onResult?.(emitCodeResult(starter, runAttempts));
-  }, [code, onResult, runAttempts, runtimeState, starter]);
+    onProgramInputChange?.(starterProgramInput);
+  }, [code, onProgramInputChange, onResult, programInput, runAttempts, runtimeState, starter, starterProgramInput]);
+
+  const recoverWorker = useCallback(async function () {
+    setRuntimeState("loading");
+    setStatusMessage("Loading Python environment…");
+    try {
+      await ensurePythonWorker();
+      setRuntimeState("ready");
+      setStatusMessage("Ready");
+    } catch {
+      setRuntimeState("error");
+      setStatusMessage("Python environment unavailable. You can still edit code, but Run is disabled.");
+    }
+  }, []);
+
+  const handleStop = useCallback(async function () {
+    if (!isRunning) return;
+    await stopPythonExecution();
+    setRuntimeState("stopped");
+    setOutputMode("error");
+    setOutputText("Execution stopped.");
+    setStatusMessage("Execution stopped");
+    await recoverWorker();
+  }, [isRunning, recoverWorker]);
 
   const handleRun = useCallback(async function () {
     if (runtimeState !== "ready" && runtimeState !== "completed") return;
@@ -119,11 +174,12 @@ export function PythonCodeExercise({
     setOutputText("");
     setTestSummary(null);
     setRunAttempts(function (value) { return value + 1; });
+    const stdin = parseProgramInput(programInput);
 
     try {
       const result = tests.length
-        ? await runPythonTests(code, tests)
-        : await runPythonCode(code);
+        ? await runPythonTests(code, tests, stdin)
+        : await runPythonCode(code, stdin);
 
       if (result.timedOut) {
         setRuntimeState("timeout");
@@ -131,6 +187,7 @@ export function PythonCodeExercise({
         setOutputText("Your program took too long to finish. The Python environment was reset.");
         setStatusMessage("Execution timed out");
         onResult?.(emitCodeResult(code, runAttempts + 1));
+        await recoverWorker();
         return;
       }
 
@@ -148,14 +205,33 @@ export function PythonCodeExercise({
       onResult?.(emitCodeResult(code, runAttempts + 1));
       outputRef.current?.focus();
     } catch (error) {
+      if (error instanceof PythonExecutionStoppedError) {
+        setRuntimeState("stopped");
+        setOutputMode("error");
+        setOutputText("Execution stopped.");
+        setStatusMessage("Execution stopped");
+        await recoverWorker();
+        return;
+      }
+      if (error instanceof PythonExecutionBusyError) {
+        setOutputMode("error");
+        setOutputText(error.message);
+        setStatusMessage("Another exercise is running");
+        return;
+      }
       setRuntimeState("error");
       setOutputMode("error");
       setOutputText(error instanceof Error ? error.message : "Run failed.");
       setStatusMessage("Python environment unavailable");
+      await recoverWorker();
     }
-  }, [code, onResult, runAttempts, runtimeState, tests]);
+  }, [code, onResult, programInput, recoverWorker, runAttempts, runtimeState, tests]);
 
-  const runDisabled = localOnly || runtimeState === "loading" || runtimeState === "running" || runtimeState === "error";
+  const runDisabled = localOnly
+    || runtimeState === "loading"
+    || runtimeState === "error"
+    || (executionLocked && !isRunning);
+  const stopVisible = !localOnly && isRunning;
 
   return (
     <div
@@ -191,6 +267,16 @@ export function PythonCodeExercise({
           >
             Run ▶
           </button>
+          {stopVisible ? (
+            <button
+              type="button"
+              className="lp-button lp-button--secondary"
+              onClick={handleStop}
+              aria-label="Stop Python execution"
+            >
+              Stop
+            </button>
+          ) : null}
         </div>
       </div>
 
@@ -209,6 +295,29 @@ export function PythonCodeExercise({
           onFallback={() => setEditorFallback(true)}
         />
       </div>
+
+      {!localOnly ? (
+        <div className="lp-python-ide__stdin">
+          <label className="lp-label" htmlFor={programInputId}>Program input</label>
+          <p className="lp-python-ide__stdin-help" id={`${programInputId}-help`}>
+            Enter one input value per line. Python input() calls will use these values in order.
+            {starterProgramInput ? " Example values may be prefilled for practice." : ""}
+          </p>
+          <textarea
+            id={programInputId}
+            className="lp-python-ide__stdin-field"
+            value={programInput}
+            onChange={function (event) {
+              const next = event.target.value;
+              setProgramInput(next);
+              onProgramInputChange?.(next);
+            }}
+            aria-describedby={`${programInputId}-help`}
+            rows={4}
+            spellCheck={false}
+          />
+        </div>
+      ) : null}
 
       {concepts.length ? (
         <p className="lp-concepts">Expected constructs: {concepts.join(", ")}.</p>

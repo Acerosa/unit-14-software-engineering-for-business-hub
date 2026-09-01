@@ -4,6 +4,7 @@ export type RuntimeState =
   | "ready"
   | "running"
   | "completed"
+  | "stopped"
   | "error"
   | "timeout";
 
@@ -35,8 +36,8 @@ export type RunTestsResult = RunCodeResult & {
 
 export type WorkerRequest =
   | { type: "init" }
-  | { type: "run"; id: string; code: string }
-  | { type: "run-tests"; id: string; code: string; tests: RuntimeTestSpec[] }
+  | { type: "run"; id: string; code: string; stdin?: string[] }
+  | { type: "run-tests"; id: string; code: string; tests: RuntimeTestSpec[]; stdin?: string[] }
   | { type: "reset-namespace" };
 
 export type WorkerResponse =
@@ -52,6 +53,8 @@ export type CodeBlockContent = {
   filename?: string;
   instructions?: string;
   starter?: string;
+  /** Optional authored sample lines for Program input (learner-visible, non-marking). */
+  sampleInput?: string[];
   hints?: string[];
   /** Explicit learner interaction mode when set in authored content. */
   interaction?: "read-only" | "local-only" | "ide";

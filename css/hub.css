@@ -280,6 +280,35 @@ body {
   resize: vertical;
 }
 
+.lp-python-ide__stdin {
+  margin-top: var(--lp-space-3);
+}
+
+.lp-python-ide__stdin-help {
+  margin: 0.25rem 0 var(--lp-space-2);
+  font-size: 0.9rem;
+  color: var(--lp-text-muted);
+}
+
+.lp-python-ide__stdin-field {
+  width: 100%;
+  min-height: 6rem;
+  padding: var(--lp-space-2);
+  border: 0.125rem solid var(--lp-border);
+  border-radius: var(--lp-radius-sm);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  background: var(--lp-surface);
+  color: var(--lp-text);
+  resize: vertical;
+}
+
+.lp-python-ide__stdin-field:focus {
+  outline: 0.125rem solid var(--lp-focus);
+  outline-offset: 0.125rem;
+}
+
 .lp-code--readonly {
   min-height: auto;
   max-height: 24rem;

@@ -39,6 +39,32 @@ export function starterCode(block: ActivityBlockDocument): string {
   return String(content.starter || "");
 }
 
+export function sampleProgramInput(block: ActivityBlockDocument): string[] {
+  const sample = blockContent(block).sampleInput;
+  if (!Array.isArray(sample)) return [];
+  return sample.map(function (line) { return String(line); });
+}
+
+export function initialProgramInputText(block: ActivityBlockDocument): string {
+  const lines = sampleProgramInput(block);
+  return lines.join("\n");
+}
+
+/** Draft-store key for Program input — not submitted as coding evidence. */
+export function programInputDraftKey(block: ActivityBlockDocument): string {
+  const content = blockContent(block);
+  const questionId = String(content.questionId || block.id).trim();
+  return `${questionId}__programInput`;
+}
+
+export function resolveInitialProgramInput(
+  block: ActivityBlockDocument,
+  draftValue?: string
+): string {
+  if (typeof draftValue === "string") return draftValue;
+  return initialProgramInputText(block);
+}
+
 export function editorFilename(block: ActivityBlockDocument): string {
   const content = blockContent(block);
   if (content.filename) return String(content.filename);

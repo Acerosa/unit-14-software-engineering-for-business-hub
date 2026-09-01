@@ -7,18 +7,30 @@ import { HomePage } from "./pages/HomePage";
 import { WeekPage, persistableResponse } from "./pages/WeekPage";
 import { breadcrumbs } from "./page-copy";
 
-vi.mock("./coding/pythonWorkerClient", () => ({
-  ensurePythonWorker: vi.fn(async () => ({})),
-  runPythonCode: vi.fn(async () => ({ stdout: "", stderr: "" })),
-  runPythonTests: vi.fn(async () => ({
-    stdout: "",
-    stderr: "",
-    tests: [],
-    passedCount: 0,
-    totalCount: 0
-  })),
-  resetPythonWorker: vi.fn(async () => {})
-}));
+const pythonWorkerClientMock = vi.hoisted(function () {
+  return {
+    ensurePythonWorker: vi.fn(async () => ({})),
+    runPythonCode: vi.fn(async () => ({ stdout: "", stderr: "" })),
+    runPythonTests: vi.fn(async () => ({
+      stdout: "",
+      stderr: "",
+      tests: [],
+      passedCount: 0,
+      totalCount: 0
+    })),
+    resetPythonWorker: vi.fn(async () => {}),
+    stopPythonExecution: vi.fn(async () => {}),
+    subscribePythonExecution: vi.fn(function (listener: (active: boolean) => void) {
+      listener(false);
+      return function () {};
+    }),
+    isPythonExecutionActive: vi.fn(() => false),
+    PythonExecutionBusyError: class PythonExecutionBusyError extends Error {},
+    PythonExecutionStoppedError: class PythonExecutionStoppedError extends Error {}
+  };
+});
+
+vi.mock("./coding/pythonWorkerClient", () => pythonWorkerClientMock);
 
 const bundled = pkg as ContentPackage;
 

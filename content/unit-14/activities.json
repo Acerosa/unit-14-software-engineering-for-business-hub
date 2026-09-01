@@ -498,8 +498,11 @@
           "questionId": "u14-w1-io-code",
           "language": "python",
           "label": "Python editor",
-          "instructions": "Complete the program so it asks for a product name and prints a confirmation. Use Run for formative checks, then test with input in your local Python environment.",
+          "instructions": "Complete the program so it asks for a product name and prints a confirmation. Enter a sample name in Program input, then use Run to test.",
           "starter": "product_name = input(\"Product name: \")\n# Print a confirmation that includes the product name.\n",
+          "sampleInput": [
+            "Keyboard"
+          ],
           "hints": [
             "Call input() to capture the name.",
             "Use print() to show the confirmation."
@@ -519,7 +522,7 @@
                 "label": "assignment"
               }
             ],
-            "passFeedback": "The program uses input, a variable and print. This is formative structure checking, not code execution.",
+            "passFeedback": "The program uses input, a variable and print. Run can execute it in the browser when Program input is provided.",
             "failFeedback": "Include input(), store the result in a variable, and use print()."
           }
         }
@@ -1075,7 +1078,7 @@
           "questionId": "u14-w1-order-code",
           "language": "python",
           "label": "Python editor",
-          "instructions": "Keep the four fundamental types in mind: name as string, quantity as integer, price as a number that may include pence, delivery as a yes/no fact. The browser does not execute this program.",
+          "instructions": "Keep the four fundamental types in mind: name as string, quantity as integer, price as a number that may include pence, delivery as a yes/no fact. Enter sample values in Program input, then use Run to test.",
           "starter": "# Business order — Week 1\n# input() returns text. int() is used only so quantity is a whole number.\n\ncustomer_name = input(\"Customer name: \")\nquantity = int(input(\"Number of items: \"))\nunit_price = input(\"Unit price: \")\ndelivery_required = input(\"Delivery required (True/False): \")\n\nprint(\"Order summary\")\nprint(\"Customer:\", customer_name)\nprint(\"Quantity:\", quantity)\nprint(\"Unit price:\", unit_price)\nprint(\"Delivery required:\", delivery_required)\n",
           "hints": [
             "Use input() for each prompt.",
@@ -1253,7 +1256,7 @@
           "questionId": "u14-w1-hw-code",
           "language": "python",
           "label": "Python editor",
-          "instructions": "Work in your cloned repository. The check only looks for input, print and several assignments. It does not execute code or award P1.",
+          "instructions": "Work in your cloned repository and use Program input with Run to test here. Browser runs are formative only and do not award P1.",
           "starter": "# Homework extension — at least six pieces of business data\n# Cover string, integer, floating point and Boolean.\n\ncustomer_name = input(\"Customer name: \")\nproduct_name = input(\"Product name: \")\nquantity = int(input(\"Quantity: \"))\nunit_price = input(\"Unit price: \")\ndelivery_required = input(\"Delivery required (True/False): \")\nloyalty_member = input(\"Loyalty member (True/False): \")\n\nprint(\"Extended order summary\")\nprint(customer_name, product_name, quantity, unit_price, delivery_required, loyalty_member)\n",
           "hints": [
             "Include at least six variables.",
@@ -2003,7 +2006,7 @@
           "questionId": "u14-w2-sub-code",
           "language": "python",
           "label": "Python editor",
-          "instructions": "Clean the customer name with strip and make the email lower case. The check looks for those calls. It does not execute code.",
+          "instructions": "Clean the customer name with strip and make the email lower case. Use Run to check your program.",
           "starter": "raw_name = \"  Mary-Anne O'Neill  \"\nraw_email = \"Mary.Anne@Example.com\"\n# Clean the name and email for a business record.\n",
           "hints": [
             "strip() removes surrounding spaces.",
@@ -2905,7 +2908,7 @@
           "questionId": "u14-w2-cln-code",
           "language": "python",
           "label": "Python editor",
-          "instructions": "Clean one customer row: strip the name, lower the email, upper the postcode, split the address. The check looks for those calls.",
+          "instructions": "Clean one customer row: strip the name, lower the email, upper the postcode, split the address. Use Run to verify the output.",
           "starter": "raw_name = \"  Mary-Anne O'Neill  \"\nraw_email = \"Mary.Anne@Example.COM\"\nraw_address = \"12 High Street,  Leeds\"\nraw_postcode = \"ls1 4ap\"\n# Clean each field with an appropriate predefined subroutine.\n",
           "hints": [
             "Keep hyphens and apostrophes in names.",
@@ -2996,7 +2999,7 @@
         "relationships": {},
         "type": "paragraph",
         "content": {
-          "text": "Write a short program for a takeaway order. Collect numeric values as text, convert them, then calculate subtotal, 20% VAT and total. Print a labelled receipt with f-strings. Work in your cloned repository; the hub only checks structure."
+          "text": "Write a short program for a takeaway order. Collect numeric values as text, convert them, then calculate subtotal, 20% VAT and total. Print a labelled receipt with f-strings. Use Program input with Run to test, then commit in your repository."
         }
       },
       {
@@ -3011,8 +3014,13 @@
           "questionId": "u14-w2-calc-code",
           "language": "python",
           "label": "Python editor",
-          "instructions": "Ask for quantity and unit price as text, convert, calculate subtotal, VAT and total, then print an f-string receipt. The browser does not execute this.",
+          "instructions": "Ask for quantity and unit price as text, convert, calculate subtotal, VAT and total, then print an f-string receipt. Enter sample values in Program input before Run.",
           "starter": "# River Café takeaway — Week 2\n# Collect text, convert, then calculate.\n\ncustomer = input(\"Customer name: \")\nquantity_text = input(\"Number of items: \")\nprice_text = input(\"Unit price: \")\n\n# Convert, calculate subtotal, VAT (20%) and total, then print a receipt.\n",
+          "sampleInput": [
+            "Alex",
+            "3",
+            "24.99"
+          ],
           "hints": [
             "int() for quantity, float() for price.",
             "subtotal = quantity * unit_price.",
@@ -3355,7 +3363,7 @@
           "questionId": "u14-w2-hw-code",
           "language": "python",
           "label": "Python editor",
-          "instructions": "Continue the calculation here if useful, but the assessed copy is the file in your GitHub repository. The check looks for conversion and an f-string only.",
+          "instructions": "Continue the calculation here if useful, but the assessed copy is the file in your GitHub repository. Use Program input with Run to test.",
           "starter": "# Homework — finish the takeaway calculation\ncustomer = input(\"Customer name: \")\nquantity = int(input(\"Number of items: \"))\nunit_price = float(input(\"Unit price: \"))\nsubtotal = quantity * unit_price\nvat = subtotal * 0.2\ntotal = subtotal + vat\nprint(f\"{customer}: subtotal £{subtotal:.2f}, VAT £{vat:.2f}, total £{total:.2f}\")\n",
           "hints": [
             "Commit on feature/week-2-conversion or the name you chose.",

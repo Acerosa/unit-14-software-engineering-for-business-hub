@@ -2,17 +2,30 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CodeBlockView } from "./CodeBlockView";
 
-vi.mock("./pythonWorkerClient", () => ({
-  ensurePythonWorker: vi.fn(async () => ({})),
-  runPythonCode: vi.fn(async () => ({ stdout: "", stderr: "" })),
-  runPythonTests: vi.fn(async () => ({
-    stdout: "",
-    stderr: "",
-    tests: [],
-    passedCount: 0,
-    totalCount: 0
-  }))
-}));
+const pythonWorkerClientMock = vi.hoisted(function () {
+  return {
+    ensurePythonWorker: vi.fn(async () => ({})),
+    runPythonCode: vi.fn(async () => ({ stdout: "", stderr: "" })),
+    runPythonTests: vi.fn(async () => ({
+      stdout: "",
+      stderr: "",
+      tests: [],
+      passedCount: 0,
+      totalCount: 0
+    })),
+    resetPythonWorker: vi.fn(async () => {}),
+    stopPythonExecution: vi.fn(async () => {}),
+    subscribePythonExecution: vi.fn(function (listener: (active: boolean) => void) {
+      listener(false);
+      return function () {};
+    }),
+    isPythonExecutionActive: vi.fn(() => false),
+    PythonExecutionBusyError: class PythonExecutionBusyError extends Error {},
+    PythonExecutionStoppedError: class PythonExecutionStoppedError extends Error {}
+  };
+});
+
+vi.mock("./pythonWorkerClient", () => pythonWorkerClientMock);
 
 vi.mock("./MonacoEditorField", () => ({
   MonacoEditorField({ value }: { value: string }) {

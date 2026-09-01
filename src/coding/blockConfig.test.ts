@@ -4,6 +4,9 @@ import {
   codeInteractionMode,
   isReadOnlyCodeBlock,
   monacoModelPath,
+  programInputDraftKey,
+  resolveInitialProgramInput,
+  sampleProgramInput,
   supportsBrowserExecution,
   usesTkinterCode
 } from "./blockConfig";
@@ -76,5 +79,24 @@ describe("code block interaction modes", () => {
     expect(monacoModelPath("w2-dbg-1", "solution.py")).toBe("u14://w2-dbg-1/solution.py");
     expect(monacoModelPath("w2-dbg-2", "solution.py")).toBe("u14://w2-dbg-2/solution.py");
     expect(monacoModelPath("w2-dbg-1", "solution.py")).not.toBe(monacoModelPath("w2-dbg-2", "solution.py"));
+  });
+
+  it("reads optional authored sample Program input", () => {
+    expect(sampleProgramInput(block({
+      content: { sampleInput: ["Keyboard", "3", "24.99"] }
+    }))).toEqual(["Keyboard", "3", "24.99"]);
+    expect(sampleProgramInput(block({ content: {} }))).toEqual([]);
+  });
+
+  it("uses a separate draft key for Program input", () => {
+    expect(programInputDraftKey(block({ content: { questionId: "u14-w1-io-code" } })))
+      .toBe("u14-w1-io-code__programInput");
+    expect(resolveInitialProgramInput(
+      block({ content: { sampleInput: ["Keyboard"] } }),
+      "saved"
+    )).toBe("saved");
+    expect(resolveInitialProgramInput(
+      block({ content: { sampleInput: ["Keyboard"] } })
+    )).toBe("Keyboard");
   });
 });

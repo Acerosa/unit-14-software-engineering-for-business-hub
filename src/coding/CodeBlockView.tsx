@@ -6,11 +6,15 @@ import { ReadOnlyCodeBlock } from "./ReadOnlyCodeBlock";
 export function CodeBlockView({
   block,
   initialCode,
-  onResult
+  initialProgramInput,
+  onResult,
+  onProgramInputChange
 }: {
   block: ActivityBlockDocument;
   initialCode?: string;
+  initialProgramInput?: string;
   onResult?: (result: ActivityResult) => void;
+  onProgramInputChange?: (value: string) => void;
 }) {
   if (!isCodeBlockType(block.type)) return null;
 
@@ -24,8 +28,10 @@ export function CodeBlockView({
     <PythonCodeExercise
       block={block}
       initialCode={initialCode}
+      initialProgramInput={initialProgramInput}
       executionMode={mode === "local-only" ? "local-only" : "browser"}
       onResult={onResult}
+      onProgramInputChange={onProgramInputChange}
     />
   );
 }

@@ -8,6 +8,10 @@ import type {
   WorkerRequest,
   WorkerResponse
 } from "./types";
+import {
+  createStdinReader,
+  formatLearnerPythonError
+} from "./pythonStdin";
 
 const PYODIDE_INDEX = "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
 const EXECUTION_TIMEOUT_MS = 8000;
@@ -17,6 +21,7 @@ type PyodideRuntime = {
   loadPackagesFromImports: (code: string) => Promise<void>;
   setStdout: (options: { batched: (msg: string) => void }) => void;
   setStderr: (options: { batched: (msg: string) => void }) => void;
+  setStdin: (options: { stdin?: () => string | null; error?: boolean }) => void;
 };
 
 type PyodideModule = {
@@ -36,6 +41,18 @@ function resetBuffers() {
 function attachIO(runtime: PyodideRuntime) {
   runtime.setStdout({ batched: (msg) => { stdoutBuffer += msg; } });
   runtime.setStderr({ batched: (msg) => { stderrBuffer += msg; } });
+}
+
+function configureStdin(runtime: PyodideRuntime, stdinLines: string[]) {
+  const reader = createStdinReader(stdinLines);
+  runtime.setStdin({
+    stdin: function () {
+      const line = reader.readLine();
+      if (line === null) return null;
+      return `${line}\n`;
+    },
+    error: false
+  });
 }
 
 async function ensurePyodide(): Promise<PyodideRuntime> {
@@ -63,13 +80,14 @@ for name in list(globals().keys()):
 
 function formatPythonError(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error);
-  return message.replace(/^PythonError:\\s*/i, "").trim();
+  return formatLearnerPythonError(message.replace(/^PythonError:\s*/i, "").trim(), stdoutBuffer);
 }
 
-async function executeLearnerCode(code: string): Promise<RunCodeResult> {
+async function executeLearnerCode(code: string, stdinLines: string[] = []): Promise<RunCodeResult> {
   const runtime = await ensurePyodide();
   resetBuffers();
   await resetLearnerNamespace(runtime);
+  configureStdin(runtime, stdinLines);
   try {
     await runtime.loadPackagesFromImports(code);
     await runtime.runPythonAsync(code);
@@ -78,10 +96,12 @@ async function executeLearnerCode(code: string): Promise<RunCodeResult> {
       stderr: stderrBuffer.trim()
     };
   } catch (error) {
+    const raw = error instanceof Error ? error.message : String(error);
+    const formatted = formatLearnerPythonError(raw, stdoutBuffer);
     return {
       stdout: stdoutBuffer.trim(),
       stderr: stderrBuffer.trim(),
-      error: formatPythonError(error)
+      error: formatted
     };
   }
 }
@@ -110,8 +130,8 @@ async function evaluateAssertion(runtime: PyodideRuntime, assertion: string): Pr
   }
 }
 
-async function runTests(code: string, tests: RuntimeTestSpec[]): Promise<RunTestsResult> {
-  const runResult = await executeLearnerCode(code);
+async function runTests(code: string, tests: RuntimeTestSpec[], stdinLines: string[] = []): Promise<RunTestsResult> {
+  const runResult = await executeLearnerCode(code, stdinLines);
   const runtime = await ensurePyodide();
   const results: RuntimeTestResult[] = [];
 
@@ -176,12 +196,14 @@ async function handleRequest(request: WorkerRequest): Promise<WorkerResponse | n
   }
 
   if (request.type === "run") {
-    const result = await withTimeout(executeLearnerCode(request.code), EXECUTION_TIMEOUT_MS);
+    const stdin = Array.isArray(request.stdin) ? request.stdin : [];
+    const result = await withTimeout(executeLearnerCode(request.code, stdin), EXECUTION_TIMEOUT_MS);
     return { type: "run-result", id: request.id, result };
   }
 
   if (request.type === "run-tests") {
-    const result = await withTimeout(runTests(request.code, request.tests), EXECUTION_TIMEOUT_MS);
+    const stdin = Array.isArray(request.stdin) ? request.stdin : [];
+    const result = await withTimeout(runTests(request.code, request.tests, stdin), EXECUTION_TIMEOUT_MS);
     return { type: "run-tests-result", id: request.id, result };
   }
 

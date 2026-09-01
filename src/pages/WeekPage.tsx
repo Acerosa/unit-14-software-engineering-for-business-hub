@@ -19,7 +19,7 @@ import { runtimeWeekForId, unit14RuntimeWeeks } from "../curriculum/runtime-week
 import { getContentEngine, type CurriculumAdapter, type ResolvedWeek } from "../content/engine";
 import { fromResolvedWeek, type ResolvedActivity } from "../content/week-presentation";
 import { CodeBlockView } from "../coding/CodeBlockView";
-import { isCodeBlockType } from "../coding/blockConfig";
+import { isCodeBlockType, programInputDraftKey } from "../coding/blockConfig";
 import { createSitePath } from "../paths";
 
 function normaliseBlockType(value: string | undefined): string {
@@ -181,11 +181,14 @@ export function WeekPage({
               renderFallback={(block) => {
                 if (isCodeBlockType(block.type)) {
                   const qid = questionIdFor(block);
-                  const initial = draftResponsesFor(activity)[qid];
+                  const drafts = draftResponsesFor(activity);
+                  const initial = drafts[qid];
+                  const stdinDraft = drafts[programInputDraftKey(block)];
                   return (
                     <CodeBlockView
                       block={block}
                       initialCode={typeof initial === "string" ? initial : undefined}
+                      initialProgramInput={typeof stdinDraft === "string" ? stdinDraft : undefined}
                       onResult={(result) => {
                         const article = mountRef.current?.querySelector(`[data-lp-activity="${activity.id}"]`);
                         article?.dispatchEvent(new CustomEvent("lp-block-result", {
@@ -194,6 +197,17 @@ export function WeekPage({
                             questionId: qid,
                             response: persistableResponse(block, result),
                             completed: result.completed
+                          }
+                        }));
+                      }}
+                      onProgramInputChange={(value) => {
+                        const article = mountRef.current?.querySelector(`[data-lp-activity="${activity.id}"]`);
+                        article?.dispatchEvent(new CustomEvent("lp-block-result", {
+                          bubbles: true,
+                          detail: {
+                            questionId: programInputDraftKey(block),
+                            response: value,
+                            completed: false
                           }
                         }));
                       }}

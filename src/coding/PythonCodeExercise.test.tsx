@@ -27,7 +27,7 @@ vi.mock("./MonacoEditorField", () => ({
 }));
 
 const workerMocks = vi.hoisted(function () {
-  return {
+  const base = {
     ensurePythonWorker: vi.fn(async () => ({})),
     runPythonCode: vi.fn(async () => ({ stdout: "Hello\n", stderr: "" })),
     runPythonTests: vi.fn(async () => ({
@@ -36,8 +36,28 @@ const workerMocks = vi.hoisted(function () {
       tests: [{ id: "t1", label: "Test 1", passed: true }],
       passedCount: 1,
       totalCount: 1
-    }))
+    })),
+    resetPythonWorker: vi.fn(async () => {}),
+    stopPythonExecution: vi.fn(async () => {}),
+    subscribePythonExecution: vi.fn(function (listener: (active: boolean) => void) {
+      listener(false);
+      return function () {};
+    }),
+    isPythonExecutionActive: vi.fn(() => false),
+    PythonExecutionBusyError: class PythonExecutionBusyError extends Error {
+      constructor() {
+        super("Another Python exercise is currently running. Wait for it to finish or stop it.");
+        this.name = "PythonExecutionBusyError";
+      }
+    },
+    PythonExecutionStoppedError: class PythonExecutionStoppedError extends Error {
+      constructor() {
+        super("Execution stopped.");
+        this.name = "PythonExecutionStoppedError";
+      }
+    }
   };
+  return base;
 });
 
 vi.mock("./pythonWorkerClient", () => workerMocks);
@@ -163,6 +183,134 @@ describe("PythonCodeExercise", () => {
     await waitFor(function () {
       expect(screen.getByText(/NameError/)).toBeTruthy();
     });
+  });
+
+  it("calls onProgramInputChange when Program input is edited", async () => {
+    const onProgramInputChange = vi.fn();
+    render(<PythonCodeExercise block={block} onProgramInputChange={onProgramInputChange} />);
+    fireEvent.change(screen.getByLabelText("Program input"), { target: { value: "Keyboard\n3" } });
+    expect(onProgramInputChange).toHaveBeenCalledWith("Keyboard\n3");
+  });
+
+  it("initialises Program input from a draft value instead of sampleInput", () => {
+    render(
+      <PythonCodeExercise
+        block={{
+          ...block,
+          content: { ...block.content, sampleInput: ["sample"] }
+        } as never}
+        initialProgramInput="saved draft"
+      />
+    );
+    expect(screen.getByLabelText("Program input")).toHaveValue("saved draft");
+  });
+
+  it("shows Stop while running and stops execution", async () => {
+    let resolveRun: (value: unknown) => void = () => {};
+    workerMocks.runPythonTests.mockReturnValueOnce(new Promise(function (resolve) {
+      resolveRun = resolve;
+    }));
+    render(<PythonCodeExercise block={block} />);
+    await waitFor(function () {
+      expect(screen.getByRole("button", { name: "Run Python code" })).toBeEnabled();
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Run Python code" }));
+    expect(screen.getByRole("button", { name: "Stop Python execution" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Stop Python execution" }));
+    expect(workerMocks.stopPythonExecution).toHaveBeenCalled();
+    resolveRun({
+      stdout: "",
+      stderr: "",
+      tests: [{ id: "t1", label: "Test 1", passed: true }],
+      passedCount: 1,
+      totalCount: 1
+    });
+  });
+
+  it("passes Program input lines to the worker when running", async () => {
+    render(<PythonCodeExercise block={block} />);
+    await waitFor(function () {
+      expect(screen.getByRole("button", { name: "Run Python code" })).toBeEnabled();
+    });
+    fireEvent.change(screen.getByLabelText("Program input"), { target: { value: "Keyboard" } });
+    fireEvent.click(screen.getByRole("button", { name: "Run Python code" }));
+    await waitFor(function () {
+      expect(workerMocks.runPythonTests).toHaveBeenCalled();
+    });
+    expect(workerMocks.runPythonTests).toHaveBeenLastCalledWith(
+      expect.any(String),
+      expect.any(Array),
+      ["Keyboard"]
+    );
+  });
+
+  it("keeps Program input independent between exercises", async () => {
+    const blockA = {
+      id: "stdin-a",
+      type: "python-exercise",
+      content: {
+        questionId: "stdin-a",
+        filename: "solution.py",
+        starter: "print(1)",
+        sampleInput: ["alpha"]
+      }
+    } as never;
+    const blockB = {
+      id: "stdin-b",
+      type: "python-exercise",
+      content: {
+        questionId: "stdin-b",
+        filename: "solution.py",
+        starter: "print(2)",
+        sampleInput: ["beta"]
+      }
+    } as never;
+
+    render(
+      <>
+        <PythonCodeExercise block={blockA} />
+        <PythonCodeExercise block={blockB} />
+      </>
+    );
+
+    const inputs = screen.getAllByLabelText("Program input");
+    expect(inputs[0]).toHaveValue("alpha");
+    expect(inputs[1]).toHaveValue("beta");
+
+    fireEvent.change(inputs[0], { target: { value: "changed-a" } });
+    expect(inputs[1]).toHaveValue("beta");
+  });
+
+  it("restores authored sample input on reset", async () => {
+    const sampleBlock = {
+      ...block,
+      content: {
+        ...block.content,
+        sampleInput: ["Keyboard", "3"]
+      }
+    } as never;
+    render(<PythonCodeExercise block={sampleBlock} />);
+    await waitFor(function () {
+      expect(screen.getByRole("button", { name: "Run Python code" })).toBeEnabled();
+    });
+    const input = screen.getByLabelText("Program input");
+    fireEvent.change(input, { target: { value: "temporary" } });
+    fireEvent.click(screen.getByRole("button", { name: "Reset code to starter template" }));
+    expect(input).toHaveValue("Keyboard\n3");
+  });
+
+  it("does not clear Program input when clearing output", async () => {
+    render(<PythonCodeExercise block={block} />);
+    await waitFor(function () {
+      expect(screen.getByRole("button", { name: "Run Python code" })).toBeEnabled();
+    });
+    fireEvent.change(screen.getByLabelText("Program input"), { target: { value: "Keyboard" } });
+    fireEvent.click(screen.getByRole("button", { name: "Run Python code" }));
+    await waitFor(function () {
+      expect(screen.getByText(/Test 1/)).toBeTruthy();
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Clear output" }));
+    expect(screen.getByLabelText("Program input")).toHaveValue("Keyboard");
   });
 
   it("keeps multiple exercises with the same filename independent", async () => {
