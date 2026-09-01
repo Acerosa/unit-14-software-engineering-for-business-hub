@@ -9,7 +9,7 @@
     schemaVersion: "0.1.0",
     contentPackageVersion: "0.1.0",
     siteName: "Unit 14 Software Engineering for Business Hub",
-    shortName: "Unit 14 Hub",
+    shortName: "SEF",
     qualification: "OCR Level 3 IT",
     unitCode: "H/507/5017",
     unitName: "Software Engineering for Business",
