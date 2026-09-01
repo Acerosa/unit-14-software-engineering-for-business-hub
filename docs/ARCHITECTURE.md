@@ -15,7 +15,7 @@ It does not own identity, marks, enrolments, RLS, administration or GitHub itsel
 
 ## Core responsibility
 
-`learning-platform-core` 0.2.0 owns authentication, session restoration, onboarding, learner context, assignments/progress services, theme behaviour, account UI, platform state and learner-safe API access.
+`learning-platform-core` 0.2.5 owns authentication, session restoration, onboarding, learner context, assignments/progress services, theme behaviour, account UI, platform state and learner-safe API access.
 
 `src/platform.ts` is the React composition root. It creates one Core platform per page through `createPlatform(..., { createClient })`. Hub code does not keep a parallel session store.
 

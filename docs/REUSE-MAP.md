@@ -20,7 +20,7 @@ Classification used here:
 | Session 1 / Session 2 disclosure | Unit 3 `details`/`summary` | Adapted | Familiar learning-page hierarchy | Used on Week 1; planned weeks stay as outlines |
 | Coming-soon cards | Unit 3 | Adapted | Honest unfinished states | Non-linked planned activity cards; colour is not the only status cue |
 | Breadcrumbs and skip link | Core `createBreadcrumbs` + shared skip-link CSS | Core | Proven across hubs | Mounted from `data-items` |
-| Mobile menu | Core `createNavigationShell` | Core | 0.2.0 ordered navigation | `navigationMode: "as-supplied"` |
+| Mobile menu | Core `createNavigationShell` | Core | 0.2.5 ordered navigation | `navigationMode: "as-supplied"` |
 | Week / session chrome | Core `createWeekView` / `createSessionSection` | Core | Presentation only | Hub maps Content `resolveWeek()` |
 | Activity listing cards | Core `createActivityCard` | Core | Outer presentation | Content still renders activity interiors |
 | Programming activities | T Level Foundations `programming-checker.js` | Adapted | Deterministic regex/structure checks, no in-browser execution | Generic `python-exercise` checks in `@learning-platform/content`; Python-only UI; no T Level questions copied |

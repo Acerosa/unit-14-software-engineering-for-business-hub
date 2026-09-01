@@ -28,16 +28,16 @@ This hub conforms to Hub Security Baseline v1. Learner bundles exclude authorita
 
 Reviewed build-time packages (see [docs/PROVENANCE.md](docs/PROVENANCE.md)):
 
-- `@learning-platform/core` **0.2.0** (`v0.2.0`)
+- `@learning-platform/core` **0.2.5** (`v0.2.5`)
 - `@learning-platform/content` **0.1.2** (`v0.1.2`)
-- `@learning-platform/ui` **0.1.4** (`v0.1.4`) from [Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui)
+- `@learning-platform/ui` **0.1.8** (`v0.1.8`) from [Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui)
 - Supabase JS **2.112.3**
 
 Vendored IIFE copies under `vendor/` remain for Node curriculum tests. The GitHub Pages bundle is produced by Vite from the `file:` packages.
 
 The hub is registered in the shared backend. Learners load the published teaching package from hosted Supabase at runtime; GitHub Pages hosts the application shell only.
 
-Learner chrome uses `@learning-platform/ui` React components on Core 0.2.0 contracts (`HubShell`, `WeekView`, activity cards). Curriculum JSON and activity-block rendering stay in `@learning-platform/content`. See [docs/shared-hub-ui.md](docs/shared-hub-ui.md) and [docs/react-vite.md](docs/react-vite.md).
+Learner chrome uses `@learning-platform/ui` React components on Core 0.2.5 contracts (`HubShell`, `WeekView`, activity cards). Curriculum JSON and activity-block rendering stay in `@learning-platform/content`. See [docs/shared-hub-ui.md](docs/shared-hub-ui.md) and [docs/react-vite.md](docs/react-vite.md).
 
 Git tag `curriculum-engine-mvp` is the Parts 1–4 baseline. See [docs/curriculum-engine-mvp.md](docs/curriculum-engine-mvp.md) and [docs/publication.md](docs/publication.md).
 

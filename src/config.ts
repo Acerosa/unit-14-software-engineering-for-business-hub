@@ -10,7 +10,7 @@ export const APP_CONFIG = Object.freeze({
   qualification: "OCR Level 3 IT",
   unitCode: "H/507/5017",
   unitName: "Software Engineering for Business",
-  coreVersion: "0.2.0",
+  coreVersion: "0.2.5",
   learnerApiContractVersion: "0.1.0",
   submissionContractVersion: "0.1.0",
   academicYear: "2026/27",
