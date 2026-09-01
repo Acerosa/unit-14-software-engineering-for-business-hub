@@ -228,6 +228,137 @@ body {
   align-items: center;
 }
 
+.lp-python-ide {
+  display: grid;
+  gap: var(--lp-space-3);
+}
+
+.lp-python-ide__toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--lp-space-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.lp-python-ide__meta,
+.lp-python-ide__actions {
+  display: flex;
+  gap: var(--lp-space-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.lp-python-ide__filename {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--lp-text-muted);
+}
+
+.lp-python-ide__status {
+  margin: 0;
+  color: var(--lp-text-muted);
+}
+
+.lp-python-ide__editor-shell {
+  border: 0.125rem solid var(--lp-border);
+  border-radius: var(--lp-radius-sm);
+  overflow: hidden;
+  background: var(--lp-surface-alt);
+}
+
+.lp-python-ide__editor-shell .monaco-editor,
+.lp-python-ide__editor-shell .monaco-editor-background,
+.lp-python-ide__editor-shell .margin {
+  background: transparent;
+}
+
+.lp-code--fallback {
+  min-height: 16rem;
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  resize: vertical;
+}
+
+.lp-python-ide__panel {
+  border: 0.125rem solid var(--lp-border);
+  border-radius: var(--lp-radius-sm);
+  background: var(--lp-surface-alt);
+  padding: var(--lp-space-3);
+}
+
+.lp-python-ide__panel-header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--lp-space-2);
+  align-items: center;
+  margin-bottom: var(--lp-space-2);
+}
+
+.lp-python-ide__panel-header h4 {
+  margin: 0;
+}
+
+.lp-button--small {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.lp-python-ide__placeholder {
+  margin: 0;
+  color: var(--lp-text-muted);
+}
+
+.lp-python-ide__output,
+.lp-python-ide__error pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  line-height: 1.45;
+}
+
+.lp-python-ide__error strong {
+  display: block;
+  margin-bottom: var(--lp-space-1);
+}
+
+.lp-python-ide__test-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--lp-space-2) 0 0;
+}
+
+.lp-python-ide__test-list li {
+  margin-bottom: var(--lp-space-2);
+}
+
+.lp-python-ide__test-list li[data-passed="false"] {
+  color: var(--lp-warning, #9a6700);
+}
+
+.lp-python-ide__summary {
+  margin: var(--lp-space-2) 0 0;
+  font-weight: 700;
+}
+
+.lp-python-ide__formative-note {
+  margin: var(--lp-space-2) 0 0;
+  color: var(--lp-text-muted);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 48rem) {
+  .lp-python-ide__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lp-python-ide__actions {
+    justify-content: flex-start;
+  }
+}
+
 .lp-language-badge {
   font-weight: 700;
 }

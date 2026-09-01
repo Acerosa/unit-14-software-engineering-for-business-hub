@@ -18,6 +18,8 @@ import type { ContentPackage } from "../curriculum/from-package";
 import { runtimeWeekForId, unit14RuntimeWeeks } from "../curriculum/runtime-weeks";
 import { getContentEngine, type CurriculumAdapter, type ResolvedWeek } from "../content/engine";
 import { fromResolvedWeek, type ResolvedActivity } from "../content/week-presentation";
+import { PythonCodeExercise } from "../coding/PythonCodeExercise";
+import { isCodeBlockType } from "../coding/blockConfig";
 import { createSitePath } from "../paths";
 
 function normaliseBlockType(value: string | undefined): string {
@@ -41,6 +43,9 @@ function persistableResponse(block: ActivityBlockDocument, result: ActivityResul
     if (typeof responses === "string") return responses.trim();
     if (responses == null) return "";
     return String(responses).trim();
+  }
+  if (type === "code-editor" || type === "python-exercise") {
+    return typeof responses === "string" ? responses : String(responses ?? "");
   }
   return responses && typeof responses === "object" ? responses : {};
 }
@@ -173,9 +178,30 @@ export function WeekPage({
             <InteractiveActivity
               activity={activity}
               initialResponses={draftResponsesFor(activity)}
-              renderFallback={(block) => (
-                <AuthoredHtml html={engine.renderBlock(block)} />
-              )}
+              renderFallback={(block) => {
+                if (isCodeBlockType(block.type)) {
+                  const qid = questionIdFor(block);
+                  const initial = draftResponsesFor(activity)[qid];
+                  return (
+                    <PythonCodeExercise
+                      block={block}
+                      initialCode={typeof initial === "string" ? initial : undefined}
+                      onResult={(result) => {
+                        const article = mountRef.current?.querySelector(`[data-lp-activity="${activity.id}"]`);
+                        article?.dispatchEvent(new CustomEvent("lp-block-result", {
+                          bubbles: true,
+                          detail: {
+                            questionId: qid,
+                            response: persistableResponse(block, result),
+                            completed: result.completed
+                          }
+                        }));
+                      }}
+                    />
+                  );
+                }
+                return <AuthoredHtml html={engine.renderBlock(block)} />;
+              }}
               onResult={(result: ActivityResult, block: ActivityBlockDocument) => {
                 const article = mountRef.current?.querySelector(`[data-lp-activity="${activity.id}"]`);
                 article?.dispatchEvent(new CustomEvent("lp-block-result", {

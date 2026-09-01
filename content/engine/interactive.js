@@ -25,6 +25,9 @@
     ) {
       return true;
     }
+    if ((type === "code-editor" || type === "python-exercise") && blockRoot.getAttribute("data-lp-react-code") === "true") {
+      return true;
+    }
     return false;
   }
 

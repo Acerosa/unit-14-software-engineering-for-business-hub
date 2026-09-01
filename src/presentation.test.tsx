@@ -1,11 +1,24 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
-import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import pkg from "./test-support/unit14-package.cjs";
 import type { ContentPackage } from "./curriculum/from-package";
 import { configureBundledPackage } from "./curriculum/runtime-weeks";
 import { HomePage } from "./pages/HomePage";
 import { WeekPage, persistableResponse } from "./pages/WeekPage";
 import { breadcrumbs } from "./page-copy";
+
+vi.mock("./coding/pythonWorkerClient", () => ({
+  ensurePythonWorker: vi.fn(async () => ({})),
+  runPythonCode: vi.fn(async () => ({ stdout: "", stderr: "" })),
+  runPythonTests: vi.fn(async () => ({
+    stdout: "",
+    stderr: "",
+    tests: [],
+    passedCount: 0,
+    totalCount: 0
+  })),
+  resetPythonWorker: vi.fn(async () => {})
+}));
 
 const bundled = pkg as ContentPackage;
 
@@ -54,11 +67,15 @@ describe("Unit 14 presentation", () => {
       { id: "sort", type: "classification" },
       { completed: true, correct: true, attempts: 1, responses: { one: "requirements" } }
     )).toEqual({ one: "requirements" });
+    expect(persistableResponse(
+      { id: "py", type: "python-exercise" },
+      { completed: true, correct: null, attempts: 1, responses: "print(1)\n" }
+    )).toBe("print(1)\n");
   });
 });
 
 describe("Unit 14 React catalogue week rendering", () => {
-  it("renders Week 1 catalogue types through React and keeps code/python on HTML", () => {
+  it("renders Week 1 catalogue types through React, including the Python IDE", async () => {
     const { container } = render(
       <WeekPage root="../.." weekId="week-1" pkg={pkg} />
     );
@@ -92,10 +109,12 @@ describe("Unit 14 React catalogue week rendering", () => {
     expect(
       container.querySelector("[data-lp-block='code-editor'], [data-lp-block='python-exercise']")
     ).toBeTruthy();
-    expect(container.querySelector("[data-lp-check]")).toBeTruthy();
+    expect(container.querySelector("[data-lp-react-code='true']")).toBeTruthy();
+    expect(screen.getAllByRole("button", { name: "Run Python code" }).length).toBeGreaterThan(0);
+    expect(container.querySelector("[data-lp-check]")).toBeFalsy();
   });
 
-  it("renders Week 2 catalogue React types alongside HTML code exercises", () => {
+  it("renders Week 2 catalogue React types alongside the Python IDE", async () => {
     const { container } = render(
       <WeekPage root="../.." weekId="week-2" pkg={pkg} />
     );
@@ -106,6 +125,7 @@ describe("Unit 14 React catalogue week rendering", () => {
     expect(
       container.querySelector("[data-lp-block='code-editor'], [data-lp-block='python-exercise']")
     ).toBeTruthy();
+    expect(container.querySelector("[data-lp-react-code='true']")).toBeTruthy();
     expect(screen.getByRole("complementary", { name: "Practice progress" })).toBeTruthy();
     expect(screen.getAllByText(/not P1 achieved/i).length).toBeGreaterThan(0);
   });
