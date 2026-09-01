@@ -21,7 +21,9 @@
     "@learning-platform/content": "file:../learning-platform-content",
     "@learning-platform/core": "file:../learning-platform-core",
     "@learning-platform/ui": "file:../learning-platform-ui",
+    "@monaco-editor/react": "^4.7.0",
     "@supabase/supabase-js": "2.112.3",
+    "monaco-editor": "^0.56.0",
     "react": "19.2.6",
     "react-dom": "19.2.6"
   },

@@ -38,6 +38,9 @@ function copyCurriculum() {
 export default defineConfig({
   base: "./",
   plugins: [react(), learnerSafeContentPlugin(), copyCurriculum()],
+  worker: {
+    format: "es"
+  },
   build: {
     sourcemap: true,
     rollupOptions: {
