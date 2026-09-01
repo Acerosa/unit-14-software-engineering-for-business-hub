@@ -130,5 +130,235 @@
         "week-2-homework"
       ]
     }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-3-session-1",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 1",
+      "kind": "session",
+      "summary": "Selection concepts, simple if, if/else and formative checks.",
+      "sortOrder": 1,
+      "defaultOpen": true
+    },
+    "relationships": {
+      "week": "week-3",
+      "activities": [
+        "week-3-retrieval",
+        "week-3-selection-intro",
+        "week-3-if-discount",
+        "week-3-if-else-stock"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-3-session-2",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 2",
+      "kind": "session",
+      "summary": "elif chains, Boolean conditions, debugging and GitHub Issues.",
+      "sortOrder": 2,
+      "defaultOpen": false
+    },
+    "relationships": {
+      "week": "week-3",
+      "activities": [
+        "week-3-elif-delivery",
+        "week-3-boolean-conditions",
+        "week-3-selection-debug",
+        "week-3-github-issues"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-3-independent-study",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Directed independent study",
+      "kind": "independent-study",
+      "summary": "Applied selection task and reflection.",
+      "sortOrder": 3,
+      "defaultOpen": false
+    },
+    "relationships": {
+      "week": "week-3",
+      "activities": [
+        "week-3-selection-applied"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-4-session-1",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 1",
+      "kind": "session",
+      "summary": "Iteration concepts, for loops and running totals.",
+      "sortOrder": 1,
+      "defaultOpen": true
+    },
+    "relationships": {
+      "week": "week-4",
+      "activities": [
+        "week-4-retrieval",
+        "week-4-iteration-intro",
+        "week-4-for-prices",
+        "week-4-running-total"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-4-session-2",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 2",
+      "kind": "session",
+      "summary": "Counting, while loops, debugging and feature branches.",
+      "sortOrder": 2,
+      "defaultOpen": false
+    },
+    "relationships": {
+      "week": "week-4",
+      "activities": [
+        "week-4-count-condition",
+        "week-4-while-validation",
+        "week-4-loop-debug",
+        "week-4-feature-branches"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-4-independent-study",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Directed independent study",
+      "kind": "independent-study",
+      "summary": "Business summary function and reflection.",
+      "sortOrder": 3,
+      "defaultOpen": false
+    },
+    "relationships": {
+      "week": "week-4",
+      "activities": [
+        "week-4-business-summary"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-5-session-1",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 1",
+      "kind": "session",
+      "summary": "Functions, parameters and return values.",
+      "sortOrder": 1,
+      "defaultOpen": true
+    },
+    "relationships": {
+      "week": "week-5",
+      "activities": [
+        "week-5-retrieval",
+        "week-5-functions-intro",
+        "week-5-one-parameter",
+        "week-5-multiple-parameters",
+        "week-5-return-value"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-5-session-2",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 2",
+      "kind": "session",
+      "summary": "Reusing functions, debugging return values and simple classes.",
+      "sortOrder": 2,
+      "defaultOpen": false
+    },
+    "relationships": {
+      "week": "week-5",
+      "activities": [
+        "week-5-reuse-function",
+        "week-5-debug-return",
+        "week-5-simple-class",
+        "week-5-pull-requests"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-5-independent-study",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Directed independent study",
+      "kind": "independent-study",
+      "summary": "Applied validation function.",
+      "sortOrder": 3,
+      "defaultOpen": false
+    },
+    "relationships": {
+      "week": "week-5",
+      "activities": [
+        "week-5-applied-validation"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-6-session-1",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 1",
+      "kind": "session",
+      "summary": "GUI concepts, tkinter examples and local editing.",
+      "sortOrder": 1,
+      "defaultOpen": true
+    },
+    "relationships": {
+      "week": "week-6",
+      "activities": [
+        "week-6-gui-intro",
+        "week-6-tkinter-app"
+      ]
+    }
+  },
+  {
+    "schema": "lp.content.session",
+    "schemaVersion": "0.1.0",
+    "id": "week-6-session-2",
+    "version": "0.1.0",
+    "metadata": {
+      "title": "Session 2",
+      "kind": "session",
+      "summary": "Assignment 1 consolidation and tagged releases.",
+      "sortOrder": 2,
+      "defaultOpen": false
+    },
+    "relationships": {
+      "week": "week-6",
+      "activities": [
+        "week-6-consolidation",
+        "week-6-tagged-release"
+      ]
+    }
   }
 ]

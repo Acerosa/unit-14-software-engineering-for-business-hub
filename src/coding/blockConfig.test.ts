@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { ActivityBlockDocument } from "@learning-platform/ui";
 import {
   codeInteractionMode,
+  effectiveCodeInteractionMode,
   isReadOnlyCodeBlock,
   monacoModelPath,
   programInputDraftKey,
@@ -68,6 +69,20 @@ describe("code block interaction modes", () => {
       }
     });
     expect(usesTkinterCode(sample)).toBe(true);
+    expect(effectiveCodeInteractionMode(sample)).toBe("local-only");
+    expect(supportsBrowserExecution(sample)).toBe(false);
+  });
+
+  it("keeps read-only tkinter examples on the read-only path", () => {
+    const sample = block({
+      content: {
+        questionId: "u14-w6-tk-window",
+        interaction: "read-only",
+        starter: "import tkinter as tk\nwindow = tk.Tk()\n"
+      }
+    });
+    expect(effectiveCodeInteractionMode(sample)).toBe("read-only");
+    expect(supportsBrowserExecution(sample)).toBe(false);
   });
 
   it("honours explicit interaction metadata", () => {

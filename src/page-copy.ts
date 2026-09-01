@@ -9,6 +9,22 @@ const WEEKS: Record<string, { title: string; subtitle: string }> = {
   "week-2": {
     title: "Week 2: Data Type Conversion and Predefined Subroutines",
     subtitle: "LO1 · Assignment 1 / P1 · Conversion, predefined subroutines, .gitignore and a feature branch."
+  },
+  "week-3": {
+    title: "Week 3: Selection",
+    subtitle: "LO1 · Assignment 1 / P1 · if, if/else, elif and Boolean conditions in business rules."
+  },
+  "week-4": {
+    title: "Week 4: Iteration",
+    subtitle: "LO1 · Assignment 1 / P1 · for and while loops, accumulators and business summaries."
+  },
+  "week-5": {
+    title: "Week 5: Encapsulation, Parameters and Return Values",
+    subtitle: "LO1 · Assignment 1 / P1 · functions, parameters, return values and simple classes."
+  },
+  "week-6": {
+    title: "Week 6: GUI Objects and Assignment 1 Completion",
+    subtitle: "LO1 · Assignment 1 / P1 · tkinter GUI objects; run GUI code locally."
   }
 };
 
@@ -32,10 +48,6 @@ const ASSIGNMENTS: Record<string, { title: string; subtitle: string }> = {
 };
 
 const PLANNED_WEEKS: Array<[number, string]> = [
-  [3, "Selection"],
-  [4, "Iteration"],
-  [5, "Encapsulation, Parameters and Return Values"],
-  [6, "GUI Objects and Assignment 1 Completion"],
   [7, "The Modern Incremental System Life Cycle"],
   [8, "Investigating Business Requirements"],
   [9, "Feasibility, Phased Development and Assignment 2"],

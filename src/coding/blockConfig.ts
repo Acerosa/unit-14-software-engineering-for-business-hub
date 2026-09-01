@@ -10,7 +10,12 @@ const READ_ONLY_QUESTION_IDS = new Set([
   "u14-w2-conv-fail",
   "u14-w2-sub-examples",
   "u14-w2-fmt-example",
-  "u14-w2-cln-sample"
+  "u14-w2-cln-sample",
+  "u14-w3-sel-example",
+  "u14-w4-loop-example",
+  "u14-w5-fn-example",
+  "u14-w6-tk-window",
+  "u14-w6-tk-widgets"
 ]);
 
 /** Editable snippets that are not executed in the browser (for example .gitignore). */
@@ -96,12 +101,20 @@ export function isReadOnlyCodeBlock(block: ActivityBlockDocument): boolean {
 }
 
 export function supportsBrowserExecution(block: ActivityBlockDocument): boolean {
-  return codeInteractionMode(block) === "ide";
+  return effectiveCodeInteractionMode(block) === "ide";
 }
 
 export function usesTkinterCode(block: ActivityBlockDocument): boolean {
   const starter = starterCode(block);
   return /\bimport\s+tkinter\b|\bfrom\s+tkinter\b|\btkinter\./i.test(starter);
+}
+
+/** Mode used at render time — read-only wins; editable tkinter routes local-only. */
+export function effectiveCodeInteractionMode(block: ActivityBlockDocument): CodeInteractionMode {
+  const base = codeInteractionMode(block);
+  if (base === "read-only") return "read-only";
+  if (usesTkinterCode(block)) return "local-only";
+  return base;
 }
 
 export function editorLabel(block: ActivityBlockDocument): string {

@@ -65,7 +65,7 @@
     "metadata": {
       "teachingWeek": 3,
       "title": "Selection",
-      "status": "planned",
+      "status": "available",
       "phase": "teaching",
       "professionalPractice": "GitHub Issues and linking work to commits.",
       "route": "weeks/week-3/",
@@ -79,7 +79,11 @@
         "LO1"
       ],
       "assignment": "A1",
-      "sessions": []
+      "sessions": [
+        "week-3-session-1",
+        "week-3-session-2",
+        "week-3-independent-study"
+      ]
     }
   },
   {
@@ -90,7 +94,7 @@
     "metadata": {
       "teachingWeek": 4,
       "title": "Iteration",
-      "status": "planned",
+      "status": "available",
       "phase": "teaching",
       "professionalPractice": "Feature branches and merging.",
       "route": "weeks/week-4/",
@@ -104,7 +108,11 @@
         "LO1"
       ],
       "assignment": "A1",
-      "sessions": []
+      "sessions": [
+        "week-4-session-1",
+        "week-4-session-2",
+        "week-4-independent-study"
+      ]
     }
   },
   {
@@ -115,7 +123,7 @@
     "metadata": {
       "teachingWeek": 5,
       "title": "Encapsulation, Parameters and Return Values",
-      "status": "planned",
+      "status": "available",
       "phase": "teaching",
       "professionalPractice": "Pull requests and peer code review.",
       "route": "weeks/week-5/",
@@ -129,7 +137,11 @@
         "LO1"
       ],
       "assignment": "A1",
-      "sessions": []
+      "sessions": [
+        "week-5-session-1",
+        "week-5-session-2",
+        "week-5-independent-study"
+      ]
     }
   },
   {
@@ -140,7 +152,7 @@
     "metadata": {
       "teachingWeek": 6,
       "title": "GUI Objects and Assignment 1 Completion",
-      "status": "planned",
+      "status": "available",
       "phase": "assignment-completion",
       "professionalPractice": "Tagged releases.",
       "route": "weeks/week-6/",
@@ -154,7 +166,10 @@
         "LO1"
       ],
       "assignment": "A1",
-      "sessions": []
+      "sessions": [
+        "week-6-session-1",
+        "week-6-session-2"
+      ]
     }
   },
   {

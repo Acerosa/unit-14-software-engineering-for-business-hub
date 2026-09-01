@@ -1,5 +1,5 @@
 import type { ActivityBlockDocument, ActivityResult } from "@learning-platform/ui";
-import { codeInteractionMode, isCodeBlockType, usesTkinterCode } from "./blockConfig";
+import { effectiveCodeInteractionMode, isCodeBlockType } from "./blockConfig";
 import { PythonCodeExercise } from "./PythonCodeExercise";
 import { ReadOnlyCodeBlock } from "./ReadOnlyCodeBlock";
 
@@ -18,7 +18,7 @@ export function CodeBlockView({
 }) {
   if (!isCodeBlockType(block.type)) return null;
 
-  const mode = usesTkinterCode(block) ? "local-only" : codeInteractionMode(block);
+  const mode = effectiveCodeInteractionMode(block);
 
   if (mode === "read-only") {
     return <ReadOnlyCodeBlock block={block} />;

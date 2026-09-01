@@ -77,6 +77,25 @@ describe("CodeBlockView migration routing", () => {
     render(
       <CodeBlockView
         block={{
+          id: "w6-tk-ex",
+          type: "python-exercise",
+          content: {
+            questionId: "u14-w6-tk-code",
+            instructions: "Run app.py locally — browser Run is disabled for tkinter.",
+            starter: "import tkinter as tk\nwindow = tk.Tk()\nwindow.mainloop()\n",
+            filename: "app.py"
+          }
+        } as never}
+      />
+    );
+    expect(screen.getByText(/Run locally/i)).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Run unavailable for this exercise" })).toBeDisabled();
+  });
+
+  it("renders gitignore blocks without browser Run", () => {
+    render(
+      <CodeBlockView
+        block={{
           id: "w2-gi-code",
           type: "code-editor",
           content: {

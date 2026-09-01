@@ -12,6 +12,7 @@ import {
   type ActivityResult,
   type ActivityScore
 } from "@learning-platform/ui";
+import { isWeekAvailable } from "@learning-platform/core/curriculum-runtime";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { APP_CONFIG } from "../config";
 import type { ContentPackage } from "../curriculum/from-package";
@@ -137,9 +138,9 @@ export function WeekPage({
   const runtimeWeek = useMemo(() => runtimeWeekForId(livePackage, weekId), [livePackage, weekId]);
   const guardWeek = runtimeWeek || {
     id: weekId,
-    teachingWeek: Number(weekId.replace(/^week-/, "")) || 0,
-    status: "",
-    available: false,
+    teachingWeek: resolved?.document.metadata.teachingWeek ?? (Number(weekId.replace(/^week-/, "")) || 0),
+    status: resolved?.document.metadata.status ?? "",
+    available: isWeekAvailable(resolved?.document.metadata.status),
     title: resolved?.document.metadata.title || weekId
   };
   const accessibleWeeks = useMemo(() => {
