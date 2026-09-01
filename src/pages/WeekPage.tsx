@@ -6,11 +6,15 @@ import {
   WeekAccessGuard,
   WeekView,
   AuthoredHtml,
+  aggregatePracticeProgress,
+  applyPracticeResult,
+  emptyPracticeProgress,
+  isCatalogueReactType,
   questionIdFor,
   type ActivityBlockDocument,
   type ActivityDocument,
   type ActivityResult,
-  type ActivityScore
+  type PracticeProgressAggregate
 } from "@learning-platform/ui";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { APP_CONFIG } from "../config";
@@ -59,11 +63,29 @@ function isScorableReactBlock(block: ActivityBlockDocument): boolean {
   return type === "single-choice" || type === "option-cards" || type === "classification";
 }
 
+function isCompletableReactBlock(block: ActivityBlockDocument): boolean {
+  return isCatalogueReactType(block.type);
+}
+
 function blockScorableTotal(block: ActivityBlockDocument): number {
   const type = normaliseBlockType(block.type);
   if (type === "single-choice" || type === "option-cards") return 1;
   if (type === "classification") return ((block.content && block.content.items) || []).length;
   return 0;
+}
+
+function weekRequiredTotal(week: ResolvedWeek | null): number {
+  if (!week) return 0;
+  let total = 0;
+  (week.sessions || []).forEach((session) => {
+    (session.activities || []).forEach((resolved) => {
+      const activity = activityDocument(resolved as ResolvedActivity);
+      (activity.blocks || []).forEach((block) => {
+        if (isCompletableReactBlock(block)) total += 1;
+      });
+    });
+  });
+  return total;
 }
 
 function weekScorableTotal(week: ResolvedWeek | null): number {
@@ -78,16 +100,6 @@ function weekScorableTotal(week: ResolvedWeek | null): number {
     });
   });
   return total;
-}
-
-function sumScores(scores: Record<string, ActivityScore>): ActivityScore {
-  return Object.values(scores).reduce(
-    (total, score) => ({
-      correct: total.correct + score.correct,
-      total: total.total + score.total
-    }),
-    { correct: 0, total: 0 }
-  );
 }
 
 function draftResponsesFor(activity: ActivityDocument): Record<string, unknown> {
@@ -120,20 +132,25 @@ export function WeekPage({
   weekId,
   pkg,
   weeks,
-  livePackage
+  livePackage,
+  platform
 }: {
   root: string;
   weekId: string;
   pkg: unknown;
   weeks?: CurriculumAdapter["weeks"];
   livePackage?: ContentPackage | null;
+  platform?: unknown;
 }) {
   const engine = getContentEngine();
   const mountRef = useRef<HTMLDivElement>(null);
-  const scoresRef = useRef<Record<string, ActivityScore>>({});
-  const [practiceScore, setPracticeScore] = useState<ActivityScore>({ correct: 0, total: 0 });
+  const progressRef = useRef(emptyPracticeProgress());
+  const [practice, setPractice] = useState<PracticeProgressAggregate>(
+    aggregatePracticeProgress(emptyPracticeProgress(), { requiredBlocks: 0, scorableTotal: 0 })
+  );
   const resolved = pkg ? engine.resolveWeek(pkg, weekId) : null;
   const scorableTotal = useMemo(() => weekScorableTotal(resolved), [resolved]);
+  const requiredTotal = useMemo(() => weekRequiredTotal(resolved), [resolved]);
   const runtimeWeek = useMemo(() => runtimeWeekForId(livePackage, weekId), [livePackage, weekId]);
   const guardWeek = runtimeWeek || {
     id: weekId,
@@ -150,19 +167,22 @@ export function WeekPage({
   }, [livePackage, weeks]);
 
   useEffect(() => {
-    scoresRef.current = {};
-    setPracticeScore({ correct: 0, total: 0 });
-  }, [weekId]);
+    progressRef.current = emptyPracticeProgress();
+    setPractice(aggregatePracticeProgress(emptyPracticeProgress(), {
+      requiredBlocks: requiredTotal,
+      scorableTotal
+    }));
+  }, [weekId, requiredTotal, scorableTotal]);
 
   const recordPracticeResult = useCallback((result: ActivityResult, block: ActivityBlockDocument) => {
-    if (!result.completed || !result.score || result.score.total <= 0) return;
-    if (!isScorableReactBlock(block)) return;
-    scoresRef.current = {
-      ...scoresRef.current,
-      [questionIdFor(block)]: result.score
-    };
-    setPracticeScore(sumScores(scoresRef.current));
-  }, []);
+    if (!result.completed) return;
+    if (!isCompletableReactBlock(block) && !isScorableReactBlock(block)) return;
+    progressRef.current = applyPracticeResult(progressRef.current, questionIdFor(block), result);
+    setPractice(aggregatePracticeProgress(progressRef.current, {
+      requiredBlocks: requiredTotal,
+      scorableTotal
+    }));
+  }, [requiredTotal, scorableTotal]);
 
   const presentation = useMemo(() => {
     if (!resolved) return null;
@@ -177,6 +197,7 @@ export function WeekPage({
           children: (
             <InteractiveActivity
               activity={activity}
+              platform={platform}
               initialResponses={draftResponsesFor(activity)}
               renderFallback={(block) => {
                 if (isCodeBlockType(block.type)) {
@@ -219,7 +240,7 @@ export function WeekPage({
         };
       }
     });
-  }, [accessibleWeeks, engine, recordPracticeResult, resolved, root]);
+  }, [accessibleWeeks, engine, platform, recordPracticeResult, resolved, root]);
 
   // Re-bind after every commit so React fallback HTML retains draft listeners.
   useLayoutEffect(() => {
@@ -237,12 +258,12 @@ export function WeekPage({
   const showAssignmentProgress = Boolean(resolved.assignment && (resolved.sessions || []).length);
   const weekNumber = resolved.document.metadata.teachingWeek;
   const weekBadge = `Week ${weekNumber}: ${resolved.document.metadata.title}`;
-  const summaryScore = {
-    correct: practiceScore.correct,
-    total: Math.max(scorableTotal, practiceScore.total, 1)
-  };
-  const coverage = summaryScore.total > 0 ? practiceScore.total / summaryScore.total : 0;
-  const practiceComplete = scorableTotal > 0 && practiceScore.total >= scorableTotal;
+  const summaryScore = scorableTotal > 0 ? {
+    correct: practice.score.correct,
+    total: Math.max(scorableTotal, practice.score.total, 1)
+  } : undefined;
+  const coverage = practice.completion;
+  const practiceComplete = practice.complete;
 
   return (
     <WeekAccessGuard week={guardWeek}>
@@ -273,14 +294,14 @@ export function WeekPage({
             ) : null}
           </section>
         ) : null}
-        {scorableTotal > 0 ? (
+        {requiredTotal > 0 ? (
           <PracticeProgressPanel
             title="Practice progress"
             badge={weekBadge}
             score={summaryScore}
             progress={coverage}
             completed={practiceComplete}
-            message="Check scored activities to update. Formative practice only — not assignment evidence and not P1."
+            message="Check items to update progress. Scores update only when the server returns a mark. Formative practice only — not assignment evidence and not P1."
             defaultCollapsed
           />
         ) : null}
