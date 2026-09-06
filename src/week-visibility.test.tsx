@@ -69,6 +69,16 @@ describe("Unit 14 shared week visibility", () => {
     expect(screen.getByRole("link", { name: "Open Week 1" })).toBeTruthy();
   });
 
+  it("keeps bundled available sessions when live publication omits session status", () => {
+    const live = structuredClone(bundled);
+    for (const session of live.sessions || []) {
+      if (session.metadata) delete session.metadata.status;
+    }
+    applyLiveCurriculum(live);
+    const runtime = runtimeContentPackage(live);
+    expect(runtime.sessions?.every((session) => session.metadata?.status === "available")).toBe(true);
+  });
+
   it("D — platform publication status overrides bundled fallback", () => {
     const livePlanned = withWeekStatus(bundled, { "week-2": "planned" });
     expect(runtimeContentPackage(livePlanned).weeks?.find((week) => week.id === "week-2")?.metadata?.status)
