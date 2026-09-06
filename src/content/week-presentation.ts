@@ -1,3 +1,4 @@
+import { isSessionAccessible, SESSION_NOT_RELEASED_COPY } from "@learning-platform/core/curriculum-runtime";
 import type { ReactNode } from "react";
 import type { WeekActivity, WeekViewProps } from "@learning-platform/ui";
 import type { ContentEngine, ResolvedWeek } from "./engine";
@@ -92,20 +93,25 @@ export function fromResolvedWeek(
     },
     learningOutcomes: outcomes.map((item) => ({ id: item.id, title: item.metadata?.title })),
     context,
-    sessions: (resolved.sessions || []).map((session) => ({
-      id: session.document.id,
-      title: session.document.metadata.title,
-      kind: session.document.metadata.kind,
-      summary: session.document.metadata.summary,
-      defaultOpen: session.document.metadata.defaultOpen,
-      activities: (session.activities || []).map((activity) => {
-        const resolvedActivity = activity as ResolvedActivity;
-        if (options.renderActivity) return options.renderActivity(resolvedActivity);
-        return {
-          html: options.engine.renderActivity(resolvedActivity, { root: options.root })
-        };
-      })
-    })),
+    sessions: (resolved.sessions || []).map((session) => {
+      const accessible = isSessionAccessible(meta.status, session.document.metadata.status);
+      return {
+        id: session.document.id,
+        title: session.document.metadata.title,
+        kind: session.document.metadata.kind,
+        summary: accessible ? session.document.metadata.summary : SESSION_NOT_RELEASED_COPY,
+        defaultOpen: accessible ? session.document.metadata.defaultOpen : false,
+        activities: accessible
+          ? (session.activities || []).map((activity) => {
+            const resolvedActivity = activity as ResolvedActivity;
+            if (options.renderActivity) return options.renderActivity(resolvedActivity);
+            return {
+              html: options.engine.renderActivity(resolvedActivity, { root: options.root })
+            };
+          })
+          : []
+      };
+    }),
     previousWeek: weekLink(neighbour(weeks, meta.teachingWeek, -1), options.root),
     nextWeek: weekLink(neighbour(weeks, meta.teachingWeek, 1), options.root),
     features: {

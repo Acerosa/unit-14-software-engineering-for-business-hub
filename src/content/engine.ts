@@ -70,7 +70,7 @@ export type ResolvedWeek = {
   };
   learningOutcomes?: Array<{ id: string; metadata?: { title?: string } }>;
   sessions?: Array<{
-    document: { id: string; metadata: { title: string; kind: string; summary?: string; defaultOpen?: boolean } };
+    document: { id: string; metadata: { title: string; kind: string; summary?: string; defaultOpen?: boolean; status?: string } };
     activities?: Array<{ document: unknown; questions?: unknown[]; assets?: unknown[] }>;
   }>;
 };

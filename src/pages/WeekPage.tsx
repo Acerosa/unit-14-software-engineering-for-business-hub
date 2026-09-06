@@ -16,6 +16,7 @@ import {
   type ActivityResult,
   type PracticeProgressAggregate
 } from "@learning-platform/ui";
+import { isSessionAccessible } from "@learning-platform/core/curriculum-runtime";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { APP_CONFIG } from "../config";
 import type { ContentPackage } from "../curriculum/from-package";
@@ -78,6 +79,7 @@ function weekRequiredTotal(week: ResolvedWeek | null): number {
   if (!week) return 0;
   let total = 0;
   (week.sessions || []).forEach((session) => {
+    if (!isSessionAccessible(week.document.metadata.status, session.document.metadata.status)) return;
     (session.activities || []).forEach((resolved) => {
       const activity = activityDocument(resolved as ResolvedActivity);
       (activity.blocks || []).forEach((block) => {
@@ -92,6 +94,7 @@ function weekScorableTotal(week: ResolvedWeek | null): number {
   if (!week) return 0;
   let total = 0;
   (week.sessions || []).forEach((session) => {
+    if (!isSessionAccessible(week.document.metadata.status, session.document.metadata.status)) return;
     (session.activities || []).forEach((resolved) => {
       const activity = activityDocument(resolved as ResolvedActivity);
       (activity.blocks || []).forEach((block) => {
