@@ -81,7 +81,8 @@ function buildWeek2Package() {
       kind: "session",
       summary: "Theory and demonstration: Week 1 retrieval, conversion, predefined subroutines, formatted output and .gitignore.",
       sortOrder: 1,
-      defaultOpen: true
+      defaultOpen: true,
+      status: "available"
     }, {
       week: "week-2",
       activities: [
@@ -98,7 +99,8 @@ function buildWeek2Package() {
       kind: "session",
       summary: "Practical lab: conversion debugging, customer-data cleaning, a business calculation, Git branch guidance and Assignment 1 notes.",
       sortOrder: 2,
-      defaultOpen: false
+      defaultOpen: false,
+      status: "available"
     }, {
       week: "week-2",
       activities: [
@@ -115,7 +117,8 @@ function buildWeek2Package() {
       kind: "independent-study",
       summary: "Finish the business calculation, complete P1 conversion and subroutine notes, then optional stretch on try/except, truncation and cleaner branch history.",
       sortOrder: 3,
-      defaultOpen: false
+      defaultOpen: false,
+      status: "available"
     }, {
       week: "week-2",
       activities: ["week-2-homework"]
