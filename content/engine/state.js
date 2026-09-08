@@ -91,8 +91,11 @@
       return stored;
     }
 
-    function save(draft) {
+    function save(draft, options) {
       write(draft);
+      if (remote && typeof remote.save === "function") {
+        try { remote.save(draft, options || {}); } catch (error) {}
+      }
       return draft;
     }
 
@@ -100,14 +103,55 @@
       try { storage.removeItem(key); } catch (error) {}
       var draft = emptyDraft(activity);
       write(draft);
+      if (remote && typeof remote.clear === "function") {
+        try { remote.clear(); } catch (error) {}
+      }
       return draft;
+    }
+
+    function hydrate() {
+      if (!remote || typeof remote.hydrate !== "function") {
+        return Promise.resolve(load());
+      }
+      return remote.hydrate(load()).then(function (resolved) {
+        var hasWork = resolved && resolved.responses && Object.keys(resolved.responses).length;
+        if (hasWork) write(resolved);
+        return hasWork ? resolved : load();
+      }).catch(function () {
+        return load();
+      });
+    }
+
+    var remote = null;
+    try {
+      var platform = root.LearningPlatform && root.LearningPlatform.platform;
+      if (platform && platform.auth && typeof platform.auth.isSignedIn === "function" && platform.auth.isSignedIn()
+          && platform.progress && typeof platform.progress.createStore === "function") {
+        remote = platform.progress.createStore({
+          activityKey: activity.id,
+          activityVersion: ns.resolvedActivityVersion(activity),
+          storage: storage,
+          legacyKeys: [
+            key,
+            storageKey(activity.id, { learnerKey: "guest" }),
+            storageKey(activity.id, { learnerKey: "authenticated" })
+          ]
+        });
+      }
+    } catch (error) {
+      remote = null;
     }
 
     return {
       key: key,
       load: load,
       save: save,
-      reset: reset
+      reset: reset,
+      hydrate: hydrate,
+      flush: function () {
+        if (remote && typeof remote.flush === "function") return remote.flush();
+        return Promise.resolve(null);
+      }
     };
   };
 
