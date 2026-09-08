@@ -130,8 +130,27 @@
     var store = ns.createDraftStore(activity, options);
     var draft = store.load();
 
-    function persist() {
-      store.save(draft);
+    function persist(saveOptions) {
+      store.save(draft, saveOptions);
+      updateActivityStatus(article, activity, draft);
+    }
+
+    function restoreDraft(next) {
+      if (!next) return;
+      if (
+        draft && draft.responses && Object.keys(draft.responses).length &&
+        (!next.responses || !Object.keys(next.responses).length)
+      ) {
+        return;
+      }
+      draft = next;
+      activityInteractiveBlocks(activity).forEach(function (block) {
+        var blockRoot = article.querySelector('[data-lp-block-id="' + block.id + '"]');
+        var qid = questionId(block);
+        if (!blockRoot) return;
+        restoreResponse(blockRoot, block, draft.responses[qid]);
+        if (draft.checked[qid]) setFeedback(blockRoot, block, draft.responses[qid], true);
+      });
       updateActivityStatus(article, activity, draft);
     }
 
@@ -145,6 +164,9 @@
       if (draft.checked[qid]) setFeedback(blockRoot, block, draft.responses[qid], true);
     });
     updateActivityStatus(article, activity, draft);
+    if (store.hydrate) {
+      store.hydrate().then(restoreDraft);
+    }
 
     article.addEventListener("lp-block-result", function (event) {
       var detail = event.detail || {};
@@ -159,10 +181,10 @@
       }
       draft.responses[qid] = detail.response;
       if (detail.completed) draft.checked[qid] = true;
-      persist();
+      persist(detail.completed ? { immediate: true } : undefined);
       if (detail.completed) {
         ns.submitActivityDraft(activity, draft, Object.assign({}, options, {
-          publication: ns.getPublicationState()
+          publication: (options && options.publication) || ns.getPublicationState()
         }));
       }
     });
@@ -224,7 +246,7 @@
         setFeedback(blockRoot, block, draft.responses[qid], true);
         persist();
         ns.submitActivityDraft(activity, draft, Object.assign({}, options, {
-          publication: ns.getPublicationState()
+          publication: (options && options.publication) || ns.getPublicationState()
         }));
       }
 

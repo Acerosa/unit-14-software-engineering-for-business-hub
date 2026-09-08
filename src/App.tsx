@@ -13,7 +13,15 @@ import { WeekPage } from "./pages/WeekPage";
 import { WeeksPage } from "./pages/WeeksPage";
 import { createSitePath, navigationItems } from "./paths";
 
-function PageBody({ context, platform }: { context: PageContext; platform?: unknown }) {
+function PageBody({
+  context,
+  platform,
+  adaptersReady
+}: {
+  context: PageContext;
+  platform?: unknown;
+  adaptersReady?: boolean;
+}) {
   const { pkg, livePackage, curriculum, assignments } = useLoadedContent();
   if (context.page === "home") return <HomePage root={context.root} livePackage={livePackage} />;
   if (context.page === "learning") {
@@ -28,6 +36,7 @@ function PageBody({ context, platform }: { context: PageContext; platform?: unkn
         weeks={curriculum?.weeks}
         livePackage={livePackage}
         platform={platform}
+        adaptersReady={adaptersReady}
       />
     );
   }
@@ -61,7 +70,7 @@ export function App({ context }: { context: PageContext }) {
 }
 
 function HubApp({ context }: { context: PageContext }) {
-  const { learner, theme, accountDialog, platform } = useHubPlatform(context.root);
+  const { learner, theme, accountDialog, platform, adaptersReady } = useHubPlatform(context.root);
   const { publicationHtml } = useLoadedContent();
   const header = pageHeader(context);
 
@@ -117,7 +126,7 @@ function HubApp({ context }: { context: PageContext }) {
         ]
       }}
     >
-      <PageBody context={context} platform={platform} />
+      <PageBody context={context} platform={platform} adaptersReady={adaptersReady} />
     </HubShell>
   );
 }
