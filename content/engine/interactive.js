@@ -184,7 +184,7 @@
       persist(detail.completed ? { immediate: true } : undefined);
       if (detail.completed) {
         ns.submitActivityDraft(activity, draft, Object.assign({}, options, {
-          publication: ns.getPublicationState()
+          publication: (options && options.publication) || ns.getPublicationState()
         }));
       }
     });
@@ -246,7 +246,7 @@
         setFeedback(blockRoot, block, draft.responses[qid], true);
         persist();
         ns.submitActivityDraft(activity, draft, Object.assign({}, options, {
-          publication: ns.getPublicationState()
+          publication: (options && options.publication) || ns.getPublicationState()
         }));
       }
 

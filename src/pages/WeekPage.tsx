@@ -136,7 +136,8 @@ export function WeekPage({
   pkg,
   weeks,
   livePackage,
-  platform
+  platform,
+  adaptersReady = true
 }: {
   root: string;
   weekId: string;
@@ -144,6 +145,7 @@ export function WeekPage({
   weeks?: CurriculumAdapter["weeks"];
   livePackage?: ContentPackage | null;
   platform?: unknown;
+  adaptersReady?: boolean;
 }) {
   const engine = getContentEngine();
   const mountRef = useRef<HTMLDivElement>(null);
@@ -245,11 +247,14 @@ export function WeekPage({
     });
   }, [accessibleWeeks, engine, platform, recordPracticeResult, resolved, root]);
 
-  // Re-bind after every commit so React fallback HTML retains draft listeners.
+  // Wait for platform.initialise() so signed-in draft stores can hydrate from
+  // the server. Re-bind after every later commit because React can rewrite
+  // authored HTML nodes and wipe data-lp-bound / listeners.
   useLayoutEffect(() => {
-    if (!pkg || !mountRef.current || !presentation || !guardWeek.available) return;
+    if (!pkg || !mountRef.current || !presentation || !guardWeek.available || !adaptersReady) return;
     engine.bindInteractive(mountRef.current, pkg, {
-      sourcePage: window.location.pathname
+      sourcePage: window.location.pathname,
+      platform: platform || (typeof window !== "undefined" ? window.LearningPlatform?.platform : undefined)
     });
   });
 

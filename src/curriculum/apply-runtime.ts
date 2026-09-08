@@ -8,9 +8,13 @@ export type CurriculumRuntime = {
   publication?: { version?: string; hub?: string; course?: string } | null;
 };
 
+type ContentEngineHost = Window & typeof globalThis & {
+  LearningPlatformContent?: { setPublicationState?: (state: unknown) => unknown };
+};
+
 export function applyUnit14Curriculum(
   runtime: CurriculumRuntime,
-  target: Window & typeof globalThis = window
+  target: ContentEngineHost = window
 ) {
   const source = runtime.source || "none";
   const livePackage = source === "published" ? (runtime.package || null) : null;
@@ -25,6 +29,10 @@ export function applyUnit14Curriculum(
   if (target.document?.body) {
     target.document.body.dataset.curriculumSource = source === "published" ? "published" : "fallback";
     target.document.body.dataset.publicationState = runtime.state?.state || "ERROR";
+  }
+
+  if (runtime.state) {
+    target.LearningPlatformContent?.setPublicationState?.(runtime.state);
   }
 
   if (source !== "published") {
