@@ -27,10 +27,20 @@ export type ContentEngine = {
   getPublicationState?: () => unknown;
   createDraftStore?: (
     activity: { id: string; version?: string },
-    options?: { storage?: Storage; learnerKey?: string }
+    options?: { storage?: Storage; learnerKey?: string; platform?: unknown }
   ) => {
-    load: () => { responses: Record<string, unknown>; activityId: string };
+    load: () => {
+      responses: Record<string, unknown>;
+      checked?: Record<string, boolean>;
+      results?: Record<string, unknown>;
+      activityId: string;
+    };
     save: (draft: unknown) => unknown;
+    hydrate?: (local?: unknown) => Promise<{
+      responses?: Record<string, unknown>;
+      checked?: Record<string, boolean>;
+      results?: Record<string, unknown>;
+    } | null>;
   };
   loadCurriculumRuntime: (options: {
     appConfig: unknown;
