@@ -109,6 +109,50 @@
     });
   }
 
+  var RESULT_STATUS = { correct: true, incorrect: true, review: true, recorded: true, error: true };
+
+  function learnerSafeCheckedResult(value) {
+    var src;
+    var result;
+    if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+    src = value;
+    result = {
+      correct: src.correct === true ? true : src.correct === false ? false : null
+    };
+    if (typeof src.canRetry === "boolean") result.canRetry = src.canRetry;
+    if (typeof src.status === "string" && RESULT_STATUS[src.status]) {
+      result.status = src.status;
+    }
+    return result;
+  }
+
+  function learnerSafeCheckedResults(value) {
+    var next = {};
+    var questionId;
+    var safe;
+    if (!value || typeof value !== "object" || Array.isArray(value)) return next;
+    for (questionId in value) {
+      if (!Object.prototype.hasOwnProperty.call(value, questionId)) continue;
+      safe = learnerSafeCheckedResult(value[questionId]);
+      if (safe) next[questionId] = safe;
+    }
+    return next;
+  }
+
+  function ensureDraftResults(draft) {
+    if (!draft.results || typeof draft.results !== "object" || Array.isArray(draft.results)) {
+      draft.results = {};
+    }
+    return draft;
+  }
+
+  function persistCheckedDraft(store, draft) {
+    var payload = Object.assign({}, draft);
+    if (payload.result) delete payload.result;
+    payload.results = learnerSafeCheckedResults(payload.results);
+    store.save(payload);
+  }
+
   function updateActivityStatus(article, activity, draft) {
     var status = article.querySelector("[data-lp-activity-status]");
     var interactive = activityInteractiveBlocks(activity);
@@ -128,10 +172,10 @@
 
   function bindActivity(article, activity, options) {
     var store = ns.createDraftStore(activity, options);
-    var draft = store.load();
+    var draft = ensureDraftResults(store.load());
 
     function persist() {
-      store.save(draft);
+      persistCheckedDraft(store, draft);
       updateActivityStatus(article, activity, draft);
     }
 
@@ -149,16 +193,24 @@
     article.addEventListener("lp-block-result", function (event) {
       var detail = event.detail || {};
       var qid = detail.questionId;
+      var marked;
       if (!qid) return;
+      ensureDraftResults(draft);
       if (detail.completed === false) {
         if (detail.response == null || detail.response === "") delete draft.responses[qid];
         else draft.responses[qid] = detail.response;
         draft.checked[qid] = false;
+        delete draft.results[qid];
         persist();
         return;
       }
       draft.responses[qid] = detail.response;
-      if (detail.completed) draft.checked[qid] = true;
+      if (detail.completed) {
+        draft.checked[qid] = true;
+        marked = learnerSafeCheckedResult(detail.result);
+        if (marked) draft.results[qid] = marked;
+        else delete draft.results[qid];
+      }
       persist();
       if (detail.completed) {
         ns.submitActivityDraft(activity, draft, Object.assign({}, options, {
@@ -178,7 +230,10 @@
       block = blockById(activity, blockRoot.getAttribute("data-lp-block-id"));
       if (!block) return;
       qid = questionId(block);
+      ensureDraftResults(draft);
       draft.responses[qid] = collectResponse(blockRoot, block);
+      draft.checked[qid] = false;
+      delete draft.results[qid];
       persist();
     });
 
@@ -191,7 +246,10 @@
       if (!block) return;
       if (shouldSkipHtmlBlockBind(blockRoot, ns.normaliseBlockType(block.type))) return;
       qid = questionId(block);
+      ensureDraftResults(draft);
       draft.responses[qid] = collectResponse(blockRoot, block);
+      draft.checked[qid] = false;
+      delete draft.results[qid];
       persist();
     });
 
@@ -219,8 +277,11 @@
         if (!block || !blockRoot) return;
         if (shouldSkipHtmlBlockBind(blockRoot, ns.normaliseBlockType(block.type))) return;
         qid = questionId(block);
+        ensureDraftResults(draft);
         draft.responses[qid] = collectResponse(blockRoot, block);
         draft.checked[qid] = true;
+        // HTML-only Check has no server result — do not invent Correct/Incorrect.
+        delete draft.results[qid];
         setFeedback(blockRoot, block, draft.responses[qid], true);
         persist();
         ns.submitActivityDraft(activity, draft, Object.assign({}, options, {
@@ -237,8 +298,10 @@
         if (field) {
           field.value = field.defaultValue;
           qid = questionId(block);
+          ensureDraftResults(draft);
           draft.responses[qid] = field.value;
           draft.checked[qid] = false;
+          delete draft.results[qid];
           setFeedback(blockRoot, block, field.value, false);
           persist();
         }
@@ -252,7 +315,7 @@
       }
 
       if (resetActivity === activity.id) {
-        draft = store.reset();
+        draft = ensureDraftResults(store.reset());
         activityInteractiveBlocks(activity).forEach(function (item) {
           var rootEl = article.querySelector('[data-lp-block-id="' + item.id + '"]');
           var responseField;

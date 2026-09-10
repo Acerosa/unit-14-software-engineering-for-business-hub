@@ -26,6 +26,9 @@ test("Unit 14 adopts shared React hub UI without hub-identity branches", functio
   assert.match(weekPage, /PracticeProgressPanel/);
   assert.match(weekPage, /bindInteractive/);
   assert.match(weekPage, /not P1 achieved/);
+  assert.match(weekPage, /initialChecked=\{draft\.checked\}/);
+  assert.match(weekPage, /initialResults=\{draft\.results\}/);
+  assert.match(weekPage, /correct:\s*result\.correct\s*\?\?\s*null/);
   assert.match(mapper, /type: "assignment"/);
   assert.match(config, /showAssignmentContext: true/);
   assert.match(config, /showExamContext: false/);

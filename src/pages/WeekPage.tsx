@@ -14,7 +14,8 @@ import {
   type ActivityBlockDocument,
   type ActivityDocument,
   type ActivityResult,
-  type PracticeProgressAggregate
+  type PracticeProgressAggregate,
+  type RestoredActivityResult
 } from "@learning-platform/ui";
 import { isSessionAccessible } from "@learning-platform/core/curriculum-runtime";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -116,6 +117,50 @@ function draftResponsesFor(activity: ActivityDocument): Record<string, unknown> 
   }
 }
 
+type ActivityDraftSlice = {
+  responses: Record<string, unknown>;
+  checked: Record<string, boolean>;
+  results: Record<string, RestoredActivityResult>;
+};
+
+function emptyDraftSlice(): ActivityDraftSlice {
+  return { responses: {}, checked: {}, results: {} };
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+}
+
+function asBooleanRecord(value: unknown): Record<string, boolean> {
+  const source = asRecord(value);
+  const next: Record<string, boolean> = {};
+  for (const [key, item] of Object.entries(source)) {
+    next[key] = Boolean(item);
+  }
+  return next;
+}
+
+function asResultsRecord(value: unknown): Record<string, RestoredActivityResult> {
+  return asRecord(value) as Record<string, RestoredActivityResult>;
+}
+
+function draftSliceFromStore(activity: ActivityDocument, platform?: unknown): ActivityDraftSlice {
+  const engine = getContentEngine();
+  if (!engine.createDraftStore) return emptyDraftSlice();
+  try {
+    const draft = engine.createDraftStore(activity, { platform }).load();
+    return {
+      responses: asRecord(draft?.responses),
+      checked: asBooleanRecord(draft?.checked),
+      results: asResultsRecord(draft?.results)
+    };
+  } catch {
+    return emptyDraftSlice();
+  }
+}
+
 function stageStatus(stage: { week: number; title: string }, pkg: unknown): string {
   const engine = getContentEngine();
   const week = engine.resolveWeek(pkg, `week-${Number(stage.week)}`);
@@ -151,6 +196,7 @@ export function WeekPage({
   const [practice, setPractice] = useState<PracticeProgressAggregate>(
     aggregatePracticeProgress(emptyPracticeProgress(), { requiredBlocks: 0, scorableTotal: 0 })
   );
+  const [draftByActivity, setDraftByActivity] = useState<Record<string, ActivityDraftSlice>>({});
   const resolved = pkg ? engine.resolveWeek(pkg, weekId) : null;
   const scorableTotal = useMemo(() => weekScorableTotal(resolved), [resolved]);
   const requiredTotal = useMemo(() => weekRequiredTotal(resolved), [resolved]);
@@ -177,6 +223,33 @@ export function WeekPage({
     }));
   }, [weekId, requiredTotal, scorableTotal]);
 
+  useEffect(() => {
+    if (!resolved) return;
+    let cancelled = false;
+    const activities = (resolved.sessions || []).flatMap((session) => (
+      (session.activities || []).map((item) => activityDocument(item as ResolvedActivity))
+    ));
+    void Promise.all(activities.map(async (activity) => {
+      try {
+        if (!engine.createDraftStore) {
+          return [activity.id, emptyDraftSlice()] as const;
+        }
+        const store = engine.createDraftStore(activity, { platform });
+        const draft = store.hydrate ? await store.hydrate() : store.load();
+        return [activity.id, {
+          responses: asRecord(draft?.responses),
+          checked: asBooleanRecord(draft?.checked),
+          results: asResultsRecord(draft?.results)
+        }] as const;
+      } catch {
+        return [activity.id, emptyDraftSlice()] as const;
+      }
+    })).then((entries) => {
+      if (!cancelled) setDraftByActivity(Object.fromEntries(entries));
+    });
+    return () => { cancelled = true; };
+  }, [engine, platform, resolved, weekId]);
+
   const recordPracticeResult = useCallback((result: ActivityResult, block: ActivityBlockDocument) => {
     if (!result.completed) return;
     if (!isCompletableReactBlock(block) && !isScorableReactBlock(block)) return;
@@ -196,16 +269,19 @@ export function WeekPage({
       features: APP_CONFIG.ui,
       renderActivity: (activityResolved: ResolvedActivity) => {
         const activity = activityDocument(activityResolved);
+        const draft = draftByActivity[activity.id] || draftSliceFromStore(activity, platform);
         return {
           children: (
             <InteractiveActivity
               activity={activity}
               platform={platform}
-              initialResponses={draftResponsesFor(activity)}
+              initialResponses={Object.keys(draft.responses).length ? draft.responses : draftResponsesFor(activity)}
+              initialChecked={draft.checked}
+              initialResults={draft.results}
               renderFallback={(block) => {
                 if (isCodeBlockType(block.type)) {
                   const qid = questionIdFor(block);
-                  const initial = draftResponsesFor(activity)[qid];
+                  const initial = draft.responses[qid] ?? draftResponsesFor(activity)[qid];
                   return (
                     <CodeBlockView
                       block={block}
@@ -217,7 +293,13 @@ export function WeekPage({
                           detail: {
                             questionId: qid,
                             response: persistableResponse(block, result),
-                            completed: result.completed
+                            completed: result.completed,
+                            result: {
+                              correct: result.correct ?? null,
+                              canRetry: result.canRetry,
+                              status: result.status,
+                              requiresReview: result.requiresReview
+                            }
                           }
                         }));
                       }}
@@ -233,7 +315,13 @@ export function WeekPage({
                   detail: {
                     questionId: questionIdFor(block),
                     response: persistableResponse(block, result),
-                    completed: result.completed
+                    completed: result.completed,
+                    result: {
+                      correct: result.correct ?? null,
+                      canRetry: result.canRetry,
+                      status: result.status,
+                      requiresReview: result.requiresReview
+                    }
                   }
                 }));
                 recordPracticeResult(result, block);
@@ -243,7 +331,7 @@ export function WeekPage({
         };
       }
     });
-  }, [accessibleWeeks, engine, platform, recordPracticeResult, resolved, root]);
+  }, [accessibleWeeks, draftByActivity, engine, platform, recordPracticeResult, resolved, root]);
 
   // Re-bind after every commit so React fallback HTML retains draft listeners.
   useLayoutEffect(() => {
