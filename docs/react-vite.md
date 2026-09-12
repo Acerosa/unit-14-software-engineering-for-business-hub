@@ -7,8 +7,8 @@ Unit 14 is the reference learner hub for React + TypeScript + Vite.
 - React 19
 - TypeScript
 - Vite multi-page static build (`base: './'`)
-- `@learning-platform/core` 0.2.5 tag `v0.2.5` (auth, learner context, theme, tokens)
-- `@learning-platform/content` 0.1.0 tag `v0.1.0` (curriculum, `renderBlock`, `bindInteractive`)
+- `@learning-platform/core` 0.2.22 tag `v0.2.22` (auth, learner context, theme, tokens)
+- `@learning-platform/content` 0.1.2 tag `v0.1.2` (curriculum, `renderBlock`, `bindInteractive`)
 - `@learning-platform/ui` (React chrome, `InteractiveActivity` catalogue, `PracticeProgressPanel`) — see [PROVENANCE.md](PROVENANCE.md) for the reviewed tag
 
 CI checks those repositories out as siblings and installs them through `file:` dependencies. See [PROVENANCE.md](PROVENANCE.md).
