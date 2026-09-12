@@ -151,6 +151,10 @@ export function WeekPage({
   const [practice, setPractice] = useState<PracticeProgressAggregate>(
     aggregatePracticeProgress(emptyPracticeProgress(), { requiredBlocks: 0, scorableTotal: 0 })
   );
+  const [draftByActivity, setDraftByActivity] = useState<Record<string, {
+    responses: Record<string, unknown>;
+    checked: Record<string, boolean>;
+  }>>({});
   const resolved = pkg ? engine.resolveWeek(pkg, weekId) : null;
   const scorableTotal = useMemo(() => weekScorableTotal(resolved), [resolved]);
   const requiredTotal = useMemo(() => weekRequiredTotal(resolved), [resolved]);
@@ -187,6 +191,56 @@ export function WeekPage({
     }));
   }, [requiredTotal, scorableTotal]);
 
+  useEffect(() => {
+    if (!resolved) return;
+    let cancelled = false;
+    const unsubscribers: Array<() => void> = [];
+    const activities = (resolved.sessions || []).flatMap((session) => (
+      (session.activities || []).map((item) => activityDocument(item as ResolvedActivity))
+    ));
+    void Promise.all(activities.map(async (activity) => {
+      try {
+        if (!engine.createDraftStore) {
+          return [activity.id, { responses: {}, checked: {} }] as const;
+        }
+        const store = engine.createDraftStore(activity, { platform });
+        if (typeof store.subscribe === "function") {
+          unsubscribers.push(store.subscribe((state: { responses?: unknown; checked?: unknown }) => {
+            if (cancelled) return;
+            const next = {
+              responses: state?.responses && typeof state.responses === "object" ? state.responses as Record<string, unknown> : {},
+              checked: state?.checked && typeof state.checked === "object" ? state.checked as Record<string, boolean> : {}
+            };
+            setDraftByActivity((prev) => {
+              const current = prev[activity.id];
+              if (
+                current
+                && JSON.stringify(current.responses) === JSON.stringify(next.responses)
+                && JSON.stringify(current.checked) === JSON.stringify(next.checked)
+              ) {
+                return prev;
+              }
+              return { ...prev, [activity.id]: next };
+            });
+          }));
+        }
+        const draft = store.hydrate ? await store.hydrate() : store.load();
+        return [activity.id, {
+          responses: draft?.responses && typeof draft.responses === "object" ? draft.responses : {},
+          checked: draft?.checked && typeof draft.checked === "object" ? draft.checked : {}
+        }] as const;
+      } catch {
+        return [activity.id, { responses: {}, checked: {} }] as const;
+      }
+    })).then((entries) => {
+      if (!cancelled) setDraftByActivity(Object.fromEntries(entries));
+    });
+    return () => {
+      cancelled = true;
+      unsubscribers.forEach((unsubscribe) => unsubscribe());
+    };
+  }, [engine, platform, resolved, weekId]);
+
   const presentation = useMemo(() => {
     if (!resolved) return null;
     return fromResolvedWeek(resolved, {
@@ -196,12 +250,15 @@ export function WeekPage({
       features: APP_CONFIG.ui,
       renderActivity: (activityResolved: ResolvedActivity) => {
         const activity = activityDocument(activityResolved);
+        const draft = draftByActivity[activity.id];
         return {
+          id: activity.id,
           children: (
             <InteractiveActivity
               activity={activity}
               platform={platform}
-              initialResponses={draftResponsesFor(activity)}
+              initialResponses={draft?.responses || draftResponsesFor(activity)}
+              initialChecked={draft?.checked}
               renderFallback={(block) => {
                 if (isCodeBlockType(block.type)) {
                   const qid = questionIdFor(block);
@@ -243,15 +300,21 @@ export function WeekPage({
         };
       }
     });
-  }, [accessibleWeeks, engine, platform, recordPracticeResult, resolved, root]);
+  }, [accessibleWeeks, draftByActivity, engine, platform, recordPracticeResult, resolved, root]);
 
-  // Re-bind after every commit so React fallback HTML retains draft listeners.
+  const activityBindKey = useMemo(
+    () => (presentation?.sessions || []).map((session) => (
+      (session.activities || []).map((item: { id?: string }) => item.id || "").join(",")
+    )).join("|"),
+    [presentation]
+  );
+
   useLayoutEffect(() => {
     if (!pkg || !mountRef.current || !presentation || !guardWeek.available) return;
     engine.bindInteractive(mountRef.current, pkg, {
       sourcePage: window.location.pathname
     });
-  });
+  }, [activityBindKey, engine, guardWeek.available, pkg]);
 
   if (!pkg) return <LoadingState message="Loading this week's sessions" />;
   if (!resolved || !presentation) {
