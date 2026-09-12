@@ -130,8 +130,8 @@
     var store = ns.createDraftStore(activity, options);
     var draft = store.load();
 
-    function persist() {
-      store.save(draft);
+    function persist(options) {
+      store.save(draft, options);
       updateActivityStatus(article, activity, draft);
     }
 
@@ -148,6 +148,7 @@
 
     function restoreDraft(next) {
       if (!next) return;
+      if (store.isDirty && store.isDirty()) return;
       if (
         draft && draft.responses && Object.keys(draft.responses).length &&
         (!next.responses || !Object.keys(next.responses).length)
@@ -187,7 +188,7 @@
         if (detail.response == null || detail.response === "") delete draft.responses[qid];
         else draft.responses[qid] = detail.response;
         draft.checked[qid] = false;
-        persist();
+        persist({ immediate: true });
         return;
       }
       draft.responses[qid] = detail.response;
