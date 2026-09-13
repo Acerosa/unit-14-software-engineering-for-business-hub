@@ -25,6 +25,7 @@ test("Unit 14 adopts shared React hub UI without hub-identity branches", functio
   assert.match(weekPage, /InteractiveActivity/);
   assert.match(weekPage, /PracticeProgressPanel/);
   assert.match(weekPage, /bindInteractive/);
+  assert.match(weekPage, /platform:\s*platform/);
   assert.match(weekPage, /not P1 achieved/);
   assert.match(mapper, /type: "assignment"/);
   assert.match(config, /showAssignmentContext: true/);
@@ -52,6 +53,7 @@ test("shared Week UI maps canonical Week 1 sessions, activities and assignment c
   assert.match(weekPage, /data-lp-view="week"/);
   assert.match(weekPage, /data-lp-week="week-1"/);
   assert.match(read("src/pages/WeekPage.tsx"), /bindInteractive/);
+  assert.match(read("src/pages/WeekPage.tsx"), /platform:\s*platform/);
   assert.match(read("src/pages/WeekPage.tsx"), /not P1 achieved/);
 });
 

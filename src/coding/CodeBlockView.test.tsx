@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CodeBlockView } from "./CodeBlockView";
 
@@ -57,7 +57,9 @@ describe("CodeBlockView migration routing", () => {
         } as never}
       />
     );
-    expect(await screen.findByRole("button", { name: "Run Python code" })).toBeEnabled();
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Run Python code" })).toBeEnabled();
+    });
   });
 
   it("renders local-only blocks without browser Run", () => {

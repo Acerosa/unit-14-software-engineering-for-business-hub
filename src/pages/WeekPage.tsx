@@ -191,6 +191,19 @@ export function WeekPage({
     }));
   }, [requiredTotal, scorableTotal]);
 
+  const dispatchBlockResult = useCallback((activityId: string, result: ActivityResult, block: ActivityBlockDocument) => {
+    const article = mountRef.current?.querySelector(`[data-lp-activity="${activityId}"]`);
+    article?.dispatchEvent(new CustomEvent("lp-block-result", {
+      bubbles: true,
+      detail: {
+        questionId: questionIdFor(block),
+        response: persistableResponse(block, result),
+        completed: result.completed
+      }
+    }));
+    recordPracticeResult(result, block);
+  }, [recordPracticeResult]);
+
   useEffect(() => {
     if (!resolved) return;
     let cancelled = false;
@@ -284,23 +297,14 @@ export function WeekPage({
                 return <AuthoredHtml html={engine.renderBlock(block)} />;
               }}
               onResult={(result: ActivityResult, block: ActivityBlockDocument) => {
-                const article = mountRef.current?.querySelector(`[data-lp-activity="${activity.id}"]`);
-                article?.dispatchEvent(new CustomEvent("lp-block-result", {
-                  bubbles: true,
-                  detail: {
-                    questionId: questionIdFor(block),
-                    response: persistableResponse(block, result),
-                    completed: result.completed
-                  }
-                }));
-                recordPracticeResult(result, block);
+                dispatchBlockResult(activity.id, result, block);
               }}
             />
           )
         };
       }
     });
-  }, [accessibleWeeks, draftByActivity, engine, platform, recordPracticeResult, resolved, root]);
+  }, [accessibleWeeks, dispatchBlockResult, draftByActivity, engine, platform, resolved, root]);
 
   const activityBindKey = useMemo(
     () => (presentation?.sessions || []).map((session) => (
@@ -312,9 +316,10 @@ export function WeekPage({
   useLayoutEffect(() => {
     if (!pkg || !mountRef.current || !presentation || !guardWeek.available) return;
     engine.bindInteractive(mountRef.current, pkg, {
-      sourcePage: window.location.pathname
+      sourcePage: window.location.pathname,
+      platform: platform || (typeof window !== "undefined" ? window.LearningPlatform?.platform : undefined)
     });
-  }, [activityBindKey, engine, guardWeek.available, pkg]);
+  }, [activityBindKey, engine, guardWeek.available, pkg, platform]);
 
   if (!pkg) return <LoadingState message="Loading this week's sessions" />;
   if (!resolved || !presentation) {

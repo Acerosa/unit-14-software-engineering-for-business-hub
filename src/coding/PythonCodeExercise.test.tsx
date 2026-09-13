@@ -215,4 +215,18 @@ describe("PythonCodeExercise", () => {
     expect(editors[0]).toHaveValue("print(1)");
     expect(editors[1]).toHaveValue("print(2)");
   });
+
+  it("does not re-emit when only the parent onResult identity changes", async () => {
+    const first = vi.fn();
+    const { rerender } = render(<PythonCodeExercise block={block} onResult={first} />);
+    await waitFor(function () {
+      expect(first).toHaveBeenCalled();
+    });
+    const count = first.mock.calls.length;
+    const second = vi.fn();
+    rerender(<PythonCodeExercise block={block} onResult={second} />);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(second).not.toHaveBeenCalled();
+    expect(first.mock.calls.length).toBe(count);
+  });
 });

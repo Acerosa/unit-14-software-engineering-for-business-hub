@@ -193,7 +193,7 @@
       }
       draft.responses[qid] = detail.response;
       if (detail.completed) draft.checked[qid] = true;
-      persist();
+      persist(detail.completed ? { immediate: true } : undefined);
       if (detail.completed) {
         ns.submitActivityDraft(activity, draft, Object.assign({}, options, {
           publication: ns.getPublicationState()
