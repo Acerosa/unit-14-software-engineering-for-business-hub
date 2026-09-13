@@ -63,6 +63,8 @@ export function PythonCodeExercise({
   const [runAttempts, setRunAttempts] = useState(0);
   const [editorFallback, setEditorFallback] = useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
+  const onResultRef = useRef(onResult);
+  onResultRef.current = onResult;
   const statusId = useId();
   const outputId = useId();
   const tests = localOnly ? [] : runtimeTests(block);
@@ -87,8 +89,8 @@ export function PythonCodeExercise({
   }, [localOnly]);
 
   useEffect(function () {
-    onResult?.(emitCodeResult(code, runAttempts));
-  }, [code, onResult, runAttempts]);
+    onResultRef.current?.(emitCodeResult(code, runAttempts));
+  }, [code, runAttempts]);
 
   const handleCodeChange = useCallback(function (next: string) {
     setCode(next);
