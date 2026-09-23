@@ -30,7 +30,7 @@ Reviewed build-time packages (see [docs/PROVENANCE.md](docs/PROVENANCE.md)):
 
 - `@learning-platform/core` **0.2.22** (`v0.2.22`)
 - `@learning-platform/content` **0.1.2** (`v0.1.2`)
-- `@learning-platform/ui` **0.1.14** (`v0.1.14`) from [Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui)
+- `@learning-platform/ui` **0.1.15** (`v0.1.15`) from [Acerosa/Acerosa-learning-platform-ui](https://github.com/Acerosa/Acerosa-learning-platform-ui)
 - Supabase JS **2.112.3**
 
 Vendored IIFE copies under `vendor/` remain for Node curriculum tests. The GitHub Pages bundle is produced by Vite from the `file:` packages.
